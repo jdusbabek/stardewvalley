@@ -1,0 +1,14 @@
+﻿{
+  "Name": "CrabNet",
+  "Authour": "jwdred",
+  "Version": {
+    "MajorVersion": 1,
+    "MinorVersion": 0,
+    "PatchVersion": 1,
+    "Build": ""
+  },
+  "Description": "Wouldn't it be nice if there were a way to empty crab pots quickly without accidentally picking up the pot too?",
+  "UniqueID": "",
+  "PerSaveConfigs": false,
+  "EntryDll": "CrabNet.dll"
+}

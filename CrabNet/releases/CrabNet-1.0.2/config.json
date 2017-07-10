@@ -1,0 +1,14 @@
+{
+  "keybind": "H",
+  "enableLogging": true,
+  "free": false,
+  "costPerCheck": 1,
+  "costPerEmpty": 10,
+  "chargeForBait": true,
+  "preferredBait": 685,
+  "whoChecks": "spouse",
+  "enableMessages": true,
+  "chestCoords": "73, 14",
+  "bypassInventory": false,
+  "allowFreebies": false
+}

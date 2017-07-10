@@ -1,0 +1,17 @@
+{
+  "keybind": "O",
+  "growUpEnabled": true,
+  "maxHappinessEnabled": true,
+  "maxFullnessEnabled": true,
+  "harvestEnabled": true,
+  "pettingEnabled": true,
+  "maxFriendshipEnabled": true,
+  "verboseLogging": true,
+  "costPerAction": 25,
+  "enableMessages": true,
+  "takeTrufflesFromPigs": true,
+  "bypassInventory": true,
+  "chestCoords": "54, 10",
+  "chestDefs": "430,35,7,BCellar",
+  "whoChecks": "Shane"
+}
