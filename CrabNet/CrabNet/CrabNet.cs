@@ -1,38 +1,28 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Buildings;
-using StardewValley.Locations;
-using StardewValley.TerrainFeatures;
-using StardewValley.Tools;
 using StardewValley.Objects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using xTile.Dimensions;
 using SFarmer = StardewValley.Farmer;
 
 namespace CrabNet
 {
-
     public class CrabNet : Mod
     {
         // Local variable for config setting "keybind"
         private static Keys actionKey;
 
         // Local variable for config setting "loggingEnabled"
-        private bool loggingEnabled = false;
+        private bool loggingEnabled;
 
         // Local variable for config setting "preferredBait"
         private int baitChoice = 685;
 
         // Local variable for config setting "free"
-        private bool free = false;
+        private bool free;
 
         // Local variable for config setting "chargeForBait"
         private bool chargeForBait = true;
@@ -53,57 +43,47 @@ namespace CrabNet
         private Vector2 chestCoords = new Vector2(73f, 14f);
 
         // Local variable for config setting "bypassInventory"
-        private bool bypassInventory = false;
+        private bool bypassInventory;
 
         // Local variable for config setting "allowFreebies"
         private bool allowFreebies = true;
 
 
         // The cost per 1 bait, as determined from the user's bait preference
-        public int baitCost = 0;
+        public int baitCost;
 
         // Content manager for loading dialogs, etc.
         public LocalizedContentManager content;
 
         // An indexed list of all messages from the dialog.xna file
-        private Dictionary<string, string> allmessages = null;
+        private Dictionary<string, string> allmessages;
 
         // An indexed list of key dialog elements, these need to be indexed in the order in the file ie. cannot be randomized.
-        private Dictionary<int, string> dialog = null;
+        private Dictionary<int, string> dialog;
 
         // An indexed list of greetings.
-        private Dictionary<int, string> greetings = null;
+        private Dictionary<int, string> greetings;
 
         // An indexed list of all dialog entries relating to "unfinished"
-        private Dictionary<int, string> unfinishedMessages = null;
+        private Dictionary<int, string> unfinishedMessages;
 
         // An indexed list of all dialog entries related to "freebies"
-        private Dictionary<int, string> freebieMessages = null;
+        private Dictionary<int, string> freebieMessages;
 
         // An indexed list of all dialog entries related to "inventory full"
-        private Dictionary<int, string> inventoryMessages = null;
+        private Dictionary<int, string> inventoryMessages;
 
         // An indexed list of all dialog entries related to "smalltalk".  This list is merged with a list of dialogs that are specific to your "checker"
-        private Dictionary<int, string> smalltalk = null;
+        private Dictionary<int, string> smalltalk;
 
         // Random number generator, used primarily for selecting dialog messages.
         private Random random = new Random();
 
         // A flag for when an item could not be deposited into either the inventory or the chest.
-        private bool inventoryAndChestFull = false;
+        private bool inventoryAndChestFull;
 
         // The configuration object.  Not used per-se, only to populate the local variables.
         public static CrabNetConfig config;
-
-
-        /**
-         * Constructor.  Nothing special at the moment.
-         */
-        public CrabNet() : base()
-        {
-
-        }
-
 
         /**
          * The SMAPI entry point.
@@ -116,12 +96,12 @@ namespace CrabNet
 
         private void onLoaded(object sender, EventArgs e)
         {
-            CrabNet.config = (CrabNetConfig)ConfigExtensions.InitializeConfig<CrabNetConfig>(new CrabNetConfig(), this.BaseConfigPath);
+            config = ConfigExtensions.InitializeConfig(new CrabNetConfig(), this.BaseConfigPath);
 
-            if (!Enum.TryParse<Keys>(config.keybind, true, out CrabNet.actionKey))
+            if (!Enum.TryParse(config.keybind, true, out CrabNet.actionKey))
             {
                 CrabNet.actionKey = Keys.H;
-                Log.Info((object)"[CrabNet] Error parsing key binding. Defaulted to H");
+                Log.Info("[CrabNet] Error parsing key binding. Defaulted to H");
             }
 
             loggingEnabled = config.enableLogging;
@@ -174,8 +154,8 @@ namespace CrabNet
                 {
                     if (loggingEnabled)
                     {
-                        Log.Info((object)("[CrabNet] Exception onKeyReleased: " + ex.Message));
-                        Log.Error((object)("[CrabNet] Stacktrace: " + ex.ToString()));
+                        Log.Info("[CrabNet] Exception onKeyReleased: " + ex.Message);
+                        Log.Error("[CrabNet] Stacktrace: " + ex.ToString());
                     }
                 }
 
@@ -202,7 +182,7 @@ namespace CrabNet
 
                             if (!free && !canAfford(Game1.player, this.costPerCheck, stats) && !allowFreebies)
                             {
-                                Log.Info((object)("[CrabNet] Couldn't afford to check."));
+                                Log.Info("[CrabNet] Couldn't afford to check.");
                                 stats.notChecked++;
                                 continue;
                             }
@@ -212,11 +192,11 @@ namespace CrabNet
 
                             CrabPot pot = (CrabPot)obj;
 
-                            if ( pot.heldObject != null && pot.heldObject.category != -21)
+                            if (pot.heldObject != null && pot.heldObject.category != -21)
                             {
                                 if (!free && !canAfford(Game1.player, this.costPerEmpty, stats) && !allowFreebies)
                                 {
-                                    Log.Info((object)("[CrabNet] Couldn't afford to empty."));
+                                    Log.Info("[CrabNet] Couldn't afford to empty.");
                                     stats.notEmptied++;
                                     continue;
                                 }
@@ -238,7 +218,7 @@ namespace CrabNet
 
                                 if (!free && !canAfford(Game1.player, this.baitCost, stats) && !allowFreebies && chargeForBait)
                                 {
-                                    Log.Info((object)("[CrabNet] Couldn't afford to bait."));
+                                    Log.Info("[CrabNet] Couldn't afford to bait.");
                                     stats.notBaited++;
                                     continue;
                                 }
@@ -273,18 +253,18 @@ namespace CrabNet
 
             if (loggingEnabled)
             {
-                Log.Info((object)("[CrabNet] CrabNet checked " + stats.numChecked + " pots."));
-                Log.Info((object)("[CrabNet] You used " + stats.numBaited + " bait to reset."));
+                Log.Info("[CrabNet] CrabNet checked " + stats.numChecked + " pots.");
+                Log.Info("[CrabNet] You used " + stats.numBaited + " bait to reset.");
 
                 if (!free)
-                    Log.Info((object)("[CrabNet] Total cost was " + totalCost + "g. Checks: " + (stats.numChecked * costPerCheck) + ", Emptied: " + (stats.numEmptied * costPerEmpty) + ", Bait: " + (stats.numBaited * baitCost)));
+                    Log.Info("[CrabNet] Total cost was " + totalCost + "g. Checks: " + (stats.numChecked * this.costPerCheck) + ", Emptied: " + (stats.numEmptied * this.costPerEmpty) + ", Bait: " + (stats.numBaited * this.baitCost));
             }
 
             doesPlayerHaveEnoughCash = (Game1.player.Money >= totalCost);
 
             if (!free)
                 Game1.player.Money = Math.Max(0, Game1.player.Money + (-1 * totalCost));
-            
+
             if (enableMessages)
             {
                 showMessage(stats, totalCost, doesPlayerHaveEnoughCash);
@@ -299,7 +279,7 @@ namespace CrabNet
                 return false;
 
             if (pot.tileIndexToShow == 714)
-            {  
+            {
                 if (farmer.IsMainPlayer && !addItemToInventory(pot.heldObject, farmer, Game1.getFarm()))
                 {
                     Game1.addHUDMessage(new HUDMessage("Inventory Full", Color.Red, 3500f));
@@ -314,9 +294,9 @@ namespace CrabNet
                     farmer.caughtFish(pot.heldObject.parentSheetIndex, Game1.random.Next(minValue, num + 1));
                 }
                 pot.readyForHarvest = false;
-                pot.heldObject = (StardewValley.Object)null;
+                pot.heldObject = null;
                 pot.tileIndexToShow = 710;
-                pot.bait = (StardewValley.Object)null;
+                pot.bait = null;
                 farmer.gainExperience(1, 5);
 
                 return true;
@@ -346,7 +326,7 @@ namespace CrabNet
                 wasAdded = true;
 
                 if (loggingEnabled)
-                    Log.Info((object)("[CrabNet] Was able to add item to inventory."));
+                    Log.Info("[CrabNet] Was able to add item to inventory.");
             }
             else
             {
@@ -356,7 +336,7 @@ namespace CrabNet
                 if (chest != null && chest is Chest)
                 {
                     if (loggingEnabled)
-                        Log.Info((object)("[CrabNet] Found a chest at " + (int)chestCoords.X + "," + (int)chestCoords.Y));
+                        Log.Info("[CrabNet] Found a chest at " + (int)this.chestCoords.X + "," + (int)this.chestCoords.Y);
 
                     Item i = ((Chest)chest).addItem(obj);
                     if (i == null)
@@ -364,27 +344,27 @@ namespace CrabNet
                         wasAdded = true;
 
                         if (loggingEnabled)
-                            Log.Info((object)("[CrabNet] Was able to add items to chest."));
+                            Log.Info("[CrabNet] Was able to add items to chest.");
                     }
                     else
                     {
                         inventoryAndChestFull = true;
 
                         if (loggingEnabled)
-                            Log.Info((object)("[CrabNet] Was NOT able to add items to chest."));
+                            Log.Info("[CrabNet] Was NOT able to add items to chest.");
                     }
 
                 }
                 else
                 {
                     if (loggingEnabled)
-                        Log.Info((object)("[Animal-Sitter] Did not find a chest at " + (int)chestCoords.X + "," + (int)chestCoords.Y));
+                        Log.Info("[Animal-Sitter] Did not find a chest at " + (int)this.chestCoords.X + "," + (int)this.chestCoords.Y);
 
                     // If bypassInventory is set to true, but there's no chest: try adding to the farmer's inventory.
                     if (bypassInventory)
                     {
                         if (loggingEnabled)
-                            Log.Info((object)("[Animal-Sitter] No chest at " + (int)chestCoords.X + "," + (int)chestCoords.Y + ", you should place a chest there, or set bypassInventory to 'false'."));
+                            Log.Info("[Animal-Sitter] No chest at " + (int)this.chestCoords.X + "," + (int)this.chestCoords.Y + ", you should place a chest there, or set bypassInventory to 'false'.");
 
                         if (farmer.couldInventoryAcceptThisItem(obj))
                         {
@@ -392,14 +372,14 @@ namespace CrabNet
                             wasAdded = true;
 
                             if (loggingEnabled)
-                                Log.Info((object)("[CrabNet] Was able to add item to inventory. (No chest found, bypassInventory set to 'true')"));
+                                Log.Info("[CrabNet] Was able to add item to inventory. (No chest found, bypassInventory set to 'true')");
                         }
                         else
                         {
                             inventoryAndChestFull = true;
 
                             if (loggingEnabled)
-                                Log.Info((object)("[CrabNet] Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'true')"));
+                                Log.Info("[CrabNet] Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'true')");
                         }
                     }
                     else
@@ -407,7 +387,7 @@ namespace CrabNet
                         inventoryAndChestFull = true;
 
                         if (loggingEnabled)
-                            Log.Info((object)("[CrabNet] Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'false')"));
+                            Log.Info("[CrabNet] Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'false')");
                     }
                 }
             }
@@ -444,8 +424,9 @@ namespace CrabNet
         {
             string message = "";
 
-            if ( checker.ToLower() == "spouse" ) {
-                if ( Game1.player.isMarried() )
+            if (checker.ToLower() == "spouse")
+            {
+                if (Game1.player.isMarried())
                 {
                     message += DialogManager.performReplacement(dialog[1], stats);
                     //message += Game1.player.getSpouse().getName() + " has emptied and baited " + stats.numChecked + " crab pots.";
@@ -472,7 +453,7 @@ namespace CrabNet
                 {
                     //this.isCheckerCharacter = true;
 
-                    message += DialogManager.performReplacement( getRandomMessage(greetings), stats );
+                    message += DialogManager.performReplacement(getRandomMessage(greetings), stats);
                     message += " " + DialogManager.performReplacement(dialog[4], stats);
                     //message += "Hi @. I serviced " + stats.numChecked + " crab pots.";
 
@@ -485,17 +466,17 @@ namespace CrabNet
                         {
                             if (inventoryAndChestFull)
                             {
-                                message += DialogManager.performReplacement( getRandomMessage(inventoryMessages), stats );
+                                message += DialogManager.performReplacement(getRandomMessage(inventoryMessages), stats);
                             }
                             else
                             {
                                 if (allowFreebies)
                                 {
-                                    message += DialogManager.performReplacement( getRandomMessage(freebieMessages), stats );
+                                    message += DialogManager.performReplacement(getRandomMessage(freebieMessages), stats);
                                 }
                                 else
                                 {
-                                    message += " " + DialogManager.performReplacement( getRandomMessage(unfinishedMessages), stats );
+                                    message += " " + DialogManager.performReplacement(getRandomMessage(unfinishedMessages), stats);
                                 }
                             }
                         }
@@ -509,15 +490,15 @@ namespace CrabNet
                         //    message += " " + getRandomMessage(unfinishedMessages);
                         //}
 
-                        message += DialogManager.performReplacement( getRandomMessage(smalltalk), stats );
+                        message += DialogManager.performReplacement(getRandomMessage(smalltalk), stats);
                         message += "#$e#";
                     }
                     else
                     {
-                        message += DialogManager.performReplacement( getRandomMessage(smalltalk), stats );
+                        message += DialogManager.performReplacement(getRandomMessage(smalltalk), stats);
                         message += "#$e#";
                     }
-                    
+
                     character.CurrentDialogue.Push(new Dialogue(message, character));
                     Game1.drawDialogue(character);
                 }
@@ -528,7 +509,7 @@ namespace CrabNet
                     Game1.addHUDMessage(msg);
                 }
             }
-                      
+
         }
 
 
@@ -545,7 +526,7 @@ namespace CrabNet
         //    return value;
         //}
 
-        public string getRandomMessage(Dictionary<int,string>messageStore)
+        public string getRandomMessage(Dictionary<int, string> messageStore)
         {
             int rand = random.Next(1, messageStore.Count + 1);
 
@@ -554,7 +535,7 @@ namespace CrabNet
             messageStore.TryGetValue(rand, out value);
 
             if (loggingEnabled)
-                Log.Info((object)("[CrabNet] condition met to return random unfinished message, returning:" + value));
+                Log.Info("[CrabNet] condition met to return random unfinished message, returning:" + value);
 
             return value;
         }
@@ -579,7 +560,7 @@ namespace CrabNet
                 if (characterDialog.Count > 0)
                 {
                     int index = smalltalk.Count + 1;
-                    foreach(KeyValuePair<int, string> d in characterDialog)
+                    foreach (KeyValuePair<int, string> d in characterDialog)
                     {
                         smalltalk.Add(index, d.Value);
                         index++;
@@ -597,7 +578,7 @@ namespace CrabNet
             }
             catch (Exception ex)
             {
-                Log.Error((object)("[CrabNet] Exception loading content:" + ex.ToString()));
+                Log.Error("[CrabNet] Exception loading content:" + ex.ToString());
             }
         }
     }

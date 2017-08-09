@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StardewLib;
-using StardewValley;
+using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using Microsoft.Xna.Framework.Input;
+using StardewValley;
 using StardewValley.Menus;
-using Object = StardewValley.Object;
 using Log = StardewLib.Log;
+using Object = StardewValley.Object;
 
 namespace MailOrderPigs
 {
@@ -33,12 +29,12 @@ namespace MailOrderPigs
         {
             try
             {
-                MailOrderPigs.config = (MailOrderPigsConfig)ConfigExtensions.InitializeConfig<MailOrderPigsConfig>(new MailOrderPigsConfig(), this.BaseConfigPath);
+                MailOrderPigs.config = new MailOrderPigsConfig().InitializeConfig(this.BaseConfigPath);
 
-                if (!Enum.TryParse<Keys>(config.keybind, true, out MailOrderPigs.menuKey))
+                if (!Enum.TryParse(config.keybind, true, out MailOrderPigs.menuKey))
                 {
                     MailOrderPigs.menuKey = Keys.PageUp;
-                    Log.force_ERROR((object)"[MailOrderPigs] Error parsing key binding. Defaulted to Page Up");
+                    Log.force_ERROR("[MailOrderPigs] Error parsing key binding. Defaulted to Page Up");
                 }
 
                 this.allowOvercrowding = config.allowOvercrowding;
@@ -52,7 +48,7 @@ namespace MailOrderPigs
             {
                 Log.force_ERROR("[MailOrderPigs] Mod not loaded successfully: " + ex.ToString());
             }
-            
+
         }
 
         private void onKeyReleased(object sender, EventArgsKeyPressed e)
@@ -80,22 +76,22 @@ namespace MailOrderPigs
                         {
                             Log.INFO("[MailOrderPigs] Not bringing up menu: building is full.");
                             Game1.showRedMessage("This Building Is Full");
-                        }  
+                        }
                         else
                         {
                             Log.INFO("[MailOrderPigs] Bringing up menu.");
                             Game1.activeClickableMenu = new MailOrderPigMenu(getPurchaseAnimalStock());
-                        }  
+                        }
                     }
                     catch (Exception ex)
                     {
                         Log.force_ERROR("[MailOrderPigs] Problem bringing up menu: " + ex.ToString());
-                    } 
+                    }
                 }
                 else
                 {
                     Log.INFO("[MailOrderPigs] Problem bringing up menu: you are not in an animal house. Location name is: " + Game1.currentLocation.Name);
-                }    
+                }
             }
         }
 
@@ -106,13 +102,13 @@ namespace MailOrderPigs
             Log.INFO("[MailOrderPigs] Returning stock for building: " + locationName);
 
             return new List<Object>() {
-                new Object(100, 1, false, 400, 0){ name = "Chicken", type = locationName.Equals("Coop") || locationName.Equals("Deluxe Coop") || locationName.Equals("Big Coop") ? (string)null : "You gotta be in a Coop" },
-                new Object(100, 1, false, 750, 0) { name = "Dairy Cow", type = locationName.Equals("Barn") || locationName.Equals("Deluxe Barn") || locationName.Equals("Big Barn") ? (string)null : "You gotta be in a Barn" },
-                new Object(100, 1, false, 2000, 0){ name = "Goat", type = locationName.Equals("Big Barn") || locationName.Equals("Deluxe Barn") ? (string)null : "You gotta be in a Big Barn" },
-                new Object(100, 1, false, 2000, 0) { name = "Duck", type = locationName.Equals("Big Coop") || locationName.Equals("Deluxe Coop") ? (string)null : "You gotta be in a Big Coop" },
-                new Object(100, 1, false, 4000, 0) { name = "Sheep", type = locationName.Equals("Deluxe Barn") ? (string)null : "You gotta be in a Deluxe Barn" },
-                new Object(100, 1, false, 4000, 0) { name = "Rabbit", type = locationName.Equals("Deluxe Coop") ? (string)null : "You gotta be in a Deluxe Coop" },
-                new Object(100, 1, false, 8000, 0){ name = "Pig", type = locationName.Equals("Deluxe Barn") ? (string)null : "You gotta be in a Deluxe Barn" } };
+                new Object(100, 1, false, 400, 0){ name = "Chicken", type = locationName.Equals("Coop") || locationName.Equals("Deluxe Coop") || locationName.Equals("Big Coop") ? null : "You gotta be in a Coop" },
+                new Object(100, 1, false, 750, 0) { name = "Dairy Cow", type = locationName.Equals("Barn") || locationName.Equals("Deluxe Barn") || locationName.Equals("Big Barn") ? null : "You gotta be in a Barn" },
+                new Object(100, 1, false, 2000, 0){ name = "Goat", type = locationName.Equals("Big Barn") || locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Big Barn" },
+                new Object(100, 1, false, 2000, 0) { name = "Duck", type = locationName.Equals("Big Coop") || locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Big Coop" },
+                new Object(100, 1, false, 4000, 0) { name = "Sheep", type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" },
+                new Object(100, 1, false, 4000, 0) { name = "Rabbit", type = locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Deluxe Coop" },
+                new Object(100, 1, false, 8000, 0){ name = "Pig", type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" } };
         }
     }
 }

@@ -1,15 +1,9 @@
 ﻿using StardewModdingAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CrabNet
 {
     public class CrabNetConfig : Config
     {
-
         // The hot key that performs this action.
         public string keybind { get; set; }
 
@@ -62,7 +56,7 @@ namespace CrabNet
             chestCoords = new Microsoft.Xna.Framework.Vector2(73f, 14f);
             bypassInventory = false;
             allowFreebies = true;
-            
+
             return this as T;
         }
 

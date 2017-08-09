@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using StardewLib;
 using StardewValley;
+using StardewValley.Buildings;
 using StardewValley.Objects;
 using Object = StardewValley.Object;
-using ChestDef = SortMyStuff.chest.ChestDef;
-using StardewLib;
-using StardewValley.Locations;
-using StardewValley.Buildings;
 
 namespace SortMyStuff.chest
 {
@@ -103,7 +98,7 @@ namespace SortMyStuff.chest
             else
                 return def;
         }
-    
+
 
         public static void setDefault(Vector2 v)
         {
@@ -232,7 +227,7 @@ namespace SortMyStuff.chest
                                     }
                                 }
                             }
-                            
+
                         }
 
                     }

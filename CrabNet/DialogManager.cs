@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -42,7 +39,7 @@ namespace CrabNet
         {
             Dictionary<int, string> result = new Dictionary<int, string>();
 
-            foreach (KeyValuePair<string, string> msgPair in (Dictionary<string, string>)source)
+            foreach (KeyValuePair<string, string> msgPair in source)
             {
                 if (msgPair.Key.Contains("_"))
                 {
@@ -56,12 +53,12 @@ namespace CrabNet
                     }
                     else
                     {
-                        Log.Error((object)"Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
+                        Log.Error("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
                     }
                 }
                 else
                 {
-                    Log.Error((object)"Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
+                    Log.Error("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
                 }
             }
 

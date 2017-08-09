@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StardewModdingAPI;
 using StardewValley;
 
 namespace Replanter
@@ -44,7 +40,7 @@ namespace Replanter
         {
             Dictionary<int, string> result = new Dictionary<int, string>();
 
-            foreach (KeyValuePair<string, string> msgPair in (Dictionary<string, string>)source)
+            foreach (KeyValuePair<string, string> msgPair in source)
             {
                 if (msgPair.Key.Contains("_"))
                 {
@@ -58,12 +54,12 @@ namespace Replanter
                     }
                     else
                     {
-                        Log.force_ERROR((object)"Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
+                        Log.force_ERROR("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
                     }
                 }
                 else
                 {
-                    Log.force_ERROR((object)"Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
+                    Log.force_ERROR("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
                 }
             }
 

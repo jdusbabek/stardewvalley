@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using Microsoft.Xna.Framework.Input;
-using StardewValley.TerrainFeatures;
-using Object = StardewValley.Object;
-using Microsoft.Xna.Framework;
-using StardewLib;
-using Log = StardewLib.Log;
-using xTile.ObjectModel;
 using StardewValley.Objects;
-using ChestManager = SortMyStuff.chest.ChestManager;
 using ChestDef = SortMyStuff.chest.ChestDef;
+using ChestManager = SortMyStuff.chest.ChestManager;
+using Log = StardewLib.Log;
+using Object = StardewValley.Object;
 
 
 namespace SortMyStuff
@@ -28,7 +21,7 @@ namespace SortMyStuff
         public override void Entry(params object[] objects)
         {
             PlayerEvents.LoadedGame += onLoaded;
-            ControlEvents.KeyReleased += onKeyReleased;   
+            ControlEvents.KeyReleased += onKeyReleased;
         }
 
 
@@ -36,12 +29,12 @@ namespace SortMyStuff
         {
             try
             {
-                SortMyStuff.config = (SortMyStuffConfig)ConfigExtensions.InitializeConfig<SortMyStuffConfig>(new SortMyStuffConfig(), this.BaseConfigPath);
+                SortMyStuff.config = new SortMyStuffConfig().InitializeConfig(this.BaseConfigPath);
 
-                if (!Enum.TryParse<Keys>(config.keybind, true, out SortMyStuff.actionKey))
+                if (!Enum.TryParse(config.keybind, true, out SortMyStuff.actionKey))
                 {
                     SortMyStuff.actionKey = Keys.G;
-                    Log.force_INFO((object)"[SMS] Error parsing key binding. Defaulted to G");
+                    Log.force_INFO("[SMS] Error parsing key binding. Defaulted to G");
                 }
 
                 ChestManager.parseChests(config.chests);
@@ -50,7 +43,7 @@ namespace SortMyStuff
             {
                 Log.ERROR(ex.ToString());
             }
-            
+
         }
 
         private void onKeyReleased(object sender, EventArgsKeyPressed e)
@@ -89,7 +82,7 @@ namespace SortMyStuff
                                     ic.Add(new ItemContainer((Chest)c, item));
                                 }
                             }
-                        } 
+                        }
                     }
 
                     foreach (ItemContainer i in ic)
@@ -106,7 +99,7 @@ namespace SortMyStuff
                     string message = "";
                     foreach (KeyValuePair<int, ChestDef> chestDefs in bestGuessChests)
                     {
-                        message += chestDefs.Key + ": " + chestDefs.Value.ToString() + "\n";
+                        message += chestDefs.Key + ": " + chestDefs.Value + "\n";
                     }
                     Log.INFO(message);
 
@@ -115,7 +108,7 @@ namespace SortMyStuff
                 {
                     Log.ERROR(ex.ToString());
                 }
-                
+
             }
         }
 

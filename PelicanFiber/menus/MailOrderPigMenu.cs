@@ -1,19 +1,10 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: StardewValley.Menus.PurchaseAnimalsMenu
-// Assembly: Stardew Valley, Version=1.0.6118.35538, Culture=neutral, PublicKeyToken=null
-// MVID: 91D9A392-4109-49BC-9B2D-A9A061D06895
-// Assembly location: C:\WORK\GAME_DEV\StarDew\SDV-Mods\SimpleSower\bin\Debug\Stardew Valley.exe
-
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Buildings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using xTile.Dimensions;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace StardewValley.Menus
@@ -39,31 +30,31 @@ namespace StardewValley.Menus
 
         private bool condition = false;
 
-        public MailOrderPigMenu(List<StardewValley.Object> stock)
-          : base(Game1.viewport.Width / 2 - MailOrderPigMenu.menuWidth / 2 - IClickableMenu.borderWidth * 2, Game1.viewport.Height / 2 - MailOrderPigMenu.menuHeight - IClickableMenu.borderWidth * 2, MailOrderPigMenu.menuWidth + IClickableMenu.borderWidth * 2, MailOrderPigMenu.menuHeight + IClickableMenu.borderWidth, false)
+        public MailOrderPigMenu(List<Object> stock)
+          : base(Game1.viewport.Width / 2 - MailOrderPigMenu.menuWidth / 2 - IClickableMenu.borderWidth * 2, Game1.viewport.Height / 2 - MailOrderPigMenu.menuHeight - IClickableMenu.borderWidth * 2, MailOrderPigMenu.menuWidth + IClickableMenu.borderWidth * 2, MailOrderPigMenu.menuHeight + IClickableMenu.borderWidth)
         {
             this.height += Game1.tileSize;
             for (int index = 0; index < stock.Count; ++index)
             {
                 List<ClickableTextureComponent> animalsToPurchase = this.animalsToPurchase;
-                ClickableTextureComponent textureComponent1 = new ClickableTextureComponent(string.Concat((object)stock[index].salePrice()), new Microsoft.Xna.Framework.Rectangle(this.xPositionOnScreen + IClickableMenu.borderWidth + index % 3 * Game1.tileSize * 2, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth / 2 + index / 3 * (Game1.tileSize + Game1.tileSize / 3), Game1.tileSize * 2, Game1.tileSize), (string)null, stock[index].Name, Game1.mouseCursors, new Microsoft.Xna.Framework.Rectangle(index % 3 * 16 * 2, 448 + index / 3 * 16, 32, 16), 4f, stock[index].type == null);
-                textureComponent1.item = (Item)stock[index];
+                ClickableTextureComponent textureComponent1 = new ClickableTextureComponent(string.Concat(stock[index].salePrice()), new Rectangle(this.xPositionOnScreen + IClickableMenu.borderWidth + index % 3 * Game1.tileSize * 2, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth / 2 + index / 3 * (Game1.tileSize + Game1.tileSize / 3), Game1.tileSize * 2, Game1.tileSize), null, stock[index].Name, Game1.mouseCursors, new Rectangle(index % 3 * 16 * 2, 448 + index / 3 * 16, 32, 16), 4f, stock[index].type == null);
+                textureComponent1.item = stock[index];
                 ClickableTextureComponent textureComponent2 = textureComponent1;
                 animalsToPurchase.Add(textureComponent2);
             }
-            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47, -1, -1), 1f, false);
-            this.randomButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize * 4 / 5 + Game1.tileSize, Game1.viewport.Height / 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), (float)Game1.pixelZoom, false);
+            this.okButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47), 1f);
+            this.randomButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize * 4 / 5 + Game1.tileSize, Game1.viewport.Height / 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), Game1.pixelZoom);
             MailOrderPigMenu.menuHeight = Game1.tileSize * 5;
             MailOrderPigMenu.menuWidth = Game1.tileSize * 7;
-            this.textBox = new TextBox((Texture2D)null, (Texture2D)null, Game1.dialogueFont, Game1.textColor);
+            this.textBox = new TextBox(null, null, Game1.dialogueFont, Game1.textColor);
             this.textBox.X = Game1.viewport.Width / 2 - Game1.tileSize * 3;
             this.textBox.Y = Game1.viewport.Height / 2;
             this.textBox.Width = Game1.tileSize * 4;
             this.textBox.Height = Game1.tileSize * 3;
-            this.e = new TextBoxEvent(this.textBoxEnter);
-            this.randomButton = new ClickableTextureComponent(new Rectangle(this.textBox.X + this.textBox.Width + Game1.tileSize + Game1.tileSize * 3 / 4 - Game1.pixelZoom * 2, Game1.viewport.Height / 2 + Game1.pixelZoom, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), (float)Game1.pixelZoom, false);
-            this.doneNamingButton = new ClickableTextureComponent(new Rectangle(this.textBox.X + this.textBox.Width + Game1.tileSize / 2 + Game1.pixelZoom, Game1.viewport.Height / 2 - Game1.pixelZoom * 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f, false);
-            this.backButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen - 10, this.yPositionOnScreen + 10, 12 * Game1.pixelZoom, 11 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(352, 495, 12, 11), (float)Game1.pixelZoom, false);
+            this.e = this.textBoxEnter;
+            this.randomButton = new ClickableTextureComponent(new Rectangle(this.textBox.X + this.textBox.Width + Game1.tileSize + Game1.tileSize * 3 / 4 - Game1.pixelZoom * 2, Game1.viewport.Height / 2 + Game1.pixelZoom, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), Game1.pixelZoom);
+            this.doneNamingButton = new ClickableTextureComponent(new Rectangle(this.textBox.X + this.textBox.Width + Game1.tileSize / 2 + Game1.pixelZoom, Game1.viewport.Height / 2 - Game1.pixelZoom * 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f);
+            this.backButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen - 10, this.yPositionOnScreen + 10, 12 * Game1.pixelZoom, 11 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(352, 495, 12, 11), Game1.pixelZoom);
 
         }
 
@@ -90,16 +81,16 @@ namespace StardewValley.Menus
                     this.animalBeingPurchased.name = sender.Text;
                     //StardewLib.Log.ERROR("Named Animal: " + sender.Text);
                     this.animalBeingPurchased.home = ((AnimalHouse)Game1.player.currentLocation).getBuilding();
-                    this.animalBeingPurchased.homeLocation = new Vector2((float)this.newAnimalHome.tileX, (float)this.newAnimalHome.tileY);
+                    this.animalBeingPurchased.homeLocation = new Vector2(this.newAnimalHome.tileX, this.newAnimalHome.tileY);
                     this.animalBeingPurchased.setRandomPosition(this.animalBeingPurchased.home.indoors);
                     (this.newAnimalHome.indoors as AnimalHouse).animals.Add(this.animalBeingPurchased.myID, this.animalBeingPurchased);
                     (this.newAnimalHome.indoors as AnimalHouse).animalsThatLiveHere.Add(this.animalBeingPurchased.myID);
-                    this.newAnimalHome = (Building)null;
+                    this.newAnimalHome = null;
                     Game1.player.money -= this.priceOfAnimal;
                     this.namingAnimal = false;
 
                     //Game1.globalFadeToBlack(new Game1.afterFadeFunction(this.setUpForReturnAfterPurchasingAnimal), 0.02f);
-                    Game1.globalFadeToClear((Game1.afterFadeFunction)null, 0.02f);
+                    Game1.globalFadeToClear();
                     this.okButton.bounds.X = this.xPositionOnScreen + this.width + 4;
                     Game1.displayHUD = true;
                     Game1.displayFarmer = true;
@@ -107,14 +98,14 @@ namespace StardewValley.Menus
                     this.textBox.OnEnterPressed -= this.e;
                     this.textBox.Selected = false;
                     Game1.viewportFreeze = false;
-                    Game1.globalFadeToClear(new Game1.afterFadeFunction(this.marnieAnimalPurchaseMessage), 0.02f);
+                    Game1.globalFadeToClear(this.marnieAnimalPurchaseMessage);
                 }
             }
         }
 
         public void setUpForReturnToShopMenu()
         {
-            Game1.globalFadeToClear((Game1.afterFadeFunction)null, 0.02f);
+            Game1.globalFadeToClear();
             this.okButton.bounds.X = this.xPositionOnScreen + this.width + 4;
             this.okButton.bounds.Y = this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth;
             Game1.displayHUD = true;
@@ -126,7 +117,7 @@ namespace StardewValley.Menus
 
         public void setUpForReturnAfterPurchasingAnimal()
         {
-            Game1.globalFadeToClear((Game1.afterFadeFunction)null, 0.02f);
+            Game1.globalFadeToClear();
             this.okButton.bounds.X = this.xPositionOnScreen + this.width + 4;
             Game1.displayHUD = true;
             Game1.displayFarmer = true;
@@ -134,12 +125,12 @@ namespace StardewValley.Menus
             this.textBox.OnEnterPressed -= this.e;
             this.textBox.Selected = false;
             Game1.viewportFreeze = false;
-            Game1.globalFadeToClear(new Game1.afterFadeFunction(this.marnieAnimalPurchaseMessage), 0.02f);
+            Game1.globalFadeToClear(this.marnieAnimalPurchaseMessage);
         }
 
         public void marnieAnimalPurchaseMessage()
         {
-            this.exitThisMenu(true);
+            this.exitThisMenu();
             Game1.player.forceCanMove();
             this.freeze = false;
 
@@ -170,7 +161,7 @@ namespace StardewValley.Menus
             {
                 if (namingAnimal)
                 {
-                    Game1.globalFadeToBlack(new Game1.afterFadeFunction(this.setUpForReturnToShopMenu), 0.02f);
+                    Game1.globalFadeToBlack(this.setUpForReturnToShopMenu);
                     Game1.playSound("smallSelect");
                 }
                 else
@@ -180,10 +171,10 @@ namespace StardewValley.Menus
                 }
             }
 
-            if (namingAnimal == true)
+            if (this.namingAnimal)
             {
                 this.textBox.OnEnterPressed += this.e;
-                Game1.keyboardDispatcher.Subscriber = (IKeyboardSubscriber)this.textBox;
+                Game1.keyboardDispatcher.Subscriber = this.textBox;
                 //this.textBox.Text = this.animalBeingPurchased.name;
                 this.textBox.Selected = true;
 
@@ -201,13 +192,13 @@ namespace StardewValley.Menus
                         this.textBox.Text = this.animalBeingPurchased.name;
                         this.randomButton.scale = this.randomButton.baseScale;
                         Game1.playSound("drumkit6");
-                    }                 
+                    }
                 }
-            }    
+            }
 
             foreach (ClickableTextureComponent textureComponent in this.animalsToPurchase)
             {
-                if (textureComponent.containsPoint(x, y) && (textureComponent.item as StardewValley.Object).type == null)
+                if (textureComponent.containsPoint(x, y) && (textureComponent.item as Object).type == null)
                 {
                     int int32 = Convert.ToInt32(textureComponent.name);
                     if (Game1.player.money >= int32)
@@ -282,7 +273,7 @@ namespace StardewValley.Menus
 
         public override void performHoverAction(int x, int y)
         {
-            this.hovered = (ClickableTextureComponent)null;
+            this.hovered = null;
             if (Game1.globalFade || this.freeze)
                 return;
             if (this.okButton != null)
@@ -347,11 +338,11 @@ namespace StardewValley.Menus
             if (!Game1.dialogueUp && !Game1.globalFade)
             {
                 b.Draw(Game1.fadeToBlackRect, Game1.graphics.GraphicsDevice.Viewport.Bounds, Color.Black * 0.75f);
-                SpriteText.drawStringWithScrollBackground(b, "Livestock:", this.xPositionOnScreen + Game1.tileSize * 3 / 2, this.yPositionOnScreen, "", 1f, -1);
-                Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true, (string)null, false);
-                Game1.dayTimeMoneyBox.drawMoneyBox(b, -1, -1);
+                SpriteText.drawStringWithScrollBackground(b, "Livestock:", this.xPositionOnScreen + Game1.tileSize * 3 / 2, this.yPositionOnScreen);
+                Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true);
+                Game1.dayTimeMoneyBox.drawMoneyBox(b);
                 foreach (ClickableTextureComponent textureComponent in this.animalsToPurchase)
-                    textureComponent.draw(b, (textureComponent.item as StardewValley.Object).type != null ? Color.Black * 0.4f : Color.White, 0.87f);
+                    textureComponent.draw(b, (textureComponent.item as Object).type != null ? Color.Black * 0.4f : Color.White, 0.87f);
 
                 this.backButton.draw(b);
             }
@@ -361,8 +352,8 @@ namespace StardewValley.Menus
             if (this.namingAnimal)
             {
                 b.Draw(Game1.fadeToBlackRect, Game1.graphics.GraphicsDevice.Viewport.Bounds, Color.Black * 0.75f);
-                Game1.drawDialogueBox(Game1.viewport.Width / 2 - Game1.tileSize * 4, Game1.viewport.Height / 2 - Game1.tileSize * 3 - Game1.tileSize / 2, Game1.tileSize * 8, Game1.tileSize * 3, false, true, (string)null, false);
-                Utility.drawTextWithShadow(b, "Name your new animal: ", Game1.dialogueFont, new Vector2((float)(Game1.viewport.Width / 2 - Game1.tileSize * 4 + Game1.tileSize / 2 + 8), (float)(Game1.viewport.Height / 2 - Game1.tileSize * 2 + 8)), Game1.textColor, 1f, -1f, -1, -1, 1f, 3);
+                Game1.drawDialogueBox(Game1.viewport.Width / 2 - Game1.tileSize * 4, Game1.viewport.Height / 2 - Game1.tileSize * 3 - Game1.tileSize / 2, Game1.tileSize * 8, Game1.tileSize * 3, false, true);
+                Utility.drawTextWithShadow(b, "Name your new animal: ", Game1.dialogueFont, new Vector2(Game1.viewport.Width / 2 - Game1.tileSize * 4 + Game1.tileSize / 2 + 8, Game1.viewport.Height / 2 - Game1.tileSize * 2 + 8), Game1.textColor);
                 this.textBox.Draw(b);
                 this.doneNamingButton.draw(b);
                 this.randomButton.draw(b);
@@ -370,15 +361,15 @@ namespace StardewValley.Menus
 
             if (this.hovered != null)
             {
-                if ((this.hovered.item as StardewValley.Object).type != null)
+                if ((this.hovered.item as Object).type != null)
                 {
-                    IClickableMenu.drawHoverText(b, Game1.parseText((this.hovered.item as StardewValley.Object).type, Game1.dialogueFont, Game1.tileSize * 5), Game1.dialogueFont, 0, 0, -1, (string)null, -1, (string[])null, (Item)null, 0, -1, -1, -1, -1, 1f, (CraftingRecipe)null);
+                    IClickableMenu.drawHoverText(b, Game1.parseText((this.hovered.item as Object).type, Game1.dialogueFont, Game1.tileSize * 5), Game1.dialogueFont);
                 }
                 else
                 {
-                    SpriteText.drawStringWithScrollBackground(b, this.hovered.hoverText, this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + Game1.tileSize, this.yPositionOnScreen + this.height + -Game1.tileSize / 2 + IClickableMenu.spaceToClearTopBorder / 2 + 8, "Truffle Pig", 1f, -1);
-                    SpriteText.drawStringWithScrollBackground(b, "$" + this.hovered.name + "g", this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + Game1.tileSize * 2, this.yPositionOnScreen + this.height + Game1.tileSize + IClickableMenu.spaceToClearTopBorder / 2 + 8, "$99999g", Game1.player.Money >= Convert.ToInt32(this.hovered.name) ? 1f : 0.5f, -1);
-                    IClickableMenu.drawHoverText(b, Game1.parseText(MailOrderPigMenu.getAnimalDescription(this.hovered.hoverText), Game1.smallFont, Game1.tileSize * 5), Game1.smallFont, 0, 0, -1, this.hovered.hoverText, -1, (string[])null, (Item)null, 0, -1, -1, -1, -1, 1f, (CraftingRecipe)null);
+                    SpriteText.drawStringWithScrollBackground(b, this.hovered.hoverText, this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + Game1.tileSize, this.yPositionOnScreen + this.height + -Game1.tileSize / 2 + IClickableMenu.spaceToClearTopBorder / 2 + 8, "Truffle Pig");
+                    SpriteText.drawStringWithScrollBackground(b, "$" + this.hovered.name + "g", this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + Game1.tileSize * 2, this.yPositionOnScreen + this.height + Game1.tileSize + IClickableMenu.spaceToClearTopBorder / 2 + 8, "$99999g", Game1.player.Money >= Convert.ToInt32(this.hovered.name) ? 1f : 0.5f);
+                    IClickableMenu.drawHoverText(b, Game1.parseText(MailOrderPigMenu.getAnimalDescription(this.hovered.hoverText), Game1.smallFont, Game1.tileSize * 5), Game1.smallFont, 0, 0, -1, this.hovered.hoverText);
                 }
             }
             this.drawMouse(b);

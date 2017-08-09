@@ -1,38 +1,18 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using StardewValley.Buildings;
-using StardewValley.Characters;
-using StardewValley.Events;
-using StardewValley.Locations;
-using StardewValley.Menus;
-using StardewValley.Monsters;
-using StardewValley.Objects;
-using StardewValley.Quests;
-using StardewValley.TerrainFeatures;
-using StardewValley.Tools;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using xTile.Dimensions;
-using Object = StardewValley.Object;
+using Microsoft.Xna.Framework;
 using StardewValley;
-using StardewModdingAPI;
-using StardewLib;
+using StardewValley.Locations;
+using StardewValley.Objects;
+using StardewValley.Tools;
 using Log = StardewLib.Log;
+using Object = StardewValley.Object;
 using SFarmer = StardewValley.Farmer;
 
 namespace PelicanFiber
 {
     public class ItemUtils
     {
-
-
         public static List<Item> getShopStock(bool Pierres, bool unfiltered = false)
         {
             List<Item> objList1 = new List<Item>();
@@ -40,87 +20,87 @@ namespace PelicanFiber
             {
                 if (Game1.currentSeason.Equals("spring") || unfiltered)
                 {
-                    objList1.Add((Item)new Object(Vector2.Zero, 472, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 473, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 474, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 475, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 427, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 429, int.MaxValue));
-                    objList1.Add((Item)new Object(745, int.MaxValue, false, 100, 0));
-                    objList1.Add((Item)new Object(Vector2.Zero, 477, int.MaxValue));
-                    objList1.Add((Item)new Object(628, int.MaxValue, false, 1700, 0));
-                    objList1.Add((Item)new Object(629, int.MaxValue, false, 1000, 0));
+                    objList1.Add(new Object(Vector2.Zero, 472, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 473, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 474, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 475, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 427, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 429, int.MaxValue));
+                    objList1.Add(new Object(745, int.MaxValue, false, 100));
+                    objList1.Add(new Object(Vector2.Zero, 477, int.MaxValue));
+                    objList1.Add(new Object(628, int.MaxValue, false, 1700));
+                    objList1.Add(new Object(629, int.MaxValue, false, 1000));
                     if (Game1.year > 1 || unfiltered)
-                        objList1.Add((Item)new Object(Vector2.Zero, 476, int.MaxValue));
+                        objList1.Add(new Object(Vector2.Zero, 476, int.MaxValue));
                 }
                 if (Game1.currentSeason.Equals("summer") || unfiltered)
                 {
-                    objList1.Add((Item)new Object(Vector2.Zero, 480, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 482, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 483, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 484, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 479, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 302, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 453, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 455, int.MaxValue));
-                    objList1.Add((Item)new Object(630, int.MaxValue, false, 2000, 0));
-                    objList1.Add((Item)new Object(631, int.MaxValue, false, 3000, 0));
+                    objList1.Add(new Object(Vector2.Zero, 480, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 482, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 483, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 484, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 479, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 302, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 453, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 455, int.MaxValue));
+                    objList1.Add(new Object(630, int.MaxValue, false, 2000));
+                    objList1.Add(new Object(631, int.MaxValue, false, 3000));
                     if (Game1.year > 1 || unfiltered)
-                        objList1.Add((Item)new Object(Vector2.Zero, 485, int.MaxValue));
+                        objList1.Add(new Object(Vector2.Zero, 485, int.MaxValue));
                 }
                 if (Game1.currentSeason.Equals("fall") || unfiltered)
                 {
-                    objList1.Add((Item)new Object(Vector2.Zero, 487, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 488, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 490, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 299, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 301, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 492, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 491, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 493, int.MaxValue));
-                    objList1.Add((Item)new Object(431, int.MaxValue, false, 100, 0));
-                    objList1.Add((Item)new Object(Vector2.Zero, 425, int.MaxValue));
-                    objList1.Add((Item)new Object(632, int.MaxValue, false, 3000, 0));
-                    objList1.Add((Item)new Object(633, int.MaxValue, false, 2000, 0));
+                    objList1.Add(new Object(Vector2.Zero, 487, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 488, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 490, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 299, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 301, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 492, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 491, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 493, int.MaxValue));
+                    objList1.Add(new Object(431, int.MaxValue, false, 100));
+                    objList1.Add(new Object(Vector2.Zero, 425, int.MaxValue));
+                    objList1.Add(new Object(632, int.MaxValue, false, 3000));
+                    objList1.Add(new Object(633, int.MaxValue, false, 2000));
                     if (Game1.year > 1 || unfiltered)
-                        objList1.Add((Item)new Object(Vector2.Zero, 489, int.MaxValue));
+                        objList1.Add(new Object(Vector2.Zero, 489, int.MaxValue));
                 }
 
-                objList1.Add((Item)new Object(Vector2.Zero, 297, int.MaxValue));
-                objList1.Add((Item)new Object(Vector2.Zero, 245, int.MaxValue));
-                objList1.Add((Item)new Object(Vector2.Zero, 246, int.MaxValue));
-                objList1.Add((Item)new Object(Vector2.Zero, 423, int.MaxValue));
+                objList1.Add(new Object(Vector2.Zero, 297, int.MaxValue));
+                objList1.Add(new Object(Vector2.Zero, 245, int.MaxValue));
+                objList1.Add(new Object(Vector2.Zero, 246, int.MaxValue));
+                objList1.Add(new Object(Vector2.Zero, 423, int.MaxValue));
 
                 Random random = new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2);
                 List<Item> objList2 = objList1;
-                Wallpaper wallpaper1 = new Wallpaper(random.Next(112), false);
+                Wallpaper wallpaper1 = new Wallpaper(random.Next(112));
                 wallpaper1.stack = int.MaxValue;
                 Wallpaper wallpaper2 = wallpaper1;
-                objList2.Add((Item)wallpaper2);
+                objList2.Add(wallpaper2);
                 List<Item> objList3 = objList1;
                 Wallpaper wallpaper3 = new Wallpaper(random.Next(40), true);
                 wallpaper3.stack = int.MaxValue;
                 Wallpaper wallpaper4 = wallpaper3;
-                objList3.Add((Item)wallpaper4);
+                objList3.Add(wallpaper4);
                 if (Game1.player.achievements.Contains(38))
-                    objList1.Add((Item)new Object(Vector2.Zero, 458, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 458, int.MaxValue));
             }
             else
             {
                 if (Game1.currentSeason.Equals("spring") || unfiltered)
-                    objList1.Add((Item)new Object(Vector2.Zero, 478, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 478, int.MaxValue));
                 if (Game1.currentSeason.Equals("summer") || unfiltered)
                 {
-                    objList1.Add((Item)new Object(Vector2.Zero, 486, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 481, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 486, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 481, int.MaxValue));
                 }
                 if (Game1.currentSeason.Equals("fall") || unfiltered)
                 {
-                    objList1.Add((Item)new Object(Vector2.Zero, 493, int.MaxValue));
-                    objList1.Add((Item)new Object(Vector2.Zero, 494, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 493, int.MaxValue));
+                    objList1.Add(new Object(Vector2.Zero, 494, int.MaxValue));
                 }
-                objList1.Add((Item)new Object(Vector2.Zero, 88, int.MaxValue));
-                objList1.Add((Item)new Object(Vector2.Zero, 90, int.MaxValue));
+                objList1.Add(new Object(Vector2.Zero, 88, int.MaxValue));
+                objList1.Add(new Object(Vector2.Zero, 90, int.MaxValue));
             }
             return objList1;
         }
@@ -129,11 +109,11 @@ namespace PelicanFiber
         public static List<Item> getCarpenterStock(bool unfiltered = false)
         {
             List<Item> stock = new List<Item>();
-            stock.Add((Item)new Object(Vector2.Zero, 388, int.MaxValue));
-            stock.Add((Item)new Object(Vector2.Zero, 390, int.MaxValue));
+            stock.Add(new Object(Vector2.Zero, 388, int.MaxValue));
+            stock.Add(new Object(Vector2.Zero, 390, int.MaxValue));
             Random r = new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2);
-            stock.Add((Item)new Furniture(1614, Vector2.Zero));
-            stock.Add((Item)new Furniture(1616, Vector2.Zero));
+            stock.Add(new Furniture(1614, Vector2.Zero));
+            stock.Add(new Furniture(1616, Vector2.Zero));
 
             if (unfiltered)
             {
@@ -144,57 +124,57 @@ namespace PelicanFiber
                 switch (Game1.dayOfMonth % 7)
                 {
                     case 0:
-                        stock.Add((Item)getRandomFurniture(r, stock, 1296, 1391));
-                        stock.Add((Item)getRandomFurniture(r, stock, 416, 537));
+                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 1296, 1391));
+                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 416, 537));
                         break;
                     case 1:
-                        stock.Add((Item)new Furniture(0, Vector2.Zero));
-                        stock.Add((Item)new Furniture(192, Vector2.Zero));
-                        stock.Add((Item)new Furniture(704, Vector2.Zero));
-                        stock.Add((Item)new Furniture(1120, Vector2.Zero));
-                        stock.Add((Item)new Furniture(1216, Vector2.Zero));
-                        stock.Add((Item)new Furniture(1391, Vector2.Zero));
+                        stock.Add(new Furniture(0, Vector2.Zero));
+                        stock.Add(new Furniture(192, Vector2.Zero));
+                        stock.Add(new Furniture(704, Vector2.Zero));
+                        stock.Add(new Furniture(1120, Vector2.Zero));
+                        stock.Add(new Furniture(1216, Vector2.Zero));
+                        stock.Add(new Furniture(1391, Vector2.Zero));
                         break;
                     case 2:
-                        stock.Add((Item)new Furniture(3, Vector2.Zero));
-                        stock.Add((Item)new Furniture(197, Vector2.Zero));
-                        stock.Add((Item)new Furniture(709, Vector2.Zero));
-                        stock.Add((Item)new Furniture(1122, Vector2.Zero));
-                        stock.Add((Item)new Furniture(1218, Vector2.Zero));
-                        stock.Add((Item)new Furniture(1393, Vector2.Zero));
+                        stock.Add(new Furniture(3, Vector2.Zero));
+                        stock.Add(new Furniture(197, Vector2.Zero));
+                        stock.Add(new Furniture(709, Vector2.Zero));
+                        stock.Add(new Furniture(1122, Vector2.Zero));
+                        stock.Add(new Furniture(1218, Vector2.Zero));
+                        stock.Add(new Furniture(1393, Vector2.Zero));
                         break;
                     case 3:
-                        stock.Add((Item)new Furniture(6, Vector2.Zero));
-                        stock.Add((Item)new Furniture(202, Vector2.Zero));
-                        stock.Add((Item)new Furniture(714, Vector2.Zero));
-                        stock.Add((Item)new Furniture(1124, Vector2.Zero));
-                        stock.Add((Item)new Furniture(1220, Vector2.Zero));
-                        stock.Add((Item)new Furniture(1395, Vector2.Zero));
+                        stock.Add(new Furniture(6, Vector2.Zero));
+                        stock.Add(new Furniture(202, Vector2.Zero));
+                        stock.Add(new Furniture(714, Vector2.Zero));
+                        stock.Add(new Furniture(1124, Vector2.Zero));
+                        stock.Add(new Furniture(1220, Vector2.Zero));
+                        stock.Add(new Furniture(1395, Vector2.Zero));
                         break;
                     case 4:
-                        stock.Add((Item)getRandomFurniture(r, stock, 1296, 1391));
-                        stock.Add((Item)getRandomFurniture(r, stock, 1296, 1391));
+                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 1296, 1391));
+                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 1296, 1391));
                         break;
                     case 5:
-                        stock.Add((Item)getRandomFurniture(r, stock, 1443, 1450));
-                        stock.Add((Item)getRandomFurniture(r, stock, 288, 313));
+                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 1443, 1450));
+                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 288, 313));
                         break;
                     case 6:
-                        stock.Add((Item)getRandomFurniture(r, stock, 1565, 1607));
-                        stock.Add((Item)getRandomFurniture(r, stock, 12, 129));
+                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 1565, 1607));
+                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 12, 129));
                         break;
                 }
-                stock.Add((Item)getRandomFurniture(r, stock, 0, 1462));
-                stock.Add((Item)getRandomFurniture(r, stock, 0, 1462));
+                stock.Add(ItemUtils.getRandomFurniture(r, stock));
+                stock.Add(ItemUtils.getRandomFurniture(r, stock));
                 while (r.NextDouble() < 0.25)
-                    stock.Add((Item)getRandomFurniture(r, stock, 1673, 1815));
-                stock.Add((Item)new Furniture(1402, Vector2.Zero));
-                stock.Add((Item)new TV(1466, Vector2.Zero));
-                stock.Add((Item)new TV(1680, Vector2.Zero));
+                    stock.Add(ItemUtils.getRandomFurniture(r, stock, 1673, 1815));
+                stock.Add(new Furniture(1402, Vector2.Zero));
+                stock.Add(new TV(1466, Vector2.Zero));
+                stock.Add(new TV(1680, Vector2.Zero));
                 if (Utility.getHomeOfFarmer(Game1.player).upgradeLevel > 0)
-                    stock.Add((Item)new TV(1468, Vector2.Zero));
+                    stock.Add(new TV(1468, Vector2.Zero));
                 if (Utility.getHomeOfFarmer(Game1.player).upgradeLevel > 0)
-                    stock.Add((Item)new Furniture(1226, Vector2.Zero));
+                    stock.Add(new Furniture(1226, Vector2.Zero));
             }
 
             if (!Game1.player.craftingRecipes.ContainsKey("Wooden Brazier"))
@@ -203,7 +183,7 @@ namespace PelicanFiber
                 Torch torch1 = new Torch(Vector2.Zero, 143, true);
                 torch1.isRecipe = true;
                 Torch torch2 = torch1;
-                objList.Add((Item)torch2);
+                objList.Add(torch2);
             }
             else if (!Game1.player.craftingRecipes.ContainsKey("Stone Brazier"))
             {
@@ -211,7 +191,7 @@ namespace PelicanFiber
                 Torch torch1 = new Torch(Vector2.Zero, 144, true);
                 torch1.isRecipe = true;
                 Torch torch2 = torch1;
-                objList.Add((Item)torch2);
+                objList.Add(torch2);
             }
             else if (!Game1.player.craftingRecipes.ContainsKey("Barrel Brazier"))
             {
@@ -219,7 +199,7 @@ namespace PelicanFiber
                 Torch torch1 = new Torch(Vector2.Zero, 150, true);
                 torch1.isRecipe = true;
                 Torch torch2 = torch1;
-                objList.Add((Item)torch2);
+                objList.Add(torch2);
             }
             else if (!Game1.player.craftingRecipes.ContainsKey("Stump Brazier"))
             {
@@ -227,7 +207,7 @@ namespace PelicanFiber
                 Torch torch1 = new Torch(Vector2.Zero, 147, true);
                 torch1.isRecipe = true;
                 Torch torch2 = torch1;
-                objList.Add((Item)torch2);
+                objList.Add(torch2);
             }
             else if (!Game1.player.craftingRecipes.ContainsKey("Gold Brazier"))
             {
@@ -235,7 +215,7 @@ namespace PelicanFiber
                 Torch torch1 = new Torch(Vector2.Zero, 145, true);
                 torch1.isRecipe = true;
                 Torch torch2 = torch1;
-                objList.Add((Item)torch2);
+                objList.Add(torch2);
             }
             else if (!Game1.player.craftingRecipes.ContainsKey("Carved Brazier"))
             {
@@ -243,7 +223,7 @@ namespace PelicanFiber
                 Torch torch1 = new Torch(Vector2.Zero, 148, true);
                 torch1.isRecipe = true;
                 Torch torch2 = torch1;
-                objList.Add((Item)torch2);
+                objList.Add(torch2);
             }
             else if (!Game1.player.craftingRecipes.ContainsKey("Skull Brazier"))
             {
@@ -251,7 +231,7 @@ namespace PelicanFiber
                 Torch torch1 = new Torch(Vector2.Zero, 149, true);
                 torch1.isRecipe = true;
                 Torch torch2 = torch1;
-                objList.Add((Item)torch2);
+                objList.Add(torch2);
             }
             else if (!Game1.player.craftingRecipes.ContainsKey("Marble Brazier"))
             {
@@ -259,28 +239,28 @@ namespace PelicanFiber
                 Torch torch1 = new Torch(Vector2.Zero, 151, true);
                 torch1.isRecipe = true;
                 Torch torch2 = torch1;
-                objList.Add((Item)torch2);
+                objList.Add(torch2);
             }
             if (!Game1.player.craftingRecipes.ContainsKey("Wood Lamp-post"))
-                stock.Add((Item)new Object(Vector2.Zero, 152, true)
+                stock.Add(new Object(Vector2.Zero, 152, true)
                 {
                     isRecipe = true
                 });
             if (!Game1.player.craftingRecipes.ContainsKey("Iron Lamp-post"))
-                stock.Add((Item)new Object(Vector2.Zero, 153, true)
+                stock.Add(new Object(Vector2.Zero, 153, true)
                 {
                     isRecipe = true
                 });
             if (!Game1.player.craftingRecipes.ContainsKey("Wood Floor"))
-                stock.Add((Item)new Object(328, 1, true, 50, 0));
+                stock.Add(new Object(328, 1, true, 50));
             if (!Game1.player.craftingRecipes.ContainsKey("Stone Floor"))
-                stock.Add((Item)new Object(329, 1, true, 50, 0));
+                stock.Add(new Object(329, 1, true, 50));
             if (!Game1.player.craftingRecipes.ContainsKey("Stepping Stone Path"))
-                stock.Add((Item)new Object(415, 1, true, 50, 0));
+                stock.Add(new Object(415, 1, true, 50));
             if (!Game1.player.craftingRecipes.ContainsKey("Straw Floor"))
-                stock.Add((Item)new Object(401, 1, true, 100, 0));
+                stock.Add(new Object(401, 1, true, 100));
             if (!Game1.player.craftingRecipes.ContainsKey("Crystal Path"))
-                stock.Add((Item)new Object(409, 1, true, 100, 0));
+                stock.Add(new Object(409, 1, true, 100));
             return stock;
         }
 
@@ -326,7 +306,7 @@ namespace PelicanFiber
             foreach (KeyValuePair<int, string> keyValuePair in Game1.content.Load<Dictionary<int, string>>("Data\\Furniture"))
             {
                 if (!isFurnitureOffLimitsForSale(keyValuePair.Key))
-                    list.Add((Item)new Furniture(keyValuePair.Key, Vector2.Zero));
+                    list.Add(new Furniture(keyValuePair.Key, Vector2.Zero));
             }
 
             return list;
@@ -338,12 +318,12 @@ namespace PelicanFiber
             foreach (KeyValuePair<int, string> keyValuePair in Game1.content.Load<Dictionary<int, string>>("Data\\Furniture"))
             {
                 if (!isFurnitureOffLimitsForSale(keyValuePair.Key))
-                    dictionary.Add((Item)new Furniture(keyValuePair.Key, Vector2.Zero), new int[2] { 0, int.MaxValue });
+                    dictionary.Add(new Furniture(keyValuePair.Key, Vector2.Zero), new[] { 0, int.MaxValue });
             }
-            dictionary.Add((Item)new Furniture(1402, Vector2.Zero), new int[2] { 0, int.MaxValue });
-            dictionary.Add((Item)new TV(1680, Vector2.Zero), new int[2] { 0, int.MaxValue });
-            dictionary.Add((Item)new TV(1466, Vector2.Zero), new int[2] { 0, int.MaxValue });
-            dictionary.Add((Item)new TV(1468, Vector2.Zero), new int[2] { 0, int.MaxValue });
+            dictionary.Add(new Furniture(1402, Vector2.Zero), new[] { 0, int.MaxValue });
+            dictionary.Add(new TV(1680, Vector2.Zero), new[] { 0, int.MaxValue });
+            dictionary.Add(new TV(1466, Vector2.Zero), new[] { 0, int.MaxValue });
+            dictionary.Add(new TV(1468, Vector2.Zero), new[] { 0, int.MaxValue });
             return dictionary;
         }
 
@@ -376,61 +356,61 @@ namespace PelicanFiber
             if (unfiltered)
             {
                 return new Dictionary<Item, int[]>() {
-                { (Item)new Object(Vector2.Zero, 378, int.MaxValue), new int[2] { 75, int.MaxValue } },
-                { (Item)new Object(Vector2.Zero, 380, int.MaxValue), new int[2] { 150, int.MaxValue } },
-                { (Item)new Object(Vector2.Zero, 382, int.MaxValue), new int[2] { 150, int.MaxValue } },
-                { (Item)new Object(Vector2.Zero, 384, int.MaxValue), new int[2] { 400, int.MaxValue } },
-                { (Item)new Object(Vector2.Zero, 386, int.MaxValue), new int[2] { 400, int.MaxValue } },
+                { new Object(Vector2.Zero, 378, int.MaxValue), new[] { 75, int.MaxValue } },
+                { new Object(Vector2.Zero, 380, int.MaxValue), new[] { 150, int.MaxValue } },
+                { new Object(Vector2.Zero, 382, int.MaxValue), new[] { 150, int.MaxValue } },
+                { new Object(Vector2.Zero, 384, int.MaxValue), new[] { 400, int.MaxValue } },
+                { new Object(Vector2.Zero, 386, int.MaxValue), new[] { 400, int.MaxValue } },
 
-                { (Item)new Object(Vector2.Zero, 334, int.MaxValue), new int[2] { 150, int.MaxValue } },
-                { (Item)new Object(Vector2.Zero, 335, int.MaxValue), new int[2] { 250, int.MaxValue } },
-                { (Item)new Object(Vector2.Zero, 336, int.MaxValue), new int[2] { 750, int.MaxValue } },
-                { (Item)new Object(Vector2.Zero, 337, int.MaxValue), new int[2] { 2000, int.MaxValue } },
-                { (Item)new Object(Vector2.Zero, 338, int.MaxValue), new int[2] { 100, int.MaxValue } }
+                { new Object(Vector2.Zero, 334, int.MaxValue), new[] { 150, int.MaxValue } },
+                { new Object(Vector2.Zero, 335, int.MaxValue), new[] { 250, int.MaxValue } },
+                { new Object(Vector2.Zero, 336, int.MaxValue), new[] { 750, int.MaxValue } },
+                { new Object(Vector2.Zero, 337, int.MaxValue), new[] { 2000, int.MaxValue } },
+                { new Object(Vector2.Zero, 338, int.MaxValue), new[] { 100, int.MaxValue } }
             };
             }
             else
             {
                 return new Dictionary<Item, int[]>() {
-                { (Item)new Object(Vector2.Zero, 378, int.MaxValue), new int[2] { 75, int.MaxValue } },
-                { (Item)new Object(Vector2.Zero, 380, int.MaxValue), new int[2] { 150, int.MaxValue } },
-                { (Item)new Object(Vector2.Zero, 382, int.MaxValue), new int[2] { 150, int.MaxValue } },
-                { (Item)new Object(Vector2.Zero, 384, int.MaxValue), new int[2] { 400, int.MaxValue } }
+                { new Object(Vector2.Zero, 378, int.MaxValue), new[] { 75, int.MaxValue } },
+                { new Object(Vector2.Zero, 380, int.MaxValue), new[] { 150, int.MaxValue } },
+                { new Object(Vector2.Zero, 382, int.MaxValue), new[] { 150, int.MaxValue } },
+                { new Object(Vector2.Zero, 384, int.MaxValue), new[] { 400, int.MaxValue } }
             };
             }
-            
+
         }
 
 
         public static Dictionary<Item, int[]> getFishShopStock(SFarmer who, bool unfiltered = false)
         {
             Dictionary<Item, int[]> dictionary = new Dictionary<Item, int[]>();
-            dictionary.Add((Item)new Object(219, 1, false, -1, 0), new int[2]
+            dictionary.Add(new Object(219, 1), new[]
             {
         250,
         int.MaxValue
             });
             if (Game1.player.fishingLevel >= 2 || unfiltered)
-                dictionary.Add((Item)new Object(685, 1, false, -1, 0), new int[2] { 5, int.MaxValue });
+                dictionary.Add(new Object(685, 1), new[] { 5, int.MaxValue });
             if (Game1.player.fishingLevel >= 3 || unfiltered)
-                dictionary.Add((Item)new Object(710, 1, false, -1, 0), new int[2]
+                dictionary.Add(new Object(710, 1), new[]
                 {
           1500,
           int.MaxValue
                 });
             if (Game1.player.fishingLevel >= 6 || unfiltered)
             {
-                dictionary.Add((Item)new Object(686, 1, false, -1, 0), new int[2]
+                dictionary.Add(new Object(686, 1), new[]
                 {
           500,
           int.MaxValue
                 });
-                dictionary.Add((Item)new Object(694, 1, false, -1, 0), new int[2]
+                dictionary.Add(new Object(694, 1), new[]
                 {
           500,
           int.MaxValue
                 });
-                dictionary.Add((Item)new Object(692, 1, false, -1, 0), new int[2]
+                dictionary.Add(new Object(692, 1), new[]
                 {
           200,
           int.MaxValue
@@ -438,12 +418,12 @@ namespace PelicanFiber
             }
             if (Game1.player.fishingLevel >= 7 || unfiltered)
             {
-                dictionary.Add((Item)new Object(693, 1, false, -1, 0), new int[2]
+                dictionary.Add(new Object(693, 1), new[]
                 {
           750,
           int.MaxValue
                 });
-                dictionary.Add((Item)new Object(695, 1, false, -1, 0), new int[2]
+                dictionary.Add(new Object(695, 1), new[]
                 {
           750,
           int.MaxValue
@@ -451,36 +431,36 @@ namespace PelicanFiber
             }
             if (Game1.player.fishingLevel >= 8 || unfiltered)
             {
-                dictionary.Add((Item)new Object(691, 1, false, -1, 0), new int[2]
+                dictionary.Add(new Object(691, 1), new[]
                 {
           1000,
           int.MaxValue
                 });
-                dictionary.Add((Item)new Object(687, 1, false, -1, 0), new int[2]
+                dictionary.Add(new Object(687, 1), new[]
                 {
           1000,
           int.MaxValue
                 });
             }
             if (Game1.player.fishingLevel >= 9 || unfiltered)
-                dictionary.Add((Item)new Object(703, 1, false, -1, 0), new int[2]
+                dictionary.Add(new Object(703, 1), new[]
                 {
           1000,
           int.MaxValue
                 });
-            dictionary.Add((Item)new FishingRod(0), new int[2]
+            dictionary.Add(new FishingRod(0), new[]
             {
         500,
         int.MaxValue
             });
             if (Game1.player.fishingLevel >= 2 || unfiltered)
-                dictionary.Add((Item)new FishingRod(2), new int[2]
+                dictionary.Add(new FishingRod(2), new[]
                 {
           1800,
           int.MaxValue
                 });
             if (Game1.player.fishingLevel >= 6 || unfiltered)
-                dictionary.Add((Item)new FishingRod(3), new int[2]
+                dictionary.Add(new FishingRod(3), new[]
                 {
           7500,
           int.MaxValue
@@ -493,13 +473,13 @@ namespace PelicanFiber
                     if (Game1.objectInformation[keyValuePair.Key].Contains("Fish -4"))
                     {
                         string[] strArray = Game1.objectInformation[keyValuePair.Key].Split('/');
-                        Item i = new Object(keyValuePair.Key, int.MaxValue, false, Convert.ToInt32(strArray[1]) * 2, 0);
+                        Item i = new Object(keyValuePair.Key, int.MaxValue, false, Convert.ToInt32(strArray[1]) * 2);
 
-                        dictionary.Add(i, new int[2] { Convert.ToInt32(strArray[1]) * 4, int.MaxValue });
+                        dictionary.Add(i, new[] { Convert.ToInt32(strArray[1]) * 4, int.MaxValue });
                     }
                 }
             }
-            
+
             return dictionary;
         }
 
@@ -507,15 +487,15 @@ namespace PelicanFiber
         public static List<Item> getSaloonStock(bool unfiltered = false)
         {
             List<Item> objList = new List<Item>();
-            objList.Add((Item)new Object(Vector2.Zero, 346, int.MaxValue));
-            objList.Add((Item)new Object(Vector2.Zero, 196, int.MaxValue));
-            objList.Add((Item)new Object(Vector2.Zero, 216, int.MaxValue));
-            objList.Add((Item)new Object(Vector2.Zero, 224, int.MaxValue));
-            objList.Add((Item)new Object(Vector2.Zero, 206, int.MaxValue));
-            objList.Add((Item)new Object(Vector2.Zero, 395, int.MaxValue));
+            objList.Add(new Object(Vector2.Zero, 346, int.MaxValue));
+            objList.Add(new Object(Vector2.Zero, 196, int.MaxValue));
+            objList.Add(new Object(Vector2.Zero, 216, int.MaxValue));
+            objList.Add(new Object(Vector2.Zero, 224, int.MaxValue));
+            objList.Add(new Object(Vector2.Zero, 206, int.MaxValue));
+            objList.Add(new Object(Vector2.Zero, 395, int.MaxValue));
 
             if (Game1.dishOfTheDay.stack > 0 && !unfiltered)
-                objList.Add((Item)Game1.dishOfTheDay);
+                objList.Add(Game1.dishOfTheDay);
             else if (unfiltered)
             {
                 // 194 - 239
@@ -524,24 +504,24 @@ namespace PelicanFiber
                     int parentSheetIndex = i;
                     if (parentSheetIndex == 217)
                         parentSheetIndex = 216;
-                    objList.Add((Item)(new Object(Vector2.Zero, parentSheetIndex, Game1.random.Next(1, 4 + (Game1.random.NextDouble() < 0.08 ? 10 : 0)))));
+                    objList.Add(new Object(Vector2.Zero, parentSheetIndex, Game1.random.Next(1, 4 + (Game1.random.NextDouble() < 0.08 ? 10 : 0))));
                 }
             }
 
             if (!Game1.player.cookingRecipes.ContainsKey("Hashbrowns"))
-                objList.Add((Item)new Object(210, 1, true, 25, 0));
+                objList.Add(new Object(210, 1, true, 25));
             if (!Game1.player.cookingRecipes.ContainsKey("Omelet"))
-                objList.Add((Item)new Object(195, 1, true, 50, 0));
+                objList.Add(new Object(195, 1, true, 50));
             if (!Game1.player.cookingRecipes.ContainsKey("Pancakes"))
-                objList.Add((Item)new Object(211, 1, true, 50, 0));
+                objList.Add(new Object(211, 1, true, 50));
             if (!Game1.player.cookingRecipes.ContainsKey("Bread"))
-                objList.Add((Item)new Object(216, 1, true, 50, 0));
+                objList.Add(new Object(216, 1, true, 50));
             if (!Game1.player.cookingRecipes.ContainsKey("Tortilla"))
-                objList.Add((Item)new Object(229, 1, true, 50, 0));
+                objList.Add(new Object(229, 1, true, 50));
             if (!Game1.player.cookingRecipes.ContainsKey("Pizza"))
-                objList.Add((Item)new Object(206, 1, true, 75, 0));
+                objList.Add(new Object(206, 1, true, 75));
             if (!Game1.player.cookingRecipes.ContainsKey("Maki Roll"))
-                objList.Add((Item)new Object(228, 1, true, 150, 0));
+                objList.Add(new Object(228, 1, true, 150));
 
             return objList;
         }
@@ -556,17 +536,17 @@ namespace PelicanFiber
                 if (Game1.objectInformation[keyValuePair.Key].Contains("/Basic -81"))
                 {
                     string[] strArray = Game1.objectInformation[keyValuePair.Key].Split('/');
-                    Item i = new Object(keyValuePair.Key, int.MaxValue, false, Convert.ToInt32(strArray[1]) * 2, 0);
+                    Item i = new Object(keyValuePair.Key, int.MaxValue, false, Convert.ToInt32(strArray[1]) * 2);
                     stock.Add(i);
                 }
                 else if (keyValuePair.Key == 406 || keyValuePair.Key == 414 || keyValuePair.Key == 396)
                 {
                     string[] strArray = Game1.objectInformation[keyValuePair.Key].Split('/');
-                    Item i = new Object(keyValuePair.Key, int.MaxValue, false, Convert.ToInt32(strArray[1]) * 2, 0);
+                    Item i = new Object(keyValuePair.Key, int.MaxValue, false, Convert.ToInt32(strArray[1]) * 2);
                     stock.Add(i);
                 }
 
-            }  
+            }
 
             return stock;
         }
@@ -583,7 +563,7 @@ namespace PelicanFiber
                     if (Game1.objectInformation[keyValuePair.Key].Contains("/Cooking -7"))
                     {
                         string[] strArray = Game1.objectInformation[keyValuePair.Key].Split('/');
-                        Item i = new Object(keyValuePair.Key, int.MaxValue, true, Convert.ToInt32(strArray[1]) * 10, 0);
+                        Item i = new Object(keyValuePair.Key, int.MaxValue, true, Convert.ToInt32(strArray[1]) * 10);
 
                         if (!Game1.player.cookingRecipes.ContainsKey(strArray[0]))
                         {
@@ -609,7 +589,7 @@ namespace PelicanFiber
                     if (Game1.objectInformation[keyValuePair.Key].Contains("/Minerals -"))
                     {
                         string[] strArray = Game1.objectInformation[keyValuePair.Key].Split('/');
-                        Item i = new Object(keyValuePair.Key, int.MaxValue, false, Convert.ToInt32(strArray[1]) * 2, 0);
+                        Item i = new Object(keyValuePair.Key, int.MaxValue, false, Convert.ToInt32(strArray[1]) * 2);
 
                         stock.Add(i);
                     }
@@ -621,23 +601,23 @@ namespace PelicanFiber
                     {
                         string[] strArray = Game1.objectInformation[keyValuePair.Key].Split('/');
 
-                        Item i = null;
+                        Item i;
 
                         if (keyValuePair.Key == 114)
                         {
-                            i = new Object(keyValuePair.Key, int.MaxValue, false, 20000, 0);
+                            i = new Object(keyValuePair.Key, int.MaxValue, false, 20000);
                         }
                         else if (keyValuePair.Key == 96 || keyValuePair.Key == 97 || keyValuePair.Key == 98 || keyValuePair.Key == 99)
                         {
-                            i = new Object(keyValuePair.Key, int.MaxValue, false, 5000, 0);
+                            i = new Object(keyValuePair.Key, int.MaxValue, false, 5000);
                         }
                         else
-                            i = new Object(keyValuePair.Key, int.MaxValue, false, Convert.ToInt32(strArray[1]) * 3, 0);
+                            i = new Object(keyValuePair.Key, int.MaxValue, false, Convert.ToInt32(strArray[1]) * 3);
 
                         stock.Add(i);
                     }
                 }
-            }          
+            }
 
             return stock;
         }
@@ -649,18 +629,18 @@ namespace PelicanFiber
             string locationName = ((AnimalHouse)Game1.currentLocation).getBuilding().buildingType;
 
             return new List<Object>() {
-                new Object(100, 1, false, 400, 0){ name = "Chicken", type = locationName.Equals("Coop") || locationName.Equals("Deluxe Coop") || locationName.Equals("Big Coop") ? (string)null : "You gotta be in a Coop" },
-                new Object(100, 1, false, 750, 0) { name = "Dairy Cow", type = locationName.Equals("Barn") || locationName.Equals("Deluxe Barn") || locationName.Equals("Big Barn") ? (string)null : "You gotta be in a Barn" },
-                new Object(100, 1, false, 2000, 0){ name = "Goat", type = locationName.Equals("Big Barn") || locationName.Equals("Deluxe Barn") ? (string)null : "You gotta be in a Big Barn" },
-                new Object(100, 1, false, 2000, 0) { name = "Duck", type = locationName.Equals("Big Coop") || locationName.Equals("Deluxe Coop") ? (string)null : "You gotta be in a Big Coop" },
-                new Object(100, 1, false, 4000, 0) { name = "Sheep", type = locationName.Equals("Deluxe Barn") ? (string)null : "You gotta be in a Deluxe Barn" },
-                new Object(100, 1, false, 4000, 0) { name = "Rabbit", type = locationName.Equals("Deluxe Coop") ? (string)null : "You gotta be in a Deluxe Coop" },
-                new Object(100, 1, false, 8000, 0){ name = "Pig", type = locationName.Equals("Deluxe Barn") ? (string)null : "You gotta be in a Deluxe Barn" } };
+                new Object(100, 1, false, 400){ name = "Chicken", type = locationName.Equals("Coop") || locationName.Equals("Deluxe Coop") || locationName.Equals("Big Coop") ? null : "You gotta be in a Coop" },
+                new Object(100, 1, false, 750) { name = "Dairy Cow", type = locationName.Equals("Barn") || locationName.Equals("Deluxe Barn") || locationName.Equals("Big Barn") ? null : "You gotta be in a Barn" },
+                new Object(100, 1, false, 2000){ name = "Goat", type = locationName.Equals("Big Barn") || locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Big Barn" },
+                new Object(100, 1, false, 2000) { name = "Duck", type = locationName.Equals("Big Coop") || locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Big Coop" },
+                new Object(100, 1, false, 4000) { name = "Sheep", type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" },
+                new Object(100, 1, false, 4000) { name = "Rabbit", type = locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Deluxe Coop" },
+                new Object(100, 1, false, 8000){ name = "Pig", type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" } };
         }
 
         public static void finishAllBundles()
         {
-            foreach (KeyValuePair<int, bool[]> bundle in (Dictionary<int, bool[]>)(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).bundles)
+            foreach (KeyValuePair<int, bool[]> bundle in (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).bundles)
             {
                 for (int index = 0; index < bundle.Value.Length; ++index)
                     bundle.Value[index] = true;
@@ -672,8 +652,8 @@ namespace PelicanFiber
         public static List<Item> getJunimoStock()
         {
             List<Item> junimoItems = new List<Item>();
-            Dictionary<int,string> junContent = PelicanFiber.content.Load<Dictionary<int, string>>("bundles");
-            Dictionary<int, bool[]> bundleInfo = (Dictionary<int, bool[]>)(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).bundles;
+            Dictionary<int, string> junContent = PelicanFiber.content.Load<Dictionary<int, string>>("bundles");
+            Dictionary<int, bool[]> bundleInfo = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).bundles;
             ItemUtils.bundleToAreaDictionary = new Dictionary<int, int>();
 
             foreach (KeyValuePair<int, string> kvp in junContent)
@@ -697,7 +677,7 @@ namespace PelicanFiber
 
                     ItemUtils.bundleToAreaDictionary.Add(bundleIndex, ItemUtils.getAreaNumberFromName(area));
 
-                    foreach (KeyValuePair<int,bool[]> bundle in bundleInfo)
+                    foreach (KeyValuePair<int, bool[]> bundle in bundleInfo)
                     {
                         if (bundle.Key == bundleIndex)
                         {
@@ -709,8 +689,8 @@ namespace PelicanFiber
                                     break;
                                 }
                             }
-                        }  
-                    }   
+                        }
+                    }
                 }
                 else
                 {
@@ -727,8 +707,8 @@ namespace PelicanFiber
             CommunityCenter c = Game1.getLocationFromName("CommunityCenter") as CommunityCenter;
 
             // Check if the player has access to the community center
-            if (! Game1.player.mailReceived.Contains("ccDoorUnlock") )
-                Game1.player.mailReceived.Add("ccDoorUnlock");        
+            if (!Game1.player.mailReceived.Contains("ccDoorUnlock"))
+                Game1.player.mailReceived.Add("ccDoorUnlock");
             if (!Game1.player.mailReceived.Contains("seenJunimoNote"))
             {
                 Game1.player.removeQuest(26);

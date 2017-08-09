@@ -1,17 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using xTile.Dimensions;
 using SFarmer = StardewValley.Farmer;
 
@@ -57,12 +53,7 @@ namespace PointAndPlant
         public static int power = -1;
         public static int toolLevel = 4;
 
-        public static bool loggingEnabled = false;
-
-        public PointAndPlant() : base() {
-
-        }
-
+        public static bool loggingEnabled;
 
         public override void Entry(params object[] objects)
         {
@@ -74,7 +65,7 @@ namespace PointAndPlant
 
         private void onLoaded(object sender, EventArgs e)
         {
-            PointAndPlant.config = (PAPConfig)ConfigExtensions.InitializeConfig<PAPConfig>(new PAPConfig(), this.BaseConfigPath);
+            PointAndPlant.config = new PAPConfig().InitializeConfig(this.BaseConfigPath);
 
             this.plowEnabled = config.plowEnabled;
             this.plantEnabled = config.plantEnabled;
@@ -97,12 +88,12 @@ namespace PointAndPlant
                 this.plowWidth = 1;
                 if (this.plowEnabled)
                 {
-                    Log.Info((object)"[PAP] Plow width must be at least 1. Defaulted to 1");
-                }  
+                    Log.Info("[PAP] Plow width must be at least 1. Defaulted to 1");
+                }
             }
             else
             {
-                this.plowWidth = config.plowWidth;   
+                this.plowWidth = config.plowWidth;
             }
 
             if (config.plowHeight < 1)
@@ -110,12 +101,12 @@ namespace PointAndPlant
                 this.plowHeight = 1;
                 if (this.plowEnabled)
                 {
-                    Log.Info((object)"[PAP] Plow width must be at least 1. Defaulted to 1");
+                    Log.Info("[PAP] Plow width must be at least 1. Defaulted to 1");
                 }
             }
             else
             {
-                this.plowHeight = config.plowHeight; 
+                this.plowHeight = config.plowHeight;
             }
 
 
@@ -125,7 +116,7 @@ namespace PointAndPlant
 
                 if (config.plantEnabled)
                 {
-                    Log.Info((object)"[PAP] Plant Radius must be 0 or greater.  Defaulted to 0");
+                    Log.Info("[PAP] Plant Radius must be 0 or greater.  Defaulted to 0");
                 }
             }
             else
@@ -139,7 +130,7 @@ namespace PointAndPlant
 
                 if (config.growEnabled)
                 {
-                    Log.Info((object)"[PAP] Grow Radius must be 0 or greater.  Defaulted to 0");
+                    Log.Info("[PAP] Grow Radius must be 0 or greater.  Defaulted to 0");
                 }
             }
             else
@@ -153,7 +144,7 @@ namespace PointAndPlant
 
                 if (config.plantEnabled)
                 {
-                    Log.Info((object)"[PAP] Harvest Radius must be 0 or greater.  Defaulted to 0");
+                    Log.Info("[PAP] Harvest Radius must be 0 or greater.  Defaulted to 0");
                 }
             }
             else
@@ -164,63 +155,64 @@ namespace PointAndPlant
 
 
 
-            if (!Enum.TryParse<Keys>(config.plowKey, true, out PointAndPlant.plowKey))
+            if (!Enum.TryParse(config.plowKey, true, out PointAndPlant.plowKey))
             {
                 PointAndPlant.plowKey = Keys.Z;
 
                 if (this.plowEnabled)
                 {
-                    Log.Info((object)"[PAP] Error parsing plow key. Defaulted to Z");
+                    Log.Info("[PAP] Error parsing plow key. Defaulted to Z");
                 }
             }
 
-            if (!Enum.TryParse<Keys>(config.plantKey, true, out PointAndPlant.plantKey))
+            if (!Enum.TryParse(config.plantKey, true, out PointAndPlant.plantKey))
             {
                 PointAndPlant.plantKey = Keys.A;
 
                 if (this.plantEnabled)
                 {
-                    Log.Info((object)"[PAP] Error parsing plant key. Defaulted to A");
+                    Log.Info("[PAP] Error parsing plant key. Defaulted to A");
                 }
-                
+
             }
 
-            if (!Enum.TryParse<Keys>(config.growKey, true, out PointAndPlant.growKey))
+            if (!Enum.TryParse(config.growKey, true, out PointAndPlant.growKey))
             {
                 PointAndPlant.growKey = Keys.S;
 
-                if (this.growEnabled) {
-                    Log.Info((object)"[PAP] Error parsing grow key. Defaulted to S");
+                if (this.growEnabled)
+                {
+                    Log.Info("[PAP] Error parsing grow key. Defaulted to S");
                 }
             }
 
-            if (!Enum.TryParse<Keys>(config.harvestKey, true, out PointAndPlant.harvestKey))
+            if (!Enum.TryParse(config.harvestKey, true, out PointAndPlant.harvestKey))
             {
                 PointAndPlant.harvestKey = Keys.D;
 
                 if (this.harvestEnabled)
                 {
-                    Log.Info((object)"[PAP] Error parsing harvest key. Defaulted to D");
+                    Log.Info("[PAP] Error parsing harvest key. Defaulted to D");
                 }
-                
+
             }
 
             PointAndPlant.grassKey = Keys.Q;
 
             PointAndPlant.papSickle = new PAPSickle(47, config.harvestRadius);
             PointAndPlant.papHoe = new Hoe();
-            ((Tool)PointAndPlant.papHoe).upgradeLevel = PointAndPlant.toolLevel;
+            PointAndPlant.papHoe.upgradeLevel = PointAndPlant.toolLevel;
         }
 
         private void onKeyReleased(object sender, EventArgsKeyPressed e)
         {
-            if (Game1.currentLocation == null 
-                || (Game1.player == null 
-                || Game1.hasLoadedGame == false) 
-                || ((Game1.player).UsingTool 
-                || !(Game1.player).CanMove 
-                || (Game1.activeClickableMenu != null 
-                || Game1.CurrentEvent != null)) 
+            if (Game1.currentLocation == null
+                || (Game1.player == null
+                || Game1.hasLoadedGame == false)
+                || ((Game1.player).UsingTool
+                || !(Game1.player).CanMove
+                || (Game1.activeClickableMenu != null
+                || Game1.CurrentEvent != null))
                 || Game1.gameMode != 3)
                 return;
 
@@ -237,11 +229,11 @@ namespace PointAndPlant
                     {
                         if (PointAndPlant.loggingEnabled)
                         {
-                            Log.Info((object)("[Point-and-Plant] Plow (key handler) Exception: " + ex.Message));
-                            Log.Error((object)("[Point-and-Plant] Plow (key handler) Stack Trace: " + ex.ToString()));
+                            Log.Info("[Point-and-Plant] Plow (key handler) Exception: " + ex.Message);
+                            Log.Error("[Point-and-Plant] Plow (key handler) Stack Trace: " + ex);
                             //Log.Info((object)("[Point-and-Plant] Plow (key handler) Source: " + ex.Source));
-                        } 
-                    } 
+                        }
+                    }
                 }
                 else if (e.KeyPressed == PointAndPlant.plantKey && config.plantEnabled)
                 {
@@ -253,12 +245,12 @@ namespace PointAndPlant
                     {
                         if (PointAndPlant.loggingEnabled)
                         {
-                            Log.Info((object)("[Point-and-Plant] Plant (key handler) Exception: " + ex.Message));
-                            Log.Error((object)("[Point-and-Plant] Plant (key handler) Stack Trace: " + ex.ToString()));
+                            Log.Info("[Point-and-Plant] Plant (key handler) Exception: " + ex.Message);
+                            Log.Error("[Point-and-Plant] Plant (key handler) Stack Trace: " + ex);
                             //Log.Info((object)("[Point-and-Plant] Plant (key handler) Source: " + ex.Source));
                         }
                     }
-                    
+
                 }
                 else if (e.KeyPressed == PointAndPlant.growKey && config.growEnabled)
                 {
@@ -270,12 +262,12 @@ namespace PointAndPlant
                     {
                         if (PointAndPlant.loggingEnabled)
                         {
-                            Log.Info((object)("[Point-and-Plant] Grow (key handler) Exception: " + ex.Message));
-                            Log.Error((object)("[Point-and-Plant] Grow (key handler) Stack Trace: " + ex.ToString()));
+                            Log.Info("[Point-and-Plant] Grow (key handler) Exception: " + ex.Message);
+                            Log.Error("[Point-and-Plant] Grow (key handler) Stack Trace: " + ex);
                             //Log.Info((object)("[Point-and-Plant] Grow (key handler) Source: " + ex.Source));
                         }
                     }
-                    
+
                 }
                 else if (e.KeyPressed == PointAndPlant.harvestKey && config.harvestEnabled)
                 {
@@ -287,11 +279,11 @@ namespace PointAndPlant
                     {
                         if (PointAndPlant.loggingEnabled)
                         {
-                            Log.Info((object)("[Point-and-Plant] Harvest (key handler) Exception: " + ex.Message));
-                            Log.Error((object)("[Point-and-Plant] Harvest (key handler) Stack Trace: " + ex.ToString()));
+                            Log.Info("[Point-and-Plant] Harvest (key handler) Exception: " + ex.Message);
+                            Log.Error("[Point-and-Plant] Harvest (key handler) Stack Trace: " + ex);
                             //Log.Info((object)("[Point-and-Plant] Harvest (key handler) Source: " + ex.Source));
                         }
-                    }                   
+                    }
                 }
                 else if (e.KeyPressed == PointAndPlant.grassKey)
                 {
@@ -299,7 +291,8 @@ namespace PointAndPlant
                     {
                         if (Game1.player.CurrentTool != null && Game1.player.CurrentTool is MeleeWeapon)
                         {
-                            if (((MeleeWeapon)Game1.player.CurrentTool).initialParentTileIndex == 39) {
+                            if (((MeleeWeapon)Game1.player.CurrentTool).initialParentTileIndex == 39)
+                            {
                                 Log.Info("You're holding Leah's Whittler! Chop away!!");
                                 chopTrees();
                             }
@@ -317,20 +310,20 @@ namespace PointAndPlant
                         {
                             plantGrass();
                         }
-                        
+
                     }
                     catch (Exception ex)
                     {
                         if (PointAndPlant.loggingEnabled)
                         {
-                            Log.Info((object)("[Point-and-Plant] Plant Grass (key handler) Exception: " + ex.Message));
-                            Log.Error((object)("[Point-and-Plant] Plant Grass (key handler) Stack Trace: " + ex.ToString()));
+                            Log.Info("[Point-and-Plant] Plant Grass (key handler) Exception: " + ex.Message);
+                            Log.Error("[Point-and-Plant] Plant Grass (key handler) Stack Trace: " + ex);
                             //Log.Info((object)("[Point-and-Plant] Harvest (key handler) Source: " + ex.Source));
                         }
                     }
                 }
             }
-            
+
         }
 
 
@@ -361,7 +354,7 @@ namespace PointAndPlant
                     }
                 }
             }
-            
+
 
             GameLocation location = Game1.player.currentLocation;
             Vector2 vector2 = new Vector2(this.tileX, this.tileY);
@@ -373,46 +366,46 @@ namespace PointAndPlant
                     //index.Equals(vector2);
                     if (location.terrainFeatures.ContainsKey(index))
                     {
-                        if (location.terrainFeatures[index].performToolAction((Tool)papHoe, 0, index))
+                        if (location.terrainFeatures[index].performToolAction(PointAndPlant.papHoe, 0, index))
                             location.terrainFeatures.Remove(index);
                     }
                     else
                     {
-                        if (location.objects.ContainsKey(index) && location.Objects[index].performToolAction((Tool)papHoe))
+                        if (location.objects.ContainsKey(index) && location.Objects[index].performToolAction(PointAndPlant.papHoe))
                         {
                             if (location.Objects[index].type.Equals("Crafting") && location.Objects[index].fragility != 2)
-                                location.debris.Add(new Debris(location.Objects[index].bigCraftable ? -location.Objects[index].ParentSheetIndex : location.Objects[index].ParentSheetIndex, Game1.player.GetToolLocation(false), new Vector2((float)Game1.player.GetBoundingBox().Center.X, (float)Game1.player.GetBoundingBox().Center.Y)));
+                                location.debris.Add(new Debris(location.Objects[index].bigCraftable ? -location.Objects[index].ParentSheetIndex : location.Objects[index].ParentSheetIndex, Game1.player.GetToolLocation(), new Vector2(Game1.player.GetBoundingBox().Center.X, Game1.player.GetBoundingBox().Center.Y)));
                             location.Objects[index].performRemoveAction(index, location);
                             location.Objects.Remove(index);
                         }
                         if (location.doesTileHaveProperty((int)index.X, (int)index.Y, "Diggable", "Back") != null)
                         {
-                            if (location.Name.Equals("UndergroundMine") && !location.isTileOccupied(index, ""))
+                            if (location.Name.Equals("UndergroundMine") && !location.isTileOccupied(index))
                             {
                                 if (Game1.mine.mineLevel < 40 || Game1.mine.mineLevel >= 80)
                                 {
-                                    location.terrainFeatures.Add(index, (TerrainFeature)new HoeDirt());
+                                    location.terrainFeatures.Add(index, new HoeDirt());
                                     Game1.playSound("hoeHit");
                                 }
                                 else if (Game1.mine.mineLevel < 80)
                                 {
-                                    location.terrainFeatures.Add(index, (TerrainFeature)new HoeDirt());
+                                    location.terrainFeatures.Add(index, new HoeDirt());
                                     Game1.playSound("hoeHit");
                                 }
                                 Game1.removeSquareDebrisFromTile((int)index.X, (int)index.Y);
                                 location.checkForBuriedItem((int)index.X, (int)index.Y, false, false);
-                                location.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(vector2.X * (float)Game1.tileSize, vector2.Y * (float)Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f, 0, -1, -1f, -1, 0));
+                                location.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(vector2.X * Game1.tileSize, vector2.Y * Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f));
                                 if (tiles.Count > 2)
-                                    location.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(index.X * (float)Game1.tileSize, index.Y * (float)Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, Vector2.Distance(vector2, index) * 30f, 0, -1, -1f, -1, 0));
+                                    location.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(index.X * Game1.tileSize, index.Y * Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, Vector2.Distance(vector2, index) * 30f));
                             }
-                            else if (!location.isTileOccupied(index, "") && location.isTilePassable(new Location((int)index.X, (int)index.Y), Game1.viewport))
+                            else if (!location.isTileOccupied(index) && location.isTilePassable(new Location((int)index.X, (int)index.Y), Game1.viewport))
                             {
                                 location.makeHoeDirt(index);
                                 Game1.playSound("hoeHit");
                                 Game1.removeSquareDebrisFromTile((int)index.X, (int)index.Y);
-                                location.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(index.X * (float)Game1.tileSize, index.Y * (float)Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f, 0, -1, -1f, -1, 0));
+                                location.temporarySprites.Add(new TemporaryAnimatedSprite(12, new Vector2(index.X * Game1.tileSize, index.Y * Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, 50f));
                                 if (tiles.Count > 2)
-                                    location.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(index.X * (float)Game1.tileSize, index.Y * (float)Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, Vector2.Distance(vector2, index) * 30f, 0, -1, -1f, -1, 0));
+                                    location.temporarySprites.Add(new TemporaryAnimatedSprite(6, new Vector2(index.X * Game1.tileSize, index.Y * Game1.tileSize), Color.White, 8, Game1.random.NextDouble() < 0.5, Vector2.Distance(vector2, index) * 30f));
                                 location.checkForBuriedItem((int)index.X, (int)index.Y, false, false);
                             }
                             ++Game1.stats.DirtHoed;
@@ -424,8 +417,8 @@ namespace PointAndPlant
                 {
                     if (PointAndPlant.loggingEnabled)
                     {
-                        Log.Info((object)("[Point-and-Plant] Plow Exception: " + exception.Message));
-                        Log.Error((object)("[Point-and-Plant] Plow Stack Trace: " + exception.ToString()));
+                        Log.Info("[Point-and-Plant] Plow Exception: " + exception.Message);
+                        Log.Error("[Point-and-Plant] Plow Stack Trace: " + exception);
                         //Log.Error((object)("[Point-and-Plant] Plow Source: " + exception.Source));
                     }
 
@@ -461,7 +454,7 @@ namespace PointAndPlant
                             HoeDirt dirt = (HoeDirt)plr.currentLocation.terrainFeatures[index];
                             //dirt.crop?.growCompletely();
 
-                            if (plr.currentLocation.isFarm || ((string)plr.currentLocation.name).Contains("Greenhouse"))
+                            if (plr.currentLocation.isFarm || plr.currentLocation.name.Contains("Greenhouse"))
                             {
                                 if (Game1.player.ActiveObject != null && dirt.crop == null && (Game1.player.ActiveObject.Category == -74 || Game1.player.ActiveObject.Category == -19))
                                 {
@@ -487,11 +480,11 @@ namespace PointAndPlant
                 {
                     if (PointAndPlant.loggingEnabled)
                     {
-                        Log.Info((object)("[Point-and-Plant] Planting Exception: " + exception.Message));
-                        Log.Error((object)("[Point-and-Plant] Planting Stack Trace: " + exception.ToString()));
+                        Log.Info("[Point-and-Plant] Planting Exception: " + exception.Message);
+                        Log.Error("[Point-and-Plant] Planting Stack Trace: " + exception);
                         //Log.Info((object)("[Point-and-Plant] Planting Source: " + exception.Source));
                     }
-                } 
+                }
             }
         }
 
@@ -522,8 +515,8 @@ namespace PointAndPlant
                     }
                     else
                     {
-                        Log.Info("Adding grass to: " + index.ToString());
-                        plr.currentLocation.terrainFeatures.Add(index, (TerrainFeature)new Grass(1, 4));
+                        Log.Info("Adding grass to: " + index);
+                        plr.currentLocation.terrainFeatures.Add(index, new Grass(1, 4));
                         Game1.playSound("dirtyHit");
                     }
 
@@ -537,8 +530,8 @@ namespace PointAndPlant
                 {
                     if (PointAndPlant.loggingEnabled)
                     {
-                        Log.Info((object)("[Point-and-Plant] Planting Exception: " + exception.Message));
-                        Log.Error((object)("[Point-and-Plant] Planting Stack Trace: " + exception.ToString()));
+                        Log.Info("[Point-and-Plant] Planting Exception: " + exception.Message);
+                        Log.Error("[Point-and-Plant] Planting Stack Trace: " + exception);
                         //Log.Info((object)("[Point-and-Plant] Planting Source: " + exception.Source));
                     }
                 }
@@ -554,7 +547,7 @@ namespace PointAndPlant
             if (PointAndPlant.phantomAxe == null)
             {
                 PointAndPlant.phantomAxe = new Axe();
-                ((Tool)PointAndPlant.phantomAxe).upgradeLevel = 4;
+                PointAndPlant.phantomAxe.upgradeLevel = 4;
             }
 
             int min = this.plantRadius * -1;
@@ -581,8 +574,8 @@ namespace PointAndPlant
                 {
                     if (PointAndPlant.loggingEnabled)
                     {
-                        Log.Info((object)("[Point-and-Plant] Tree Chopping Exception: " + exception.Message));
-                        Log.Error((object)("[Point-and-Plant] Tree Chopping Trace: " + exception.ToString()));
+                        Log.Info("[Point-and-Plant] Tree Chopping Exception: " + exception.Message);
+                        Log.Error("[Point-and-Plant] Tree Chopping Trace: " + exception);
                         //Log.Info((object)("[Point-and-Plant] Planting Source: " + exception.Source));
                     }
                 }
@@ -598,7 +591,7 @@ namespace PointAndPlant
             if (PointAndPlant.phantomPick == null)
             {
                 PointAndPlant.phantomPick = new Pickaxe();
-                ((Tool)PointAndPlant.phantomPick).upgradeLevel = 4;
+                PointAndPlant.phantomPick.upgradeLevel = 4;
             }
 
             int min = this.plantRadius * -1;
@@ -622,15 +615,15 @@ namespace PointAndPlant
                         {
                             o.minutesUntilReady = 0;
                             PointAndPlant.phantomPick.DoFunction(plr.currentLocation, (int)(index.X * Game1.tileSize), (int)(index.Y * Game1.tileSize), 4, plr);
-                        }  
+                        }
                     }
                 }
                 catch (Exception exception)
                 {
                     if (PointAndPlant.loggingEnabled)
                     {
-                        Log.Info((object)("[Point-and-Plant] Rock Pounding Exception: " + exception.Message));
-                        Log.Error((object)("[Point-and-Plant] Rock Pounding  Trace: " + exception.ToString()));
+                        Log.Info("[Point-and-Plant] Rock Pounding Exception: " + exception.Message);
+                        Log.Error("[Point-and-Plant] Rock Pounding  Trace: " + exception);
                     }
                 }
             }
@@ -670,12 +663,12 @@ namespace PointAndPlant
                 {
                     if (PointAndPlant.loggingEnabled)
                     {
-                        Log.Info((object)("[Point-and-Plant] Grow Exception: " + exception.Message));
-                        Log.Error((object)("[Point-and-Plant] Grow Stack Trace: " + exception.ToString()));
+                        Log.Info("[Point-and-Plant] Grow Exception: " + exception.Message);
+                        Log.Error("[Point-and-Plant] Grow Stack Trace: " + exception);
                         //Log.Info((object)("[Point-and-Plant] Grow Source: " + exception.Source));
                     }
                 }
-                
+
             }
         }
 
@@ -684,24 +677,24 @@ namespace PointAndPlant
             //Log.Info((object)("[Point-and-Plant] Harvest "));
 
             SFarmer plr = Game1.player;
-            GameLocation currentLocation = (GameLocation)Game1.currentLocation;
-            StardewValley.Object @object = (StardewValley.Object)null;
-            TerrainFeature terrainFeature = (TerrainFeature)null;
-            ((Dictionary<Vector2, StardewValley.Object>)currentLocation.Objects).TryGetValue(PointAndPlant.vector, out @object);
-            ((Dictionary<Vector2, TerrainFeature>)currentLocation.terrainFeatures).TryGetValue(PointAndPlant.vector, out terrainFeature);
+            GameLocation currentLocation = Game1.currentLocation;
+            StardewValley.Object @object = null;
+            TerrainFeature terrainFeature = null;
+            currentLocation.Objects.TryGetValue(PointAndPlant.vector, out @object);
+            currentLocation.terrainFeatures.TryGetValue(PointAndPlant.vector, out terrainFeature);
 
             //List<Vector2> tiles = new List<Vector2>();
             try
             {
-                if (plr.currentLocation.isFarm || ((string)plr.currentLocation.name).Contains("Greenhouse"))
+                if (plr.currentLocation.isFarm || plr.currentLocation.name.Contains("Greenhouse"))
                 {
                     if (((HoeDirt)terrainFeature).crop != null || ((HoeDirt)terrainFeature).fertilizer != 0)
                     {
-                        if (((HoeDirt)terrainFeature).crop != null && (((Crop)((HoeDirt)terrainFeature).crop).harvestMethod == 1 && ((HoeDirt)terrainFeature).readyForHarvest() || ((Crop)((HoeDirt)terrainFeature).crop).dead))
+                        if (((HoeDirt)terrainFeature).crop != null && (((HoeDirt)terrainFeature).crop.harvestMethod == 1 && ((HoeDirt)terrainFeature).readyForHarvest() || ((HoeDirt)terrainFeature).crop.dead))
                         {
-                            PointAndPlant.papSickle.DoDamage(currentLocation, this.mouseX, this.mouseY, ((Character)Game1.player).getFacingDirection(), 0, Game1.player);
+                            PointAndPlant.papSickle.DoDamage(currentLocation, this.mouseX, this.mouseY, Game1.player.getFacingDirection(), 0, Game1.player);
                         }
-                        else if (((HoeDirt)terrainFeature).crop != null && (((Crop)((HoeDirt)terrainFeature).crop).harvestMethod != 1 && ((HoeDirt)terrainFeature).readyForHarvest() ))
+                        else if (((HoeDirt)terrainFeature).crop != null && (((HoeDirt)terrainFeature).crop.harvestMethod != 1 && ((HoeDirt)terrainFeature).readyForHarvest()))
                         {
                             List<Vector2> tiles = new List<Vector2>();
                             int min = this.harvestRadius * -1;
@@ -727,7 +720,7 @@ namespace PointAndPlant
                                             {
                                                 dirt.performUseAction(index);
                                             }
-                                            
+
                                         }
                                     }
                                 }
@@ -735,8 +728,8 @@ namespace PointAndPlant
                                 {
                                     if (PointAndPlant.loggingEnabled)
                                     {
-                                        Log.Info((object)("[Point-and-Plant] Harvest Inner Exception: " + exception.Message));
-                                        Log.Error((object)("[Point-and-Plant] Harvest Inner Stack Trace: " + exception.ToString()));
+                                        Log.Info("[Point-and-Plant] Harvest Inner Exception: " + exception.Message);
+                                        Log.Error("[Point-and-Plant] Harvest Inner Stack Trace: " + exception);
                                         //Log.Info((object)("[Point-and-Plant] Harvest Inner Source: " + exception.Source));
                                     }
                                 }
@@ -744,7 +737,7 @@ namespace PointAndPlant
                             }
 
                         }
-                            
+
                     }
                 }
             }
@@ -752,12 +745,12 @@ namespace PointAndPlant
             {
                 if (PointAndPlant.loggingEnabled)
                 {
-                    Log.Info((object)("[Point-and-Plant] Harvest Outer Exception: " + exception.Message));
-                    Log.Error((object)("[Point-and-Plant] Harvest Outer Stack Trace: " + exception.ToString()));
+                    Log.Info("[Point-and-Plant] Harvest Outer Exception: " + exception.Message);
+                    Log.Error("[Point-and-Plant] Harvest Outer Stack Trace: " + exception);
                     //Log.Info((object)("[Point-and-Plant] Harvest Outer Source: " + exception.Source));
                 }
             }
-            
+
 
         }
 
@@ -770,7 +763,7 @@ namespace PointAndPlant
             try
             {
                 if (this.buildingTiles == null)
-                    this.buildingTiles = ((ContentManager)Game1.content).Load<Texture2D>("LooseSprites\\buildingPlacementTiles");
+                    this.buildingTiles = Game1.content.Load<Texture2D>("LooseSprites\\buildingPlacementTiles");
 
                 KeyboardState keyboard = Keyboard.GetState();
 
@@ -789,30 +782,30 @@ namespace PointAndPlant
                     Game1.gameMode != 3)
                     return;
 
-                this.mouseX = Game1.getMouseX() + ((xTile.Dimensions.Rectangle)@Game1.viewport).X;
-                this.mouseY = Game1.getMouseY() + ((xTile.Dimensions.Rectangle)@Game1.viewport).Y;
+                this.mouseX = Game1.getMouseX() + @Game1.viewport.X;
+                this.mouseY = Game1.getMouseY() + @Game1.viewport.Y;
 
                 this.tileX = this.mouseX / Game1.tileSize;
                 this.tileY = this.mouseY / Game1.tileSize;
-                PointAndPlant.vector = new Vector2((float)this.tileX, (float)this.tileY);
+                PointAndPlant.vector = new Vector2(this.tileX, this.tileY);
 
                 if (keyboard.IsKeyDown(PointAndPlant.plowKey))
                 {
-                    foreach (Vector2 vector2 in this.tilesAffected(PointAndPlant.vector, 0, (SFarmer)Game1.player))
-                        ((SpriteBatch)Game1.spriteBatch).Draw(this.buildingTiles, Game1.GlobalToLocal((xTile.Dimensions.Rectangle)Game1.viewport, vector2 * (float)Game1.tileSize), new Microsoft.Xna.Framework.Rectangle?(Game1.getSourceRectForStandardTileSheet(buildingTiles, 0, -1, -1)), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
+                    foreach (Vector2 vector2 in this.tilesAffected(PointAndPlant.vector, 0, Game1.player))
+                        Game1.spriteBatch.Draw(this.buildingTiles, Game1.GlobalToLocal(Game1.viewport, vector2 * Game1.tileSize), Game1.getSourceRectForStandardTileSheet(this.buildingTiles, 0), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
                 }
                 else if (keyboard.IsKeyDown(PointAndPlant.grassKey))
                 {
-                    foreach (Vector2 vector2 in this.tilesAffectedGrass(PointAndPlant.vector, (SFarmer)Game1.player))
-                        ((SpriteBatch)Game1.spriteBatch).Draw(this.buildingTiles, Game1.GlobalToLocal((xTile.Dimensions.Rectangle)Game1.viewport, vector2 * (float)Game1.tileSize), new Microsoft.Xna.Framework.Rectangle?(Game1.getSourceRectForStandardTileSheet(buildingTiles, 0, -1, -1)), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
+                    foreach (Vector2 vector2 in this.tilesAffectedGrass(PointAndPlant.vector, Game1.player))
+                        Game1.spriteBatch.Draw(this.buildingTiles, Game1.GlobalToLocal(Game1.viewport, vector2 * Game1.tileSize), Game1.getSourceRectForStandardTileSheet(this.buildingTiles, 0), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
                 }
             }
             catch (Exception exception)
             {
                 if (PointAndPlant.loggingEnabled)
                 {
-                    Log.Info((object)("[Point-and-Plant] Drawing Plow Overlay: " + exception.Message));
-                    Log.Error((object)("[Point-and-Plant] Drawing Plow Overlay Stack Trace: " + exception.ToString()));
+                    Log.Info("[Point-and-Plant] Drawing Plow Overlay: " + exception.Message);
+                    Log.Error("[Point-and-Plant] Drawing Plow Overlay Stack Trace: " + exception);
                     //Log.Info((object)("[Point-and-Plant] Drawing Plow Overlay Source: " + exception.Source));
                 }
             }
@@ -843,7 +836,7 @@ namespace PointAndPlant
                     }
                 }
             }
-            
+
             return tiles;
         }
 

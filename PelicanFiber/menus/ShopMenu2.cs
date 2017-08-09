@@ -1,19 +1,12 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: StardewValley.Menus.ShopMenu
-// Assembly: Stardew Valley, Version=1.0.6118.35538, Culture=neutral, PublicKeyToken=null
-// MVID: 91D9A392-4109-49BC-9B2D-A9A061D06895
-// Assembly location: C:\WORK\GAME_DEV\StarDew\SDV-Mods\SimpleSower\bin\Debug\Stardew Valley.exe
-
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using PelicanFiber;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Locations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using StardewLib;
-using PelicanFiber;
 
 namespace StardewValley.Menus
 {
@@ -57,7 +50,7 @@ namespace StardewValley.Menus
         private String locationName;
 
         public ShopMenu2(Dictionary<Item, int[]> itemPriceAndStock, int currency = 0, string who = null, String locationName = "")
-          : this(itemPriceAndStock.Keys.ToList<Item>(), currency, who, locationName)
+          : this(itemPriceAndStock.Keys.ToList(), currency, who, locationName)
         {
             this.locationName = locationName;
             this.itemPriceAndStock = itemPriceAndStock;
@@ -75,7 +68,7 @@ namespace StardewValley.Menus
                 this.xPositionOnScreen = Game1.tileSize / 2;
             Game1.player.forceCanMove();
             Game1.playSound("dwop");
-            this.inventory = new InventoryMenu(this.xPositionOnScreen + this.width, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + Game1.tileSize * 5 + Game1.pixelZoom * 10, false, (List<Item>)null, new InventoryMenu.highlightThisItem(this.highlightItemToSell), -1, 3, 0, 0, true)
+            this.inventory = new InventoryMenu(this.xPositionOnScreen + this.width, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + Game1.tileSize * 5 + Game1.pixelZoom * 10, false, null, this.highlightItemToSell)
             {
                 showGrayedOutSlots = true
             };
@@ -87,17 +80,17 @@ namespace StardewValley.Menus
             int positionOnScreen2 = this.yPositionOnScreen;
             int borderWidth2 = IClickableMenu.borderWidth;
             int toClearTopBorder = IClickableMenu.spaceToClearTopBorder;
-            this.upArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), (float)Game1.pixelZoom, false);
-            this.downArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + this.height - Game1.tileSize, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), (float)Game1.pixelZoom, false);
-            this.scrollBar = new ClickableTextureComponent(new Rectangle(this.upArrow.bounds.X + Game1.pixelZoom * 3, this.upArrow.bounds.Y + this.upArrow.bounds.Height + Game1.pixelZoom, 6 * Game1.pixelZoom, 10 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), (float)Game1.pixelZoom, false);
-            this.backButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen, this.yPositionOnScreen - Game1.tileSize, 12 * Game1.pixelZoom, 11 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(352, 495, 12, 11), (float)Game1.pixelZoom, false);
+            this.upArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), Game1.pixelZoom);
+            this.downArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + this.height - Game1.tileSize, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), Game1.pixelZoom);
+            this.scrollBar = new ClickableTextureComponent(new Rectangle(this.upArrow.bounds.X + Game1.pixelZoom * 3, this.upArrow.bounds.Y + this.upArrow.bounds.Height + Game1.pixelZoom, 6 * Game1.pixelZoom, 10 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), Game1.pixelZoom);
+            this.backButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen, this.yPositionOnScreen - Game1.tileSize, 12 * Game1.pixelZoom, 11 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(352, 495, 12, 11), Game1.pixelZoom);
             this.scrollBarRunner = new Rectangle(this.scrollBar.bounds.X, this.upArrow.bounds.Y + this.upArrow.bounds.Height + Game1.pixelZoom, this.scrollBar.bounds.Width, this.height - Game1.tileSize - this.upArrow.bounds.Height - Game1.pixelZoom * 7);
             for (int index = 0; index < 4; ++index)
-                this.forSaleButtons.Add(new ClickableComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4 + index * ((this.height - Game1.tileSize * 4) / 4), this.width - Game1.tileSize / 2, (this.height - Game1.tileSize * 4) / 4 + Game1.pixelZoom), string.Concat((object)index)));
+                this.forSaleButtons.Add(new ClickableComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4 + index * ((this.height - Game1.tileSize * 4) / 4), this.width - Game1.tileSize / 2, (this.height - Game1.tileSize * 4) / 4 + Game1.pixelZoom), string.Concat(index)));
             foreach (Item key in itemsForSale)
             {
                 //if (key is StardewValley.Object && (key as StardewValley.Object).isRecipe || (key as StardewValley.Object).category == -425)
-                if (key is StardewValley.Object && (key as StardewValley.Object).isRecipe || locationName.Equals("Junimo"))
+                if (key is Object && (key as Object).isRecipe || locationName.Equals("Junimo"))
                 {
                     if (!Game1.player.knowsRecipe(key.Name))
                         key.Stack = 1;
@@ -105,7 +98,7 @@ namespace StardewValley.Menus
                         continue;
                 }
                 this.forSale.Add(key);
-                this.itemPriceAndStock.Add(key, new int[2]
+                this.itemPriceAndStock.Add(key, new[]
                 {
           key.salePrice(),
           key.Stack
@@ -117,49 +110,49 @@ namespace StardewValley.Menus
             switch (this.locationName)
             {
                 case "SeedShop":
-                    this.categoriesToSellHere.AddRange((IEnumerable<int>)new int[14]
+                    this.categoriesToSellHere.AddRange(new[]
                     {
-            -81,
-            -75,
-            -79,
-            -80,
-            -74,
-            -17,
-            -18,
-            -6,
-            -26,
-            -5,
-            -14,
-            -19,
-            -7,
-            -25
+                        -81,
+                        -75,
+                        -79,
+                        -80,
+                        -74,
+                        -17,
+                        -18,
+                        -6,
+                        -26,
+                        -5,
+                        -14,
+                        -19,
+                        -7,
+                        -25
                     });
                     break;
                 case "Blacksmith":
-                    this.categoriesToSellHere.AddRange((IEnumerable<int>)new int[3] { -12, -2, -15 });
+                    this.categoriesToSellHere.AddRange(new[] { -12, -2, -15 });
                     break;
                 case "ScienceHouse":
-                    this.categoriesToSellHere.AddRange((IEnumerable<int>)new int[1] { -16 });
+                    this.categoriesToSellHere.AddRange(new[] { -16 });
                     break;
                 case "AnimalShop":
-                    this.categoriesToSellHere.AddRange((IEnumerable<int>)new int[4] { -18, -6, -5, -14 });
+                    this.categoriesToSellHere.AddRange(new[] { -18, -6, -5, -14 });
                     break;
                 case "FishShop":
-                    this.categoriesToSellHere.AddRange((IEnumerable<int>)new int[4]
+                    this.categoriesToSellHere.AddRange(new[]
                     {
-            -4,
-            -23,
-            -21,
-            -22
+                        -4,
+                        -23,
+                        -21,
+                        -22
                     });
                     break;
                 case "AdventureGuild":
-                    this.categoriesToSellHere.AddRange((IEnumerable<int>)new int[4]
+                    this.categoriesToSellHere.AddRange(new[]
                     {
-            -28,
-            -98,
-            -97,
-            -96
+                        -28,
+                        -98,
+                        -97,
+                        -96
                     });
                     break;
             }
@@ -170,7 +163,7 @@ namespace StardewValley.Menus
         {
             if (who == null)
                 return;
-            Random random = new Random((int)((long)Game1.uniqueIDForThisGame + (long)Game1.stats.DaysPlayed));
+            Random random = new Random((int)((long)Game1.uniqueIDForThisGame + Game1.stats.DaysPlayed));
             string text = "Have a look at my wares.";
             switch (who)
             {
@@ -206,7 +199,7 @@ namespace StardewValley.Menus
                             text = "Got any spare construction material to sell?";
                             break;
                         case 4:
-                            text = "I've got " + Lexicon.appendArticle(this.itemPriceAndStock.ElementAt<KeyValuePair<Item, int[]>>(Game1.random.Next(2, this.itemPriceAndStock.Count)).Key.Name) + " that would look just " + Lexicon.getRandomPositiveAdjectiveForEventOrPerson((NPC)null) + " in your house.";
+                            text = "I've got " + Lexicon.appendArticle(this.itemPriceAndStock.ElementAt(Game1.random.Next(2, this.itemPriceAndStock.Count)).Key.Name) + " that would look just " + Lexicon.getRandomPositiveAdjectiveForEventOrPerson() + " in your house.";
                             break;
                     }
                     break;
@@ -295,7 +288,7 @@ namespace StardewValley.Menus
                             text = "I'll have new items every week, so make sure to come back!";
                             break;
                         case 3:
-                            text = "Let me see... Oh! I've got just what you need: " + Lexicon.appendArticle(this.itemPriceAndStock.ElementAt<KeyValuePair<Item, int[]>>(random.Next(this.itemPriceAndStock.Count)).Key.Name) + "!";
+                            text = "Let me see... Oh! I've got just what you need: " + Lexicon.appendArticle(this.itemPriceAndStock.ElementAt(random.Next(this.itemPriceAndStock.Count)).Key.Name) + "!";
                             break;
                         case 4:
                             text = "Beautiful country you have here. One of my favorite stops. The pig likes it, too.";
@@ -319,7 +312,7 @@ namespace StardewValley.Menus
                             text = "What'll you have?";
                             break;
                         case 1:
-                            text = "Can you smell that? It's the " + this.itemPriceAndStock.ElementAt<KeyValuePair<Item, int[]>>(random.Next(this.itemPriceAndStock.Count)).Key.Name;
+                            text = "Can you smell that? It's the " + this.itemPriceAndStock.ElementAt(random.Next(this.itemPriceAndStock.Count)).Key.Name;
                             break;
                         case 2:
                             text = "Hungry? Thirsty? I've got just the thing.";
@@ -392,7 +385,7 @@ namespace StardewValley.Menus
                 return;
             int y1 = this.scrollBar.bounds.Y;
             this.scrollBar.bounds.Y = Math.Min(this.yPositionOnScreen + this.height - Game1.tileSize - Game1.pixelZoom * 3 - this.scrollBar.bounds.Height, Math.Max(y, this.yPositionOnScreen + this.upArrow.bounds.Height + Game1.pixelZoom * 5));
-            this.currentItemIndex = Math.Min(this.forSale.Count - 4, Math.Max(0, (int)((double)this.forSale.Count * (double)((float)(y - this.scrollBarRunner.Y) / (float)this.scrollBarRunner.Height))));
+            this.currentItemIndex = Math.Min(this.forSale.Count - 4, Math.Max(0, (int)(this.forSale.Count * (double)((y - this.scrollBarRunner.Y) / (float)this.scrollBarRunner.Height))));
             this.setScrollBarToCurrentIndex();
             if (y1 == this.scrollBar.bounds.Y)
                 return;
@@ -457,7 +450,7 @@ namespace StardewValley.Menus
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
-            base.receiveLeftClick(x, y, true);
+            base.receiveLeftClick(x, y);
             if (Game1.activeClickableMenu == null)
                 return;
             Vector2 clickableComponent = this.inventory.snapToClickableComponent(x, y);
@@ -487,31 +480,31 @@ namespace StardewValley.Menus
             this.currentItemIndex = Math.Max(0, Math.Min(this.forSale.Count - 4, this.currentItemIndex));
             if (this.heldItem == null)
             {
-                Item obj = this.inventory.leftClick(x, y, (Item)null, false);
+                Item obj = this.inventory.leftClick(x, y, null, false);
                 if (obj != null)
                 {
-                    ShopMenu2.chargePlayer(Game1.player, this.currency, -((obj is StardewValley.Object ? (int)((double)(obj as StardewValley.Object).sellToStorePrice() * (double)this.sellPercentage) : (int)((double)(obj.salePrice() / 2) * (double)this.sellPercentage)) * obj.Stack));
+                    ShopMenu2.chargePlayer(Game1.player, this.currency, -((obj is Object ? (int)((obj as Object).sellToStorePrice() * (double)this.sellPercentage) : (int)(obj.salePrice() / 2 * (double)this.sellPercentage)) * obj.Stack));
                     int num = obj.Stack / 8 + 2;
                     for (int index = 0; index < num; ++index)
                     {
                         this.animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
                         {
                             alphaFade = 0.025f,
-                            motion = new Vector2((float)Game1.random.Next(-3, 4), -4f),
+                            motion = new Vector2(Game1.random.Next(-3, 4), -4f),
                             acceleration = new Vector2(0.0f, 0.5f),
                             delayBeforeAnimationStart = index * 25,
-                            scale = (float)Game1.pixelZoom * 0.5f
+                            scale = Game1.pixelZoom * 0.5f
                         });
                         this.animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
                         {
-                            scale = (float)Game1.pixelZoom,
+                            scale = Game1.pixelZoom,
                             alphaFade = 0.025f,
                             delayBeforeAnimationStart = index * 50,
-                            motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(this.xPositionOnScreen - Game1.pixelZoom * 9), (float)(this.yPositionOnScreen + this.height - this.inventory.height - Game1.pixelZoom * 4)), 8f),
-                            acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2((float)(this.xPositionOnScreen - Game1.pixelZoom * 9), (float)(this.yPositionOnScreen + this.height - this.inventory.height - Game1.pixelZoom * 4)), 0.5f)
+                            motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2(this.xPositionOnScreen - Game1.pixelZoom * 9, this.yPositionOnScreen + this.height - this.inventory.height - Game1.pixelZoom * 4), 8f),
+                            acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2(this.xPositionOnScreen - Game1.pixelZoom * 9, this.yPositionOnScreen + this.height - this.inventory.height - Game1.pixelZoom * 4), 0.5f)
                         });
                     }
-                    if (obj is StardewValley.Object && (obj as StardewValley.Object).edibility != -300)
+                    if (obj is Object && (obj as Object).edibility != -300)
                     {
                         for (int index = 0; index < obj.Stack; ++index)
                         {
@@ -522,17 +515,17 @@ namespace StardewValley.Menus
                     Game1.playSound("sell");
                     Game1.playSound("purchase");
                     if (this.inventory.getItemAt(x, y) == null)
-                        this.animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White, 8, false, 100f, 0, -1, -1f, -1, 0)
+                        this.animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White)
                         {
                             motion = new Vector2(0.0f, -0.5f)
                         });
                 }
             }
             else
-                this.heldItem = this.inventory.leftClick(x, y, this.heldItem, true);
+                this.heldItem = this.inventory.leftClick(x, y, this.heldItem);
             for (int index1 = 0; index1 < this.forSaleButtons.Count; ++index1)
             {
-                
+
                 if (this.currentItemIndex + index1 < this.forSale.Count && this.forSaleButtons[index1].containsPoint(x, y))
                 {
                     int index2 = this.currentItemIndex + index1;
@@ -558,7 +551,7 @@ namespace StardewValley.Menus
             }
             if (!this.readyToClose() || x >= this.xPositionOnScreen - Game1.tileSize && y >= this.yPositionOnScreen - Game1.tileSize && (x <= this.xPositionOnScreen + this.width + Game1.tileSize * 2 && y <= this.yPositionOnScreen + this.height + Game1.tileSize))
                 return;
-            this.exitThisMenu(true);
+            this.exitThisMenu();
         }
 
         public override bool readyToClose()
@@ -573,7 +566,7 @@ namespace StardewValley.Menus
             base.emergencyShutDown();
             if (this.heldItem == null)
                 return;
-            Game1.player.addItemToInventoryBool(this.heldItem, false);
+            Game1.player.addItemToInventoryBool(this.heldItem);
             Game1.playSound("coin");
         }
 
@@ -601,14 +594,14 @@ namespace StardewValley.Menus
                 int num = -1;
                 if (this.itemPriceAndStock[item].Length > 2)
                     num = this.itemPriceAndStock[item][2];
-                if (ShopMenu2.getPlayerCurrencyAmount(Game1.player, this.currency) >= amount && (num == -1 || Game1.player.hasItemInInventory(num, 5, 0)))
+                if (ShopMenu2.getPlayerCurrencyAmount(Game1.player, this.currency) >= amount && (num == -1 || Game1.player.hasItemInInventory(num, 5)))
                 {
                     this.heldItem = item.getOne();
                     this.heldItem.Stack = numberToBuy;
                     if (!Game1.player.couldInventoryAcceptThisItem(this.heldItem))
                     {
                         Game1.playSound("smallSelect");
-                        this.heldItem = (Item)null;
+                        this.heldItem = null;
                         return false;
                     }
                     if (this.itemPriceAndStock[item][1] != int.MaxValue)
@@ -621,21 +614,21 @@ namespace StardewValley.Menus
                         Game1.player.removeItemsFromInventory(num, 5);
                     if (item.actionWhenPurchased())
                     {
-                        if (this.heldItem is StardewValley.Object && (this.heldItem as StardewValley.Object).isRecipe)
+                        if (this.heldItem is Object && (this.heldItem as Object).isRecipe)
                         {
-                            if ((this.heldItem as StardewValley.Object).name.Contains("Bundle"))
+                            if ((this.heldItem as Object).name.Contains("Bundle"))
                             {
-                                ItemUtils.addBundle((this.heldItem as StardewValley.Object).specialVariable);
+                                ItemUtils.addBundle((this.heldItem as Object).specialVariable);
                                 Game1.playSound("newRecipe");
-                                heldItem = (Item)null;
-                                this.heldItem = (Item)null;
+                                heldItem = null;
+                                this.heldItem = null;
                             }
                             else
                             {
                                 string key = this.heldItem.Name.Substring(0, this.heldItem.Name.IndexOf("Recipe") - 1);
                                 try
                                 {
-                                    if ((this.heldItem as StardewValley.Object).category == -7)
+                                    if ((this.heldItem as Object).category == -7)
                                     {
                                         Game1.player.cookingRecipes.Add(key, 0);
 
@@ -652,8 +645,8 @@ namespace StardewValley.Menus
                                 catch (Exception ex)
                                 {
                                 }
-                                heldItem = (Item)null;
-                                this.heldItem = (Item)null;
+                                heldItem = null;
+                                this.heldItem = null;
                             }
                         }
                     }
@@ -690,7 +683,7 @@ namespace StardewValley.Menus
                         if (index != -1)
                             Game1.player.removeItemsFromInventory(index, 5);
                         if (item.actionWhenPurchased())
-                            this.heldItem = (Item)null;
+                            this.heldItem = null;
                     }
                     else
                     {
@@ -720,8 +713,8 @@ namespace StardewValley.Menus
                 }
 
                 return false;
-            }    
-            this.hoveredItem = (Item)null;
+            }
+            this.hoveredItem = null;
             return true;
         }
 
@@ -730,11 +723,11 @@ namespace StardewValley.Menus
             Vector2 clickableComponent = this.inventory.snapToClickableComponent(x, y);
             if (this.heldItem == null)
             {
-                Item obj1 = this.inventory.rightClick(x, y, (Item)null, false);
+                Item obj1 = this.inventory.rightClick(x, y, null, false);
                 if (obj1 != null)
                 {
-                    ShopMenu2.chargePlayer(Game1.player, this.currency, -((obj1 is StardewValley.Object ? (int)((double)(obj1 as StardewValley.Object).sellToStorePrice() * (double)this.sellPercentage) : (int)((double)(obj1.salePrice() / 2) * (double)this.sellPercentage)) * obj1.Stack));
-                    Item obj2 = (Item)null;
+                    ShopMenu2.chargePlayer(Game1.player, this.currency, -((obj1 is Object ? (int)((obj1 as Object).sellToStorePrice() * (double)this.sellPercentage) : (int)(obj1.salePrice() / 2 * (double)this.sellPercentage)) * obj1.Stack));
+                    Item obj2 = null;
                     if (Game1.mouseClickPolling > 300)
                         Game1.playSound("purchaseRepeat");
                     else
@@ -745,12 +738,12 @@ namespace StardewValley.Menus
                         motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 12f),
                         acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 0.5f)
                     });
-                    if (obj2 is StardewValley.Object && (obj2 as StardewValley.Object).edibility != -300 && Game1.random.NextDouble() < 0.04)
+                    if (obj2 is Object && (obj2 as Object).edibility != -300 && Game1.random.NextDouble() < 0.04)
                         (Game1.getLocationFromName("SeedShop") as SeedShop).itemsToStartSellingTomorrow.Add(obj2.getOne());
                     if (this.inventory.getItemAt(x, y) == null)
                     {
                         Game1.playSound("sell");
-                        this.animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White, 8, false, 100f, 0, -1, -1f, -1, 0)
+                        this.animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White)
                         {
                             motion = new Vector2(0.0f, -0.5f)
                         });
@@ -758,7 +751,7 @@ namespace StardewValley.Menus
                 }
             }
             else
-                this.heldItem = this.inventory.rightClick(x, y, this.heldItem, true);
+                this.heldItem = this.inventory.rightClick(x, y, this.heldItem);
             for (int index1 = 0; index1 < this.forSaleButtons.Count; ++index1)
             {
                 if (this.currentItemIndex + index1 < this.forSale.Count && this.forSaleButtons[index1].containsPoint(x, y))
@@ -784,12 +777,12 @@ namespace StardewValley.Menus
             base.performHoverAction(x, y);
             this.descriptionText = "";
             this.hoverText = "";
-            this.hoveredItem = (Item)null;
+            this.hoveredItem = null;
             this.hoverPrice = -1;
             this.boldTitleText = "";
-            this.upArrow.tryHover(x, y, 0.1f);
-            this.downArrow.tryHover(x, y, 0.1f);
-            this.scrollBar.tryHover(x, y, 0.1f);
+            this.upArrow.tryHover(x, y);
+            this.downArrow.tryHover(x, y);
+            this.scrollBar.tryHover(x, y);
             if (this.scrolling)
                 return;
             for (int index = 0; index < this.forSaleButtons.Count; ++index)
@@ -819,10 +812,10 @@ namespace StardewValley.Menus
                     if (clickableComponent != null && this.highlightItemToSell(clickableComponent))
                     {
                         if (clickableComponent.category == -425)
-                            this.hoverText = ((Object)clickableComponent).name + " x " + (object)clickableComponent.Stack;
+                            this.hoverText = ((Object)clickableComponent).name + " x " + clickableComponent.Stack;
                         else
-                            this.hoverText = clickableComponent.Name + " x " + (object)clickableComponent.Stack;
-                        this.hoverPrice = (clickableComponent is StardewValley.Object ? (int)((double)(clickableComponent as StardewValley.Object).sellToStorePrice() * (double)this.sellPercentage) : (int)((double)(clickableComponent.salePrice() / 2) * (double)this.sellPercentage)) * clickableComponent.Stack;
+                            this.hoverText = clickableComponent.Name + " x " + clickableComponent.Stack;
+                        this.hoverPrice = (clickableComponent is Object ? (int)((clickableComponent as Object).sellToStorePrice() * (double)this.sellPercentage) : (int)(clickableComponent.salePrice() / 2 * (double)this.sellPercentage)) * clickableComponent.Stack;
                     }
                 }
             }
@@ -833,7 +826,7 @@ namespace StardewValley.Menus
             base.update(time);
             if (this.poof == null || !this.poof.update(time))
                 return;
-            this.poof = (TemporaryAnimatedSprite)null;
+            this.poof = null;
         }
 
         public void drawCurrency(SpriteBatch b)
@@ -868,7 +861,7 @@ namespace StardewValley.Menus
             if (Game1.viewport.Width < 1500)
                 this.xPositionOnScreen = Game1.tileSize / 2;
             Game1.player.forceCanMove();
-            this.inventory = new InventoryMenu(this.xPositionOnScreen + this.width, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + Game1.tileSize * 5 + Game1.pixelZoom * 10, false, (List<Item>)null, new InventoryMenu.highlightThisItem(this.highlightItemToSell), -1, 3, 0, 0, true)
+            this.inventory = new InventoryMenu(this.xPositionOnScreen + this.width, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + Game1.tileSize * 5 + Game1.pixelZoom * 10, false, null, this.highlightItemToSell)
             {
                 showGrayedOutSlots = true
             };
@@ -879,76 +872,76 @@ namespace StardewValley.Menus
             int positionOnScreen2 = this.yPositionOnScreen;
             int borderWidth2 = IClickableMenu.borderWidth;
             int toClearTopBorder = IClickableMenu.spaceToClearTopBorder;
-            this.upArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), (float)Game1.pixelZoom, false);
-            this.downArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + this.height - Game1.tileSize, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), (float)Game1.pixelZoom, false);
-            this.scrollBar = new ClickableTextureComponent(new Rectangle(this.upArrow.bounds.X + Game1.pixelZoom * 3, this.upArrow.bounds.Y + this.upArrow.bounds.Height + Game1.pixelZoom, 6 * Game1.pixelZoom, 10 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), (float)Game1.pixelZoom, false);
+            this.upArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), Game1.pixelZoom);
+            this.downArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + this.height - Game1.tileSize, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), Game1.pixelZoom);
+            this.scrollBar = new ClickableTextureComponent(new Rectangle(this.upArrow.bounds.X + Game1.pixelZoom * 3, this.upArrow.bounds.Y + this.upArrow.bounds.Height + Game1.pixelZoom, 6 * Game1.pixelZoom, 10 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), Game1.pixelZoom);
             this.scrollBarRunner = new Rectangle(this.scrollBar.bounds.X, this.upArrow.bounds.Y + this.upArrow.bounds.Height + Game1.pixelZoom, this.scrollBar.bounds.Width, this.height - Game1.tileSize - this.upArrow.bounds.Height - Game1.pixelZoom * 7);
             this.forSaleButtons.Clear();
             for (int index = 0; index < 4; ++index)
-                this.forSaleButtons.Add(new ClickableComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4 + index * ((this.height - Game1.tileSize * 4) / 4), this.width - Game1.tileSize / 2, (this.height - Game1.tileSize * 4) / 4 + Game1.pixelZoom), string.Concat((object)index)));
+                this.forSaleButtons.Add(new ClickableComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4 + index * ((this.height - Game1.tileSize * 4) / 4), this.width - Game1.tileSize / 2, (this.height - Game1.tileSize * 4) / 4 + Game1.pixelZoom), string.Concat(index)));
         }
 
         public override void draw(SpriteBatch b)
         {
             if (!Game1.options.showMenuBackground)
                 b.Draw(Game1.fadeToBlackRect, Game1.graphics.GraphicsDevice.Viewport.Bounds, Color.Black * 0.75f);
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), this.xPositionOnScreen + this.width - this.inventory.width - Game1.tileSize / 2 - Game1.pixelZoom * 6, this.yPositionOnScreen + this.height - Game1.tileSize * 4 + Game1.pixelZoom * 10, this.inventory.width + Game1.pixelZoom * 14, this.height - Game1.tileSize * 7 + Game1.pixelZoom * 5, Color.White, (float)Game1.pixelZoom, true);
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height - Game1.tileSize * 4 + Game1.tileSize / 2 + Game1.pixelZoom, Color.White, (float)Game1.pixelZoom, true);
+            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), this.xPositionOnScreen + this.width - this.inventory.width - Game1.tileSize / 2 - Game1.pixelZoom * 6, this.yPositionOnScreen + this.height - Game1.tileSize * 4 + Game1.pixelZoom * 10, this.inventory.width + Game1.pixelZoom * 14, this.height - Game1.tileSize * 7 + Game1.pixelZoom * 5, Color.White, Game1.pixelZoom);
+            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height - Game1.tileSize * 4 + Game1.tileSize / 2 + Game1.pixelZoom, Color.White, Game1.pixelZoom);
             this.drawCurrency(b);
             for (int index = 0; index < this.forSaleButtons.Count; ++index)
             {
                 if (this.currentItemIndex + index < this.forSale.Count)
                 {
-                    IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), this.forSaleButtons[index].bounds.X, this.forSaleButtons[index].bounds.Y, this.forSaleButtons[index].bounds.Width, this.forSaleButtons[index].bounds.Height, !this.forSaleButtons[index].containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) || this.scrolling ? Color.White : Color.Wheat, (float)Game1.pixelZoom, false);
-                    b.Draw(Game1.mouseCursors, new Vector2((float)(this.forSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 3), (float)(this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 6 - Game1.pixelZoom)), new Rectangle?(new Rectangle(296, 363, 18, 18)), Color.White, 0.0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 1f);
-                    this.forSale[this.currentItemIndex + index].drawInMenu(b, new Vector2((float)(this.forSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 2), (float)(this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 6)), 1f);
+                    IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), this.forSaleButtons[index].bounds.X, this.forSaleButtons[index].bounds.Y, this.forSaleButtons[index].bounds.Width, this.forSaleButtons[index].bounds.Height, !this.forSaleButtons[index].containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) || this.scrolling ? Color.White : Color.Wheat, Game1.pixelZoom, false);
+                    b.Draw(Game1.mouseCursors, new Vector2(this.forSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 3, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 6 - Game1.pixelZoom), new Rectangle?(new Rectangle(296, 363, 18, 18)), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1f);
+                    this.forSale[this.currentItemIndex + index].drawInMenu(b, new Vector2(this.forSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 2, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 6), 1f);
                     if (this.forSale[this.currentItemIndex + index].category == -425)
-                        SpriteText.drawString(b, ((Object)this.forSale[this.currentItemIndex + index]).name, this.forSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7, 999999, -1, 999999, 1f, 0.88f, false, -1, "", -1);
+                        SpriteText.drawString(b, ((Object)this.forSale[this.currentItemIndex + index]).name, this.forSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7);
 
                     else
-                        SpriteText.drawString(b, this.forSale[this.currentItemIndex + index].Name, this.forSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7, 999999, -1, 999999, 1f, 0.88f, false, -1, "", -1);
-                    SpriteText.drawString(b, this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0].ToString() + " ", this.forSaleButtons[index].bounds.Right - SpriteText.getWidthOfString(this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0].ToString() + " ") - Game1.pixelZoom * 8, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7, 999999, -1, 999999, ShopMenu2.getPlayerCurrencyAmount(Game1.player, this.currency) >= this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0] ? 1f : 0.5f, 0.88f, false, -1, "", -1);
-                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float)(this.forSaleButtons[index].bounds.Right - Game1.pixelZoom * 13), (float)(this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 10 - Game1.pixelZoom)), new Rectangle(193 + this.currency * 9, 373, 9, 10), Color.White, 0.0f, Vector2.Zero, (float)Game1.pixelZoom, false, 1f, -1, -1, 0.35f);
+                        SpriteText.drawString(b, this.forSale[this.currentItemIndex + index].Name, this.forSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7);
+                    SpriteText.drawString(b, this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0].ToString() + " ", this.forSaleButtons[index].bounds.Right - SpriteText.getWidthOfString(this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0].ToString() + " ") - Game1.pixelZoom * 8, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7, 999999, -1, 999999, ShopMenu2.getPlayerCurrencyAmount(Game1.player, this.currency) >= this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0] ? 1f : 0.5f);
+                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.forSaleButtons[index].bounds.Right - Game1.pixelZoom * 13, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 10 - Game1.pixelZoom), new Rectangle(193 + this.currency * 9, 373, 9, 10), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, false, 1f);
                 }
             }
             if (this.forSale.Count == 0)
-                SpriteText.drawString(b, "Out of stock", this.xPositionOnScreen + this.width / 2 - SpriteText.getWidthOfString("Out of stock.") / 2, this.yPositionOnScreen + this.height / 2 - Game1.tileSize * 2, 999999, -1, 999999, 1f, 0.88f, false, -1, "", -1);
+                SpriteText.drawString(b, "Out of stock", this.xPositionOnScreen + this.width / 2 - SpriteText.getWidthOfString("Out of stock.") / 2, this.yPositionOnScreen + this.height / 2 - Game1.tileSize * 2);
             this.inventory.draw(b);
             for (int index = this.animations.Count - 1; index >= 0; --index)
             {
                 if (this.animations[index].update(Game1.currentGameTime))
                     this.animations.RemoveAt(index);
                 else
-                    this.animations[index].draw(b, true, 0, 0);
+                    this.animations[index].draw(b, true);
             }
             if (this.poof != null)
-                this.poof.draw(b, false, 0, 0);
+                this.poof.draw(b);
             this.upArrow.draw(b);
             this.downArrow.draw(b);
             if (this.forSale.Count > 4)
             {
-                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollBarRunner.X, this.scrollBarRunner.Y, this.scrollBarRunner.Width, this.scrollBarRunner.Height, Color.White, (float)Game1.pixelZoom, true);
+                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollBarRunner.X, this.scrollBarRunner.Y, this.scrollBarRunner.Width, this.scrollBarRunner.Height, Color.White, Game1.pixelZoom);
                 this.scrollBar.draw(b);
             }
             if (!this.hoverText.Equals(""))
-                IClickableMenu.drawToolTip(b, this.hoverText, this.boldTitleText, this.hoveredItem, this.heldItem != null, -1, this.currency, this.getHoveredItemExtraItemIndex(), this.getHoveredItemExtraItemAmount(), (CraftingRecipe)null, this.hoverPrice);
+                IClickableMenu.drawToolTip(b, this.hoverText, this.boldTitleText, this.hoveredItem, this.heldItem != null, -1, this.currency, this.getHoveredItemExtraItemIndex(), this.getHoveredItemExtraItemAmount(), null, this.hoverPrice);
             if (this.heldItem != null)
-                this.heldItem.drawInMenu(b, new Vector2((float)(Game1.getOldMouseX() + 8), (float)(Game1.getOldMouseY() + 8)), 1f);
+                this.heldItem.drawInMenu(b, new Vector2(Game1.getOldMouseX() + 8, Game1.getOldMouseY() + 8), 1f);
             base.draw(b);
             if (Game1.viewport.Width > 1800 && Game1.options.showMerchantPortraits)
             {
                 if (this.portraitPerson != null)
                 {
-                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2((float)(this.xPositionOnScreen - 80 * Game1.pixelZoom), (float)this.yPositionOnScreen), new Rectangle(603, 414, 74, 74), Color.White, 0.0f, Vector2.Zero, (float)Game1.pixelZoom, false, 0.91f, -1, -1, 0.35f);
+                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.xPositionOnScreen - 80 * Game1.pixelZoom, this.yPositionOnScreen), new Rectangle(603, 414, 74, 74), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, false, 0.91f);
                     if (this.portraitPerson.Portrait != null)
-                        b.Draw(this.portraitPerson.Portrait, new Vector2((float)(this.xPositionOnScreen - 80 * Game1.pixelZoom + Game1.pixelZoom * 5), (float)(this.yPositionOnScreen + Game1.pixelZoom * 5)), new Rectangle?(new Rectangle(0, 0, 64, 64)), Color.White, 0.0f, Vector2.Zero, (float)Game1.pixelZoom, SpriteEffects.None, 0.92f);
+                        b.Draw(this.portraitPerson.Portrait, new Vector2(this.xPositionOnScreen - 80 * Game1.pixelZoom + Game1.pixelZoom * 5, this.yPositionOnScreen + Game1.pixelZoom * 5), new Rectangle?(new Rectangle(0, 0, 64, 64)), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.92f);
                 }
                 if (this.potraitPersonDialogue != null)
-                    IClickableMenu.drawHoverText(b, this.potraitPersonDialogue, Game1.dialogueFont, 0, 0, -1, (string)null, -1, (string[])null, (Item)null, 0, -1, -1, this.xPositionOnScreen - (int)Game1.dialogueFont.MeasureString(this.potraitPersonDialogue).X - Game1.tileSize, this.yPositionOnScreen + (this.portraitPerson != null ? 78 * Game1.pixelZoom : 0), 1f, (CraftingRecipe)null);
+                    IClickableMenu.drawHoverText(b, this.potraitPersonDialogue, Game1.dialogueFont, 0, 0, -1, null, -1, null, null, 0, -1, -1, this.xPositionOnScreen - (int)Game1.dialogueFont.MeasureString(this.potraitPersonDialogue).X - Game1.tileSize, this.yPositionOnScreen + (this.portraitPerson != null ? 78 * Game1.pixelZoom : 0));
             }
 
             this.backButton.draw(b);
-            
+
             this.drawMouse(b);
         }
     }

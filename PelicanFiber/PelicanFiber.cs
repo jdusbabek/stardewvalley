@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StardewLib;
-using StardewValley;
-using StardewModdingAPI;
-using Microsoft.Xna.Framework.Input;
-using StardewModdingAPI.Events;
-using StardewValley.Menus;
-using Object = StardewValley.Object;
-using Log = StardewLib.Log;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
+using StardewValley.Menus;
+using Log = StardewLib.Log;
 
 namespace PelicanFiber
 {
@@ -23,7 +17,7 @@ namespace PelicanFiber
         public static PelicanFiberConfig config;
 
         public bool unfiltered = true;
-        public static bool giveAchievements = false;
+        public static bool giveAchievements;
 
 
         public override void Entry(params object[] objects)
@@ -34,12 +28,12 @@ namespace PelicanFiber
 
         private void onLoaded(object sender, EventArgs e)
         {
-            PelicanFiber.config = (PelicanFiberConfig)ConfigExtensions.InitializeConfig<PelicanFiberConfig>(new PelicanFiberConfig(), this.BaseConfigPath);
+            PelicanFiber.config = new PelicanFiberConfig().InitializeConfig(this.BaseConfigPath);
 
-            if (!Enum.TryParse<Keys>(config.keybind, true, out PelicanFiber.menuKey))
+            if (!Enum.TryParse(config.keybind, true, out PelicanFiber.menuKey))
             {
                 PelicanFiber.menuKey = Keys.PageDown;
-                Log.force_ERROR((object)"[PelicanFiber] 404 Not Found: Error parsing key binding. Defaulted to Page Down");
+                Log.force_ERROR("[PelicanFiber] 404 Not Found: Error parsing key binding. Defaulted to Page Down");
             }
 
             this.unfiltered = !config.internetFilter;
@@ -52,9 +46,9 @@ namespace PelicanFiber
             }
             catch (Exception ex)
             {
-                Log.force_ERROR("[PelicanFiber] 400 Bad Request: Could not load image content. " + ex.ToString());
+                Log.force_ERROR("[PelicanFiber] 400 Bad Request: Could not load image content. " + ex);
             }
-            
+
         }
 
         private void onKeyReleased(object sender, EventArgsKeyPressed e)
@@ -77,15 +71,15 @@ namespace PelicanFiber
                 {
                     float scale = 1.0f;
                     if (Game1.viewport.Height < 1325)
-                        scale = (float)(Game1.viewport.Height) / 1325f;
+                        scale = Game1.viewport.Height / 1325f;
 
                     Game1.activeClickableMenu = new PelicanFiberMenu(scale, unfiltered);
                 }
                 catch (Exception ex)
                 {
-                    Log.force_ERROR("[PelicanFiber] 500 Internal Error: " + ex.ToString());
+                    Log.force_ERROR("[PelicanFiber] 500 Internal Error: " + ex);
                 }
-                
+
             }
         }
 
@@ -95,13 +89,13 @@ namespace PelicanFiber
             {
                 float scale = 1.0f;
                 if (Game1.viewport.Height < 1325)
-                    scale = (float)(Game1.viewport.Height) / 1325f;
+                    scale = Game1.viewport.Height / 1325f;
 
                 Game1.activeClickableMenu = new PelicanFiberMenu(scale, !config.internetFilter);
             }
             catch (Exception ex)
             {
-                Log.force_ERROR("[PelicanFiber] 500 Internal Error: " + ex.ToString());
+                Log.force_ERROR("[PelicanFiber] 500 Internal Error: " + ex);
             }
         }
 

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using StardewLib;
-using System.Reflection;
 
 namespace ExtremePetting
 {
@@ -28,11 +23,7 @@ namespace ExtremePetting
 
         public bool justGathering()
         {
-            if (((animalsPet + aged + fed + maxHappiness + maxFriendship) == 0) && getTaskCount() > 0)
-                return true;
-            else
-                return false;
-            
+            return (((animalsPet + aged + fed + maxHappiness + maxFriendship) == 0) && getTaskCount() > 0);
         }
 
         FieldInfo[] IStats.getFieldList()

@@ -1,15 +1,9 @@
 ﻿using StardewModdingAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PointAndPlant
 {
     public class PAPConfig : Config
     {
-
         public string plowKey { get; set; }
         public string plantKey { get; set; }
         public string growKey { get; set; }

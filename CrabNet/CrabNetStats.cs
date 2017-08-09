@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StardewModdingAPI;
-
-namespace CrabNet
+﻿namespace CrabNet
 {
     public class CrabNetStats
     {
@@ -48,7 +41,7 @@ namespace CrabNet
         {
             int tot = (numBaited + nothingToBait) + (numEmptied + nothingToRetrieve) + numChecked;
 
-            return (tot != (numTotal*3));
+            return (tot != (numTotal * 3));
         }
     }
 }

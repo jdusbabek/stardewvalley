@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using StardewValley.Objects;
 
 namespace SortMyStuff.chest
@@ -14,8 +9,8 @@ namespace SortMyStuff.chest
         public int y;
         public Vector2 vector;
         public string location;
-        public int count = 0;
-        public Chest chest = null;
+        public int count;
+        public Chest chest;
 
         public ChestDef()
         {
@@ -28,7 +23,7 @@ namespace SortMyStuff.chest
             this.x = x;
             this.y = y;
 
-            this.vector = new Vector2((float)x, (float)y);
+            this.vector = new Vector2(x, y);
 
             location = "Farm";
         }
@@ -38,7 +33,7 @@ namespace SortMyStuff.chest
             this.x = x;
             this.y = y;
 
-            this.vector = new Vector2((float)x, (float)y);
+            this.vector = new Vector2(x, y);
 
             this.location = location;
         }
@@ -47,7 +42,7 @@ namespace SortMyStuff.chest
         {
             this.x = x;
             this.y = y;
-            this.vector = new Vector2((float)x, (float)y);
+            this.vector = new Vector2(x, y);
             this.location = location;
             this.count = count;
         }
@@ -56,7 +51,7 @@ namespace SortMyStuff.chest
         {
             this.x = x;
             this.y = y;
-            this.vector = new Vector2((float)x, (float)y);
+            this.vector = new Vector2(x, y);
             this.location = location;
             this.count = count;
             this.chest = chest;
@@ -64,7 +59,7 @@ namespace SortMyStuff.chest
 
         override public string ToString()
         {
-            return location + " " + vector.ToString() + " #" + count;
+            return location + " " + this.vector + " #" + count;
         }
     }
 

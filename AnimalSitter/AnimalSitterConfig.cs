@@ -1,16 +1,9 @@
-﻿using StardewModdingAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StardewLib;
+﻿using StardewLib;
 
 namespace ExtremePetting
 {
     public class AnimalSitterConfig : IConfig
     {
-
         public string keybind { get; set; }
         public bool growUpEnabled { get; set; }
         public bool maxHappinessEnabled { get; set; }
@@ -26,8 +19,6 @@ namespace ExtremePetting
         public bool bypassInventory { get; set; }
         public Microsoft.Xna.Framework.Vector2 chestCoords { get; set; }
         public string chestDefs { get; set; }
-        
-
 
         public override T GenerateDefaultConfig<T>()
         {
@@ -49,6 +40,5 @@ namespace ExtremePetting
 
             return this as T;
         }
-
     }
 }

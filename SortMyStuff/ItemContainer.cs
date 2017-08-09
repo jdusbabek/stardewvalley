@@ -1,5 +1,5 @@
-﻿using StardewValley.Objects;
-using StardewValley;
+﻿using StardewValley;
+using StardewValley.Objects;
 
 namespace SortMyStuff
 {

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Replanter
+﻿namespace Replanter
 {
     public class ReplanterStats
     {
-
         public int cropsHarvested { get; set; }
         public int runningSeedCost { get; set; }
         public int runningSellPrice { get; set; }
@@ -17,8 +10,8 @@ namespace Replanter
         public int cropsWatered { get; set; }
         public int plantsCleared { get; set; }
 
-        public int totalCost { get { return farmhandCost + runningSeedCost; } set { ; } }
-        public int numUnharvested { get { return totalCrops - cropsHarvested; } set { ; } }
+        public int totalCost { get { return farmhandCost + runningSeedCost; } set {; } }
+        public int numUnharvested { get { return totalCrops - cropsHarvested; } set {; } }
 
         public ReplanterStats()
         {
