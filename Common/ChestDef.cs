@@ -2,7 +2,7 @@
 
 namespace StardewLib
 {
-    public class ChestDef
+    internal class ChestDef
     {
         public int x;
         public int y;

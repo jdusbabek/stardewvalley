@@ -2,7 +2,7 @@
 
 namespace StardewLib
 {
-    public interface IStats
+    internal interface IStats
     {
         FieldInfo[] getFieldList();
     }

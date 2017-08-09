@@ -1,10 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 
-
 namespace Replanter
 {
-    public class ReplanterConfig : Config
+    internal class ReplanterConfig : Config
     {
         public string keybind { get; set; }
 

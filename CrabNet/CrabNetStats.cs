@@ -1,6 +1,6 @@
 ﻿namespace CrabNet
 {
-    public class CrabNetStats
+    internal class CrabNetStats
     {
         // The total number of crab pots that are placed
         public int numTotal = 0;

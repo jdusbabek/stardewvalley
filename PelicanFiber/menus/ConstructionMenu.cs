@@ -9,7 +9,7 @@ using xTile.Dimensions;
 
 namespace StardewValley.Menus
 {
-    public class ConstructionMenu : IClickableMenu
+    internal class ConstructionMenu : IClickableMenu
     {
         public string whereToGo = "";
 
@@ -105,7 +105,7 @@ namespace StardewValley.Menus
 
         }
 
-        public void setNewActiveBlueprint()
+        private void setNewActiveBlueprint()
         {
             this.currentBuilding = !this.blueprints[this.currentBlueprintIndex].name.Contains("Coop") ? (!this.blueprints[this.currentBlueprintIndex].name.Contains("Barn") ? (!this.blueprints[this.currentBlueprintIndex].name.Contains("Mill") ? (!this.blueprints[this.currentBlueprintIndex].name.Contains("Junimo Hut") ? new Building(this.blueprints[this.currentBlueprintIndex], Vector2.Zero) : new JunimoHut(this.blueprints[this.currentBlueprintIndex], Vector2.Zero)) : new Mill(this.blueprints[this.currentBlueprintIndex], Vector2.Zero)) : new Barn(this.blueprints[this.currentBlueprintIndex], Vector2.Zero)) : new Coop(this.blueprints[this.currentBlueprintIndex], Vector2.Zero);
             this.price = this.blueprints[this.currentBlueprintIndex].moneyRequired;
@@ -379,12 +379,12 @@ namespace StardewValley.Menus
                 Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantBuild"), Color.Red, 3500f));
         }
 
-        public bool tryToBuild()
+        private bool tryToBuild()
         {
             return ((BuildableGameLocation)Game1.getLocationFromName("Farm")).buildStructure(this.CurrentBlueprint, new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY()) / Game1.tileSize), false, Game1.player, this.magicalConstruction);
         }
 
-        public void returnToCarpentryMenu()
+        private void returnToCarpentryMenu()
         {
             Game1.currentLocation.cleanupBeforePlayerExit();
             Game1.currentLocation = Game1.getLocationFromName(whereToGo);
@@ -404,7 +404,7 @@ namespace StardewValley.Menus
             Game1.displayFarmer = true;
         }
 
-        public void returnToCarpentryMenuAfterSuccessfulBuild()
+        private void returnToCarpentryMenuAfterSuccessfulBuild()
         {
             Game1.currentLocation.cleanupBeforePlayerExit();
             Game1.currentLocation = Game1.getLocationFromName(whereToGo);
@@ -418,7 +418,7 @@ namespace StardewValley.Menus
             Game1.displayFarmer = true;
         }
 
-        public void robinConstructionMessage()
+        private void robinConstructionMessage()
         {
             this.exitThisMenu();
             Game1.player.forceCanMove();
@@ -432,7 +432,7 @@ namespace StardewValley.Menus
             //Game1.drawDialogue(Game1.getCharacterFromName("Robin"), Game1.content.LoadString(path, (object)this.CurrentBlueprint.name.ToLower(), (object)((IEnumerable<string>)this.CurrentBlueprint.name.ToLower().Split(' ')).Last<string>()));
         }
 
-        public void setUpForBuildingPlacement()
+        private void setUpForBuildingPlacement()
         {
             Game1.currentLocation.cleanupBeforePlayerExit();
             this.hoverText = "";

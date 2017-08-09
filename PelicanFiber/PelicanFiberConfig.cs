@@ -1,9 +1,8 @@
 ﻿using StardewModdingAPI;
 
-
 namespace PelicanFiber
 {
-    public class PelicanFiberConfig : Config
+    internal class PelicanFiberConfig : Config
     {
         public string keybind { get; set; }
 

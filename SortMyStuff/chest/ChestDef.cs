@@ -3,7 +3,7 @@ using StardewValley.Objects;
 
 namespace SortMyStuff.chest
 {
-    public class ChestDef
+    internal class ChestDef
     {
         public int x;
         public int y;

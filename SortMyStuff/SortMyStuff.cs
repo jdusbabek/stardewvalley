@@ -15,7 +15,7 @@ namespace SortMyStuff
 {
     public class SortMyStuff : Mod
     {
-        public static SortMyStuffConfig config;
+        private static SortMyStuffConfig config;
         private static Keys actionKey;
 
         public override void Entry(params object[] objects)

@@ -12,12 +12,12 @@ namespace PelicanFiber
     public class PelicanFiber : Mod
     {
         private static Keys menuKey = Keys.PageDown;
-        public static LocalizedContentManager content;
-        public static Texture2D websites;
-        public static PelicanFiberConfig config;
+        internal static LocalizedContentManager content;
+        internal static Texture2D websites;
+        private static PelicanFiberConfig config;
 
-        public bool unfiltered = true;
-        public static bool giveAchievements;
+        private bool unfiltered = true;
+        internal static bool giveAchievements;
 
 
         public override void Entry(params object[] objects)
@@ -83,7 +83,7 @@ namespace PelicanFiber
             }
         }
 
-        public static void showTheMenu()
+        internal static void showTheMenu()
         {
             try
             {
@@ -99,17 +99,17 @@ namespace PelicanFiber
             }
         }
 
-        public static MailOrderPigMenu getMailOrderPigMenu()
+        internal static MailOrderPigMenu getMailOrderPigMenu()
         {
             return new MailOrderPigMenu(ItemUtils.getPurchaseAnimalStock());
         }
 
-        public static BuyAnimalMenu getBuyAnimalMenu()
+        internal static BuyAnimalMenu getBuyAnimalMenu()
         {
             return new BuyAnimalMenu(Utility.getPurchaseAnimalStock());
         }
 
-        public static ConstructionMenu getConstructionMenu(bool magical)
+        internal static ConstructionMenu getConstructionMenu(bool magical)
         {
             return new ConstructionMenu(magical);
         }

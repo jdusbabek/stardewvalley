@@ -2,7 +2,7 @@
 
 namespace PointAndPlant
 {
-    public class PAPConfig : Config
+    internal class PAPConfig : Config
     {
         public string plowKey { get; set; }
         public string plantKey { get; set; }

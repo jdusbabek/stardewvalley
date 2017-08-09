@@ -11,7 +11,7 @@ using SFarmer = StardewValley.Farmer;
 
 namespace PelicanFiber
 {
-    public class ItemUtils
+    internal class ItemUtils
     {
         public static List<Item> getShopStock(bool Pierres, bool unfiltered = false)
         {
@@ -299,7 +299,7 @@ namespace PelicanFiber
         }
 
 
-        public static List<Item> getAllFurniture()
+        private static List<Item> getAllFurniture()
         {
             List<Item> list = new List<Item>();
 
@@ -312,7 +312,7 @@ namespace PelicanFiber
             return list;
         }
 
-        public static Dictionary<Item, int[]> getAllFurnituresForFree()
+        private static Dictionary<Item, int[]> getAllFurnituresForFree()
         {
             Dictionary<Item, int[]> dictionary = new Dictionary<Item, int[]>();
             foreach (KeyValuePair<int, string> keyValuePair in Game1.content.Load<Dictionary<int, string>>("Data\\Furniture"))
@@ -740,7 +740,7 @@ namespace PelicanFiber
         //(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).addJunimoNote(Convert.ToInt32(strArray[1]));
 
 
-        public static int getAreaNumberFromName(string name)
+        private static int getAreaNumberFromName(string name)
         {
             switch (name)
             {

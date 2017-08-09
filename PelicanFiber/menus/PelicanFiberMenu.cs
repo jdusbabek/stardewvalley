@@ -10,7 +10,7 @@ using StardewValley.Tools;
 
 namespace StardewValley.Menus
 {
-    class PelicanFiberMenu : IClickableMenu
+    internal class PelicanFiberMenu : IClickableMenu
     {
         public static int menuHeight = 1216;
         public static int menuWidth = 1354;

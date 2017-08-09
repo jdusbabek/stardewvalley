@@ -4,7 +4,7 @@ using StardewValley;
 
 namespace Replanter
 {
-    public class DialogManager
+    internal class DialogManager
     {
         public static ReplanterConfig config;
 

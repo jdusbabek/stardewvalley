@@ -4,7 +4,7 @@ using StardewValley;
 using StardewValley.Tools;
 using SFarmer = StardewValley.Farmer;
 
-public class PAPSickle : MeleeWeapon
+internal class PAPSickle : MeleeWeapon
 {
     int radius = 4;
 

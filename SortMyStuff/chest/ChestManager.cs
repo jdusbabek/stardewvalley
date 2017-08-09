@@ -9,10 +9,10 @@ using Object = StardewValley.Object;
 
 namespace SortMyStuff.chest
 {
-    public class ChestManager
+    internal class ChestManager
     {
-        public static ChestDef defaultChest;
-        public static Dictionary<int, ChestDef> chests;
+        private static ChestDef defaultChest;
+        private static Dictionary<int, ChestDef> chests;
 
         public static void parseChests(string chestString)
         {

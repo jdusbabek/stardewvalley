@@ -50,10 +50,10 @@ namespace CrabNet
 
 
         // The cost per 1 bait, as determined from the user's bait preference
-        public int baitCost;
+        private int baitCost;
 
         // Content manager for loading dialogs, etc.
-        public LocalizedContentManager content;
+        private LocalizedContentManager content;
 
         // An indexed list of all messages from the dialog.xna file
         private Dictionary<string, string> allmessages;
@@ -83,7 +83,7 @@ namespace CrabNet
         private bool inventoryAndChestFull;
 
         // The configuration object.  Not used per-se, only to populate the local variables.
-        public static CrabNetConfig config;
+        internal static CrabNetConfig config;
 
         /**
          * The SMAPI entry point.
@@ -273,7 +273,7 @@ namespace CrabNet
 
 
 
-        public bool checkForAction(SFarmer farmer, CrabPot pot, CrabNetStats stats)
+        private bool checkForAction(SFarmer farmer, CrabPot pot, CrabNetStats stats)
         {
             if (!canAfford(farmer, this.costPerCheck, stats))
                 return false;
@@ -305,7 +305,7 @@ namespace CrabNet
         }
 
 
-        public bool performObjectDropInAction(StardewValley.Object dropIn, SFarmer farmer, CrabPot pot)
+        private bool performObjectDropInAction(StardewValley.Object dropIn, SFarmer farmer, CrabPot pot)
         {
             if (pot.bait != null || farmer.professions.Contains(11))
                 return false;
@@ -526,7 +526,7 @@ namespace CrabNet
         //    return value;
         //}
 
-        public string getRandomMessage(Dictionary<int, string> messageStore)
+        private string getRandomMessage(Dictionary<int, string> messageStore)
         {
             int rand = random.Next(1, messageStore.Count + 1);
 
@@ -541,7 +541,7 @@ namespace CrabNet
         }
 
 
-        public void readInMessages()
+        private void readInMessages()
         {
             //Dictionary<int, string> objects = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
             try

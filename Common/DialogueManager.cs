@@ -5,14 +5,14 @@ using StardewValley;
 
 namespace StardewLib
 {
-    public class DialogueManager
+    internal class DialogueManager
     {
-        public static LocalizedContentManager content;
-        public static Dictionary<string, Dictionary<int, string>> dialogueLookups = new Dictionary<string, Dictionary<int, string>>();
-        public static Dictionary<string, string> allmessages = new Dictionary<string, string>();
+        private static LocalizedContentManager content;
+        private static Dictionary<string, Dictionary<int, string>> dialogueLookups = new Dictionary<string, Dictionary<int, string>>();
+        private static Dictionary<string, string> allmessages = new Dictionary<string, string>();
         public static IConfig config;
 
-        public static Random random = new Random();
+        private static Random random = new Random();
 
         public static void initialize(IServiceProvider provider, string path)
         {
@@ -40,7 +40,7 @@ namespace StardewLib
         }
 
 
-        public static Dictionary<int, string> readDialogue(string identifier)
+        private static Dictionary<int, string> readDialogue(string identifier)
         {
             Dictionary<int, string> result = new Dictionary<int, string>();
 

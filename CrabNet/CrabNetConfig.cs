@@ -2,7 +2,7 @@
 
 namespace CrabNet
 {
-    public class CrabNetConfig : Config
+    internal class CrabNetConfig : Config
     {
         // The hot key that performs this action.
         public string keybind { get; set; }

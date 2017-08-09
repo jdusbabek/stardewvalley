@@ -35,25 +35,25 @@ namespace PointAndPlant
         private int plowWidth;
         private int plowHeight;
 
-        public int mouseX;
-        public int mouseY;
-        public int tileX;
-        public int tileY;
+        private int mouseX;
+        private int mouseY;
+        private int tileX;
+        private int tileY;
 
-        public static Vector2 vector;
+        internal static Vector2 vector;
         private Texture2D buildingTiles;
 
-        public static PAPConfig config;
+        private static PAPConfig config;
 
         private static Hoe papHoe;
         private static PAPSickle papSickle;
         private static Axe phantomAxe;
         private static Pickaxe phantomPick;
 
-        public static int power = -1;
-        public static int toolLevel = 4;
+        private static int power = -1;
+        private static int toolLevel = 4;
 
-        public static bool loggingEnabled;
+        private static bool loggingEnabled;
 
         public override void Entry(params object[] objects)
         {
@@ -812,7 +812,7 @@ namespace PointAndPlant
         }
 
 
-        protected List<Vector2> tilesAffected(Vector2 tileLocation, int power, SFarmer who)
+        private List<Vector2> tilesAffected(Vector2 tileLocation, int power, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 
@@ -840,7 +840,7 @@ namespace PointAndPlant
             return tiles;
         }
 
-        protected List<Vector2> tilesAffectedTree(Vector2 tileLocation, SFarmer who)
+        private List<Vector2> tilesAffectedTree(Vector2 tileLocation, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 
@@ -857,7 +857,7 @@ namespace PointAndPlant
             return tiles;
         }
 
-        protected List<Vector2> tilesAffectedRock(Vector2 tileLocation, SFarmer who)
+        private List<Vector2> tilesAffectedRock(Vector2 tileLocation, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 
@@ -874,7 +874,7 @@ namespace PointAndPlant
             return tiles;
         }
 
-        protected List<Vector2> tilesAffectedGrass(Vector2 tileLocation, SFarmer who)
+        private List<Vector2> tilesAffectedGrass(Vector2 tileLocation, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 

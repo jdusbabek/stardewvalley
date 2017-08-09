@@ -1,6 +1,6 @@
 ﻿namespace StardewLib
 {
-    public class Log
+    internal class Log
     {
         public static int sequence = 0;
 

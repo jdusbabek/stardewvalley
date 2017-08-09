@@ -8,7 +8,7 @@ using StardewValley.Buildings;
 
 namespace StardewValley.Menus
 {
-    public class MailOrderPigMenu : IClickableMenu
+    internal class MailOrderPigMenu : IClickableMenu
     {
         public static int menuHeight = Game1.tileSize * 5;
         public static int menuWidth = Game1.tileSize * 7;
@@ -54,7 +54,7 @@ namespace StardewValley.Menus
             this.doneNamingButton = new ClickableTextureComponent(new Rectangle(this.textBox.X + this.textBox.Width + Game1.tileSize / 2 + Game1.pixelZoom, Game1.viewport.Height / 2 - Game1.pixelZoom * 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f);
         }
 
-        public void textBoxEnter(TextBox sender)
+        private void textBoxEnter(TextBox sender)
         {
             if (!this.namingAnimal)
                 return;
@@ -99,7 +99,7 @@ namespace StardewValley.Menus
             }
         }
 
-        public void setUpForReturnToShopMenu()
+        private void setUpForReturnToShopMenu()
         {
             Game1.globalFadeToClear();
             this.okButton.bounds.X = this.xPositionOnScreen + this.width + 4;
@@ -111,7 +111,7 @@ namespace StardewValley.Menus
             this.textBox.Selected = false;
         }
 
-        public void setUpForReturnAfterPurchasingAnimal()
+        private void setUpForReturnAfterPurchasingAnimal()
         {
             Game1.globalFadeToClear();
             this.okButton.bounds.X = this.xPositionOnScreen + this.width + 4;
@@ -124,7 +124,7 @@ namespace StardewValley.Menus
             Game1.globalFadeToClear(this.marnieAnimalPurchaseMessage);
         }
 
-        public void marnieAnimalPurchaseMessage()
+        private void marnieAnimalPurchaseMessage()
         {
             this.exitThisMenu();
             Game1.player.forceCanMove();
@@ -289,7 +289,7 @@ namespace StardewValley.Menus
             }
         }
 
-        public static string getAnimalDescription(string name)
+        private static string getAnimalDescription(string name)
         {
             switch (name)
             {

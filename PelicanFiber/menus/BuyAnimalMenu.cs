@@ -12,7 +12,7 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace StardewValley.Menus
 {
-    public class BuyAnimalMenu : IClickableMenu
+    internal class BuyAnimalMenu : IClickableMenu
     {
         public string whereToGo = "";
 
@@ -63,7 +63,7 @@ namespace StardewValley.Menus
 
         }
 
-        public void textBoxEnter(TextBox sender)
+        private void textBoxEnter(TextBox sender)
         {
             if (!this.namingAnimal)
                 return;
@@ -96,7 +96,7 @@ namespace StardewValley.Menus
             }
         }
 
-        public void setUpForReturnAfterPurchasingAnimal()
+        private void setUpForReturnAfterPurchasingAnimal()
         {
             Game1.currentLocation.cleanupBeforePlayerExit();
             //Game1.currentLocation = Game1.getLocationFromName("AnimalShop");
@@ -123,7 +123,7 @@ namespace StardewValley.Menus
         //    //Game1.drawDialogue(Game1.getCharacterFromName("Marnie"), "Great! I'll send little " + this.animalBeingPurchased.name + " to " + (this.animalBeingPurchased.isMale() ? "his" : "her") + " new home right away.");
         //}
 
-        public void marnieAnimalPurchaseMessage()
+        private void marnieAnimalPurchaseMessage()
         {
             this.exitThisMenu();
             Game1.player.forceCanMove();
@@ -141,7 +141,7 @@ namespace StardewValley.Menus
             }
         }
 
-        public void setUpForAnimalPlacement()
+        private void setUpForAnimalPlacement()
         {
             Game1.displayFarmer = false;
             Game1.currentLocation = Game1.getLocationFromName("Farm");
@@ -157,7 +157,7 @@ namespace StardewValley.Menus
             Game1.panScreen(0, 0);
         }
 
-        public void setUpForReturnToShopMenu()
+        private void setUpForReturnToShopMenu()
         {
             this.freeze = false;
             Game1.displayFarmer = true;
@@ -389,7 +389,7 @@ namespace StardewValley.Menus
             }
         }
 
-        public static string getAnimalDescription(string name)
+        private static string getAnimalDescription(string name)
         {
             switch (name)
             {

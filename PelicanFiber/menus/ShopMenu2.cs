@@ -10,7 +10,7 @@ using StardewValley.Locations;
 
 namespace StardewValley.Menus
 {
-    public class ShopMenu2 : IClickableMenu
+    internal class ShopMenu2 : IClickableMenu
     {
         private string descriptionText = "";
         private string hoverText = "";
@@ -159,7 +159,7 @@ namespace StardewValley.Menus
             Game1.currentLocation.Name.Equals("SeedShop");
         }
 
-        public void setUpShopOwner(string who)
+        private void setUpShopOwner(string who)
         {
             if (who == null)
                 return;
@@ -358,12 +358,12 @@ namespace StardewValley.Menus
             this.potraitPersonDialogue = Game1.parseText(text, Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4);
         }
 
-        public bool highlightItemToSell(Item i)
+        private bool highlightItemToSell(Item i)
         {
             return this.categoriesToSellHere.Contains(i.category);
         }
 
-        public static int getPlayerCurrencyAmount(Farmer who, int currencyType)
+        private static int getPlayerCurrencyAmount(Farmer who, int currencyType)
         {
             switch (currencyType)
             {
@@ -829,7 +829,7 @@ namespace StardewValley.Menus
             this.poof = null;
         }
 
-        public void drawCurrency(SpriteBatch b)
+        private void drawCurrency(SpriteBatch b)
         {
             switch (this.currency)
             {

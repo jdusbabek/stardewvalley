@@ -3,7 +3,7 @@ using StardewLib;
 
 namespace ExtremePetting
 {
-    public class AnimalTasks : IStats
+    internal class AnimalTasks : IStats
     {
         public int animalsPet = 0;
         public int trufflesHarvested = 0;

@@ -14,9 +14,9 @@ namespace MailOrderPigs
     {
         private static Keys menuKey = Keys.PageUp;
 
-        public static MailOrderPigsConfig config;
-        public bool allowOvercrowding = false;
-        public bool enableLogging = false;
+        private static MailOrderPigsConfig config;
+        private bool allowOvercrowding = false;
+        private bool enableLogging = false;
 
 
         public override void Entry(params object[] objects)
@@ -46,7 +46,7 @@ namespace MailOrderPigs
             }
             catch (Exception ex)
             {
-                Log.force_ERROR("[MailOrderPigs] Mod not loaded successfully: " + ex.ToString());
+                Log.force_ERROR("[MailOrderPigs] Mod not loaded successfully: " + ex);
             }
 
         }
@@ -85,7 +85,7 @@ namespace MailOrderPigs
                     }
                     catch (Exception ex)
                     {
-                        Log.force_ERROR("[MailOrderPigs] Problem bringing up menu: " + ex.ToString());
+                        Log.force_ERROR("[MailOrderPigs] Problem bringing up menu: " + ex);
                     }
                 }
                 else
@@ -95,7 +95,7 @@ namespace MailOrderPigs
             }
         }
 
-        public static List<Object> getPurchaseAnimalStock()
+        private static List<Object> getPurchaseAnimalStock()
         {
             //string locationName = ((AnimalHouse)Game1.currentLocation).Name;
             string locationName = ((AnimalHouse)Game1.currentLocation).getBuilding().buildingType;

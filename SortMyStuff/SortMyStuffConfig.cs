@@ -2,7 +2,7 @@
 
 namespace SortMyStuff
 {
-    public class SortMyStuffConfig : Config
+    internal class SortMyStuffConfig : Config
     {
         public string keybind = "G";
         public string chests;

@@ -40,7 +40,7 @@ namespace Replanter
         private HashSet<int> neverSellLookup;
 
         // The mod's configuration file.
-        public static ReplanterConfig config;
+        private static ReplanterConfig config;
 
         // Whether to disregard all cost mechanisms, or to enforce them.
         private bool free;
@@ -90,7 +90,7 @@ namespace Replanter
         #region Messages and Dialogue
 
         // Content manager for loading dialogs, etc.
-        public LocalizedContentManager content;
+        private LocalizedContentManager content;
 
         // An indexed list of all messages from the dialog.xna file
         private Dictionary<string, string> allmessages;
@@ -974,7 +974,7 @@ namespace Replanter
         /**
          * Gets a random message from a specific list.
          */
-        public string getRandomMessage(Dictionary<int, string> messageStore)
+        private string getRandomMessage(Dictionary<int, string> messageStore)
         {
             Log.INFO("returning random message from : " + messageStore.Count);
 
@@ -991,7 +991,7 @@ namespace Replanter
         /**
          * Loads the dialog.xnb file and sets up each of the dialog lookup files.
          */
-        public void readInMessages()
+        private void readInMessages()
         {
             //Dictionary<int, string> objects = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
             try

@@ -1,6 +1,6 @@
 ﻿namespace Replanter
 {
-    public class ReplanterStats
+    internal class ReplanterStats
     {
         public int cropsHarvested { get; set; }
         public int runningSeedCost { get; set; }

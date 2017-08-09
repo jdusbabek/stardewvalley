@@ -2,7 +2,7 @@
 
 namespace StardewLib
 {
-    public class IConfig : Config
+    internal class IConfig : Config
     {
         public string whoChecks { get; set; }
 

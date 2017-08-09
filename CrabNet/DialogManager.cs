@@ -5,7 +5,7 @@ using StardewValley;
 
 namespace CrabNet
 {
-    public class DialogManager
+    internal class DialogManager
     {
         public static CrabNetConfig config;
 

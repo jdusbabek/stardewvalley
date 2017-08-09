@@ -7,10 +7,10 @@ using Object = StardewValley.Object;
 
 namespace StardewLib
 {
-    public class ChestManager
+    internal class ChestManager
     {
-        public static ChestDef defaultChest;
-        public static Dictionary<int, ChestDef> chests;
+        private static ChestDef defaultChest;
+        private static Dictionary<int, ChestDef> chests;
 
         public static void parseChests(string chestString)
         {
@@ -25,14 +25,14 @@ namespace StardewLib
                 {
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
-                    chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // A farm house chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
-                    chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
             }
@@ -49,14 +49,14 @@ namespace StardewLib
                 {
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
-                    chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // Another location.
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
-                    chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
             }
@@ -73,26 +73,26 @@ namespace StardewLib
                 {
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
-                    chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // Another location.
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
-                    chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
             }
         }
 
-        public static ChestDef getChestDef(int itemId)
+        private static ChestDef getChestDef(int itemId)
         {
             ChestDef def = null;
-            chests.TryGetValue(itemId, out def);
+            ChestManager.chests.TryGetValue(itemId, out def);
 
             if (def == null)
-                return defaultChest;
+                return ChestManager.defaultChest;
             else
                 return def;
         }
@@ -100,19 +100,19 @@ namespace StardewLib
 
         public static void setDefault(Vector2 v)
         {
-            defaultChest = new ChestDef((int)v.X, (int)v.Y);
+            ChestManager.defaultChest = new ChestDef((int)v.X, (int)v.Y);
         }
 
 
         public static Object getDefaultChest()
         {
-            return getChest(-999999);
+            return ChestManager.getChest(-999999);
         }
 
 
         public static Object getChest(int itemId)
         {
-            ChestDef def = getChestDef(itemId);
+            ChestDef def = ChestManager.getChestDef(itemId);
             if (def == null)
                 return null;
 
@@ -121,7 +121,7 @@ namespace StardewLib
             if (loc == null)
                 return null;
 
-            StardewValley.Object chest = null;
+            Object chest;
             loc.objects.TryGetValue(def.vector, out chest);
 
             if (chest == null || !(chest is Chest))

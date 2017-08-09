@@ -2,7 +2,7 @@
 
 namespace ExtremePetting
 {
-    public class AnimalSitterConfig : IConfig
+    internal class AnimalSitterConfig : IConfig
     {
         public string keybind { get; set; }
         public bool growUpEnabled { get; set; }

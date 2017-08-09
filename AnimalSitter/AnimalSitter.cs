@@ -17,7 +17,6 @@ namespace ExtremePetting
 {
     public class AnimalSitter : Mod
     {
-
         private static Keys petKey;
 
         // Whether to use dark magic to age the animals to maturity when visiting the animals.
@@ -67,9 +66,8 @@ namespace ExtremePetting
 
         // How many days the farmer has not been able to afford to pay the laborer.
         private int shortDays;
-
-
-        public static AnimalSitterConfig config;
+        
+        private static AnimalSitterConfig config;
 
         public override void Entry(params object[] objects)
         {

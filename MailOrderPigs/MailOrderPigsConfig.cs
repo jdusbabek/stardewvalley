@@ -1,9 +1,8 @@
 ﻿using StardewModdingAPI;
 
-
 namespace MailOrderPigs
 {
-    public class MailOrderPigsConfig : Config
+    internal class MailOrderPigsConfig : Config
     {
         public string keybind { get; set; }
         public bool allowOvercrowding { get; set; }
