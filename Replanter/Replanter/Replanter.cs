@@ -14,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using xTile.Dimensions;
-
+using SFarmer = StardewValley.Farmer;
 
 namespace Replanter
 {
@@ -167,8 +167,8 @@ namespace Replanter
             if (Game1.currentLocation == null
                 || (Game1.player == null
                 || Game1.hasLoadedGame == false)
-                || (((Farmer)Game1.player).UsingTool
-                || !((Farmer)Game1.player).CanMove
+                || ((Game1.player).UsingTool
+                || !(Game1.player).CanMove
                 || (Game1.activeClickableMenu != null
                 || Game1.CurrentEvent != null))
                 || Game1.gameMode != 3)
@@ -234,7 +234,7 @@ namespace Replanter
         private void performAction()
         {
             Farm farm = Game1.getFarm();
-            Farmer farmer = Game1.player;
+            SFarmer farmer = Game1.player;
 
             ReplanterStats stats = new ReplanterStats();
 
@@ -584,7 +584,7 @@ namespace Replanter
         }
 
 
-        private void handleSunflower(Farmer farmer, ReplanterStats stats, int quality, int tileX = 0, int tileY = 0)
+        private void handleSunflower(SFarmer farmer, ReplanterStats stats, int quality, int tileX = 0, int tileY = 0)
         {
             if (sellAfterHarvest)
             {
@@ -830,7 +830,7 @@ namespace Replanter
         /**
          * Sells the crops, and adds them to the inventory if they are on the never-sell list.
          */
-        private bool sellCrops(Farmer farmer, StardewValley.Object obj, ReplanterStats stats)
+        private bool sellCrops(SFarmer farmer, StardewValley.Object obj, ReplanterStats stats)
         {
             if (neverSell(obj.parentSheetIndex))
             {
@@ -877,7 +877,7 @@ namespace Replanter
         /**
          * Attempts to add the crop to the farmer's inventory.  If the crop is on the always sell list, it is sold instead.
          */
-        private bool addItemToInventory(StardewValley.Object obj, Farmer farmer, Farm farm, ReplanterStats stats)
+        private bool addItemToInventory(StardewValley.Object obj, SFarmer farmer, Farm farm, ReplanterStats stats)
         {
             if (alwaysSell(obj.parentSheetIndex))
             {

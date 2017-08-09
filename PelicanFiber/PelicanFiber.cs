@@ -62,8 +62,8 @@ namespace PelicanFiber
             if (Game1.currentLocation == null
                 || (Game1.player == null
                 || Game1.hasLoadedGame == false)
-                || (((Farmer)Game1.player).UsingTool
-                || !((Farmer)Game1.player).CanMove
+                || ((Game1.player).UsingTool
+                || !(Game1.player).CanMove
                 || (Game1.activeClickableMenu != null
                 || Game1.CurrentEvent != null))
                 || Game1.gameMode != 3)

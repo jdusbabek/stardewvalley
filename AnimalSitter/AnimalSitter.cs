@@ -19,6 +19,7 @@ using StardewLib;
 using Log = StardewLib.Log;
 using Object = StardewValley.Object;
 using System.Reflection;
+using SFarmer = StardewValley.Farmer;
 
 namespace ExtremePetting
 {
@@ -150,8 +151,8 @@ namespace ExtremePetting
             if (Game1.currentLocation == null
                 || (Game1.player == null
                 || Game1.hasLoadedGame == false)
-                || (((Farmer)Game1.player).UsingTool
-                || !((Farmer)Game1.player).CanMove
+                || ((Game1.player).UsingTool
+                || !(Game1.player).CanMove
                 || (Game1.activeClickableMenu != null
                 || Game1.CurrentEvent != null))
                 || Game1.gameMode != 3) {
@@ -179,7 +180,7 @@ namespace ExtremePetting
 
         private void iterateOverAnimals()
         {
-            Farmer farmer = Game1.player;
+            SFarmer farmer = Game1.player;
             Farm farm = Game1.getFarm();
             AnimalTasks stats = new AnimalTasks();
 
@@ -301,7 +302,7 @@ namespace ExtremePetting
         private void harvestTruffles(AnimalTasks stats)
         {
             Farm farm = Game1.getFarm();
-            Farmer farmer = Game1.player;
+            SFarmer farmer = Game1.player;
 
             List<Vector2> itemsToRemove = new List<Vector2>();
 
@@ -357,7 +358,7 @@ namespace ExtremePetting
         private void harvestCoops(AnimalTasks stats)
         {
             Farm farm = Game1.getFarm();
-            Farmer farmer = Game1.player;
+            SFarmer farmer = Game1.player;
 
             foreach (Building building in farm.buildings)
             {
@@ -397,7 +398,7 @@ namespace ExtremePetting
         }
 
 
-        private bool addItemToInventory(Object obj, Farmer farmer, Farm farm, AnimalTasks stats)
+        private bool addItemToInventory(Object obj, SFarmer farmer, Farm farm, AnimalTasks stats)
         {
             bool wasAdded = false;
 
@@ -575,20 +576,6 @@ namespace ExtremePetting
                 }
             }
             
-        }
-
-
-        private void warpAnimalSitterToPlayer()
-        {
-            NPC character = Game1.getCharacterFromName("Shane");
-            GameLocation returnLocation = character.currentLocation;
-            Vector2 returnTile = character.getTileLocation();
-            Game1.warpCharacter(character, "Farm", new Vector2((float)Game1.player.getAdjacentTiles().First().X, (float)Game1.player.getAdjacentTiles().First().Y), false, false);
-            character.stopWithoutChangingFrame();
-            character.facePlayer(Game1.player);
-            character.CurrentDialogue.Push(new Dialogue("I'm through taking care of the animals.  The charge is XXXg.$h#", character));
-            Game1.drawDialogue(character);
-            Game1.warpCharacter(character, returnLocation.Name, returnTile, false, true);
         }
 
         private List<FarmAnimal> getAllFarmAnimals()

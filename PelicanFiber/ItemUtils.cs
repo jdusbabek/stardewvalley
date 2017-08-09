@@ -25,6 +25,7 @@ using StardewValley;
 using StardewModdingAPI;
 using StardewLib;
 using Log = StardewLib.Log;
+using SFarmer = StardewValley.Farmer;
 
 namespace PelicanFiber
 {
@@ -401,7 +402,7 @@ namespace PelicanFiber
         }
 
 
-        public static Dictionary<Item, int[]> getFishShopStock(Farmer who, bool unfiltered = false)
+        public static Dictionary<Item, int[]> getFishShopStock(SFarmer who, bool unfiltered = false)
         {
             Dictionary<Item, int[]> dictionary = new Dictionary<Item, int[]>();
             dictionary.Add((Item)new Object(219, 1, false, -1, 0), new int[2]

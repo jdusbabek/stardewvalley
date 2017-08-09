@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using xTile.Dimensions;
+using SFarmer = StardewValley.Farmer;
 
 namespace CrabNet
 {
@@ -153,8 +154,8 @@ namespace CrabNet
             if (Game1.currentLocation == null
                 || (Game1.player == null
                 || Game1.hasLoadedGame == false)
-                || (((Farmer)Game1.player).UsingTool
-                || !((Farmer)Game1.player).CanMove
+                || ((Game1.player).UsingTool
+                || !(Game1.player).CanMove
                 || (Game1.activeClickableMenu != null
                 || Game1.CurrentEvent != null))
                 || Game1.gameMode != 3)
@@ -292,7 +293,7 @@ namespace CrabNet
 
 
 
-        public bool checkForAction(Farmer farmer, CrabPot pot, CrabNetStats stats)
+        public bool checkForAction(SFarmer farmer, CrabPot pot, CrabNetStats stats)
         {
             if (!canAfford(farmer, this.costPerCheck, stats))
                 return false;
@@ -324,7 +325,7 @@ namespace CrabNet
         }
 
 
-        public bool performObjectDropInAction(StardewValley.Object dropIn, Farmer farmer, CrabPot pot)
+        public bool performObjectDropInAction(StardewValley.Object dropIn, SFarmer farmer, CrabPot pot)
         {
             if (pot.bait != null || farmer.professions.Contains(11))
                 return false;
@@ -335,7 +336,7 @@ namespace CrabNet
         }
 
 
-        private bool addItemToInventory(StardewValley.Object obj, Farmer farmer, Farm farm)
+        private bool addItemToInventory(StardewValley.Object obj, SFarmer farmer, Farm farm)
         {
             bool wasAdded = false;
 
@@ -432,7 +433,7 @@ namespace CrabNet
         }
 
 
-        private bool canAfford(Farmer farmer, int amount, CrabNetStats stats)
+        private bool canAfford(SFarmer farmer, int amount, CrabNetStats stats)
         {
             // Calculate the running cost (need config passed for that) and determine if additional puts you over.
             return (amount + stats.runningTotal) <= farmer.Money;

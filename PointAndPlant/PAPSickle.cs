@@ -4,7 +4,7 @@ using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System.Collections.Generic;
-
+using SFarmer = StardewValley.Farmer;
 
 public class PAPSickle : MeleeWeapon
 {
@@ -15,7 +15,7 @@ public class PAPSickle : MeleeWeapon
         this.radius = radius;
     }
 
-    public void DoDamage(GameLocation location, int x, int y, int facingDirection, int power, Farmer who)
+    public void DoDamage(GameLocation location, int x, int y, int facingDirection, int power, SFarmer who)
     {
         this.isOnSpecial = false;
 

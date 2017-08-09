@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using xTile.Dimensions;
+using SFarmer = StardewValley.Farmer;
 
 namespace PointAndPlant
 {
@@ -216,8 +217,8 @@ namespace PointAndPlant
             if (Game1.currentLocation == null 
                 || (Game1.player == null 
                 || Game1.hasLoadedGame == false) 
-                || (((Farmer)Game1.player).UsingTool 
-                || !((Farmer)Game1.player).CanMove 
+                || ((Game1.player).UsingTool 
+                || !(Game1.player).CanMove 
                 || (Game1.activeClickableMenu != null 
                 || Game1.CurrentEvent != null)) 
                 || Game1.gameMode != 3)
@@ -337,7 +338,7 @@ namespace PointAndPlant
         {
             //Log.Info((object)("[Point-and-Plant] Plow "));
 
-            Farmer plr = Game1.player;
+            SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             if (plr.currentLocation.name.Equals("Farm") || plr.currentLocation.name.Contains("Greenhouse"))
@@ -436,7 +437,7 @@ namespace PointAndPlant
         {
             //Log.Info((object)("[Point-and-Plant] Plant "));
 
-            Farmer plr = Game1.player;
+            SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             int min = this.plantRadius * -1;
@@ -498,7 +499,7 @@ namespace PointAndPlant
         private void plantGrass()
         {
 
-            Farmer plr = Game1.player;
+            SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             int min = this.plantRadius * -1;
@@ -547,7 +548,7 @@ namespace PointAndPlant
 
         private void chopTrees()
         {
-            Farmer plr = Game1.player;
+            SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             if (PointAndPlant.phantomAxe == null)
@@ -591,7 +592,7 @@ namespace PointAndPlant
 
         private void breakRocks()
         {
-            Farmer plr = Game1.player;
+            SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             if (PointAndPlant.phantomPick == null)
@@ -639,7 +640,7 @@ namespace PointAndPlant
         {
             //Log.Info((object)("[Point-and-Plant] Grow "));
 
-            Farmer plr = Game1.player;
+            SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             int min = this.growRadius * -1;
@@ -682,7 +683,7 @@ namespace PointAndPlant
         {
             //Log.Info((object)("[Point-and-Plant] Harvest "));
 
-            Farmer plr = Game1.player;
+            SFarmer plr = Game1.player;
             GameLocation currentLocation = (GameLocation)Game1.currentLocation;
             StardewValley.Object @object = (StardewValley.Object)null;
             TerrainFeature terrainFeature = (TerrainFeature)null;
@@ -698,7 +699,7 @@ namespace PointAndPlant
                     {
                         if (((HoeDirt)terrainFeature).crop != null && (((Crop)((HoeDirt)terrainFeature).crop).harvestMethod == 1 && ((HoeDirt)terrainFeature).readyForHarvest() || ((Crop)((HoeDirt)terrainFeature).crop).dead))
                         {
-                            PointAndPlant.papSickle.DoDamage(currentLocation, this.mouseX, this.mouseY, ((Character)Game1.player).getFacingDirection(), 0, (Farmer)Game1.player);
+                            PointAndPlant.papSickle.DoDamage(currentLocation, this.mouseX, this.mouseY, ((Character)Game1.player).getFacingDirection(), 0, Game1.player);
                         }
                         else if (((HoeDirt)terrainFeature).crop != null && (((Crop)((HoeDirt)terrainFeature).crop).harvestMethod != 1 && ((HoeDirt)terrainFeature).readyForHarvest() ))
                         {
@@ -770,18 +771,18 @@ namespace PointAndPlant
             {
                 if (this.buildingTiles == null)
                     this.buildingTiles = ((ContentManager)Game1.content).Load<Texture2D>("LooseSprites\\buildingPlacementTiles");
-                if ((!Extensions.IsKeyDown(PointAndPlant.grassKey) && 
-                    !Extensions.IsKeyDown(PointAndPlant.plowKey) && 
-                    !Extensions.IsKeyDown(PointAndPlant.plantKey) && 
-                    !Extensions.IsKeyDown(PointAndPlant.growKey) && 
-                    !Extensions.IsKeyDown(PointAndPlant.harvestKey)) || 
-                    Game1.currentLocation == null || 
-                    (Game1.player == null || 
-                    Game1.hasLoadedGame == false) || 
-                    (((Farmer)Game1.player).UsingTool || 
-                    !((Farmer)Game1.player).CanMove || 
-                    (Game1.activeClickableMenu != null || 
-                    Game1.CurrentEvent != null)) || 
+                if ((!Extensions.IsKeyDown(PointAndPlant.grassKey) &&
+                    !Extensions.IsKeyDown(PointAndPlant.plowKey) &&
+                    !Extensions.IsKeyDown(PointAndPlant.plantKey) &&
+                    !Extensions.IsKeyDown(PointAndPlant.growKey) &&
+                    !Extensions.IsKeyDown(PointAndPlant.harvestKey)) ||
+                    Game1.currentLocation == null ||
+                    (Game1.player == null ||
+                    Game1.hasLoadedGame == false) ||
+                    ((Game1.player).UsingTool ||
+                    !(Game1.player).CanMove ||
+                    (Game1.activeClickableMenu != null ||
+                    Game1.CurrentEvent != null)) ||
                     Game1.gameMode != 3)
                     return;
 
@@ -794,12 +795,12 @@ namespace PointAndPlant
 
                 if (Extensions.IsKeyDown(PointAndPlant.plowKey))
                 {
-                    foreach (Vector2 vector2 in this.tilesAffected(PointAndPlant.vector, 0, (Farmer)Game1.player))
+                    foreach (Vector2 vector2 in this.tilesAffected(PointAndPlant.vector, 0, (SFarmer)Game1.player))
                         ((SpriteBatch)Game1.spriteBatch).Draw(this.buildingTiles, Game1.GlobalToLocal((xTile.Dimensions.Rectangle)Game1.viewport, vector2 * (float)Game1.tileSize), new Microsoft.Xna.Framework.Rectangle?(Game1.getSourceRectForStandardTileSheet(buildingTiles, 0, -1, -1)), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
                 }
                 else if (Extensions.IsKeyDown(PointAndPlant.grassKey))
                 {
-                    foreach (Vector2 vector2 in this.tilesAffectedGrass(PointAndPlant.vector, (Farmer)Game1.player))
+                    foreach (Vector2 vector2 in this.tilesAffectedGrass(PointAndPlant.vector, (SFarmer)Game1.player))
                         ((SpriteBatch)Game1.spriteBatch).Draw(this.buildingTiles, Game1.GlobalToLocal((xTile.Dimensions.Rectangle)Game1.viewport, vector2 * (float)Game1.tileSize), new Microsoft.Xna.Framework.Rectangle?(Game1.getSourceRectForStandardTileSheet(buildingTiles, 0, -1, -1)), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
                 }
             }
@@ -815,7 +816,7 @@ namespace PointAndPlant
         }
 
 
-        protected List<Vector2> tilesAffected(Vector2 tileLocation, int power, Farmer who)
+        protected List<Vector2> tilesAffected(Vector2 tileLocation, int power, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 
@@ -843,7 +844,7 @@ namespace PointAndPlant
             return tiles;
         }
 
-        protected List<Vector2> tilesAffectedTree(Vector2 tileLocation, Farmer who)
+        protected List<Vector2> tilesAffectedTree(Vector2 tileLocation, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 
@@ -860,7 +861,7 @@ namespace PointAndPlant
             return tiles;
         }
 
-        protected List<Vector2> tilesAffectedRock(Vector2 tileLocation, Farmer who)
+        protected List<Vector2> tilesAffectedRock(Vector2 tileLocation, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 
@@ -877,7 +878,7 @@ namespace PointAndPlant
             return tiles;
         }
 
-        protected List<Vector2> tilesAffectedGrass(Vector2 tileLocation, Farmer who)
+        protected List<Vector2> tilesAffectedGrass(Vector2 tileLocation, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 
