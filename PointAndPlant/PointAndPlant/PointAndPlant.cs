@@ -771,11 +771,14 @@ namespace PointAndPlant
             {
                 if (this.buildingTiles == null)
                     this.buildingTiles = ((ContentManager)Game1.content).Load<Texture2D>("LooseSprites\\buildingPlacementTiles");
-                if ((!Extensions.IsKeyDown(PointAndPlant.grassKey) &&
-                    !Extensions.IsKeyDown(PointAndPlant.plowKey) &&
-                    !Extensions.IsKeyDown(PointAndPlant.plantKey) &&
-                    !Extensions.IsKeyDown(PointAndPlant.growKey) &&
-                    !Extensions.IsKeyDown(PointAndPlant.harvestKey)) ||
+
+                KeyboardState keyboard = Keyboard.GetState();
+
+                if ((!keyboard.IsKeyDown(PointAndPlant.grassKey) &&
+                    !keyboard.IsKeyDown(PointAndPlant.plowKey) &&
+                    !keyboard.IsKeyDown(PointAndPlant.plantKey) &&
+                    !keyboard.IsKeyDown(PointAndPlant.growKey) &&
+                    !keyboard.IsKeyDown(PointAndPlant.harvestKey)) ||
                     Game1.currentLocation == null ||
                     (Game1.player == null ||
                     Game1.hasLoadedGame == false) ||
@@ -793,12 +796,12 @@ namespace PointAndPlant
                 this.tileY = this.mouseY / Game1.tileSize;
                 PointAndPlant.vector = new Vector2((float)this.tileX, (float)this.tileY);
 
-                if (Extensions.IsKeyDown(PointAndPlant.plowKey))
+                if (keyboard.IsKeyDown(PointAndPlant.plowKey))
                 {
                     foreach (Vector2 vector2 in this.tilesAffected(PointAndPlant.vector, 0, (SFarmer)Game1.player))
                         ((SpriteBatch)Game1.spriteBatch).Draw(this.buildingTiles, Game1.GlobalToLocal((xTile.Dimensions.Rectangle)Game1.viewport, vector2 * (float)Game1.tileSize), new Microsoft.Xna.Framework.Rectangle?(Game1.getSourceRectForStandardTileSheet(buildingTiles, 0, -1, -1)), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
                 }
-                else if (Extensions.IsKeyDown(PointAndPlant.grassKey))
+                else if (keyboard.IsKeyDown(PointAndPlant.grassKey))
                 {
                     foreach (Vector2 vector2 in this.tilesAffectedGrass(PointAndPlant.vector, (SFarmer)Game1.player))
                         ((SpriteBatch)Game1.spriteBatch).Draw(this.buildingTiles, Game1.GlobalToLocal((xTile.Dimensions.Rectangle)Game1.viewport, vector2 * (float)Game1.tileSize), new Microsoft.Xna.Framework.Rectangle?(Game1.getSourceRectForStandardTileSheet(buildingTiles, 0, -1, -1)), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
