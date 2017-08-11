@@ -65,7 +65,7 @@ namespace PointAndPlant
 
         private void onLoaded(object sender, EventArgs e)
         {
-            PointAndPlant.config = new PAPConfig().InitializeConfig(this.BaseConfigPath);
+            PointAndPlant.config = this.Helper.ReadConfig<PAPConfig>();
 
             this.plowEnabled = config.plowEnabled;
             this.plantEnabled = config.plantEnabled;

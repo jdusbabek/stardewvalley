@@ -28,7 +28,7 @@ namespace PelicanFiber
 
         private void onLoaded(object sender, EventArgs e)
         {
-            PelicanFiber.config = new PelicanFiberConfig().InitializeConfig(this.BaseConfigPath);
+            PelicanFiber.config = this.Helper.ReadConfig<PelicanFiberConfig>();
 
             if (!Enum.TryParse(config.keybind, true, out PelicanFiber.menuKey))
             {

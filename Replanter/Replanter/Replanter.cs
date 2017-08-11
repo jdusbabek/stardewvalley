@@ -131,7 +131,7 @@ namespace Replanter
 
         private void onLoaded(object sender, EventArgs e)
         {
-            Replanter.config = new ReplanterConfig().InitializeConfig(this.BaseConfigPath);
+            Replanter.config = this.Helper.ReadConfig<ReplanterConfig>();
 
             // Loads and validates the configuration settings.
             importConfiguration();

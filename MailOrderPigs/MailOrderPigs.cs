@@ -29,7 +29,7 @@ namespace MailOrderPigs
         {
             try
             {
-                MailOrderPigs.config = new MailOrderPigsConfig().InitializeConfig(this.BaseConfigPath);
+                MailOrderPigs.config = this.Helper.ReadConfig<MailOrderPigsConfig>();
 
                 if (!Enum.TryParse(config.keybind, true, out MailOrderPigs.menuKey))
                 {

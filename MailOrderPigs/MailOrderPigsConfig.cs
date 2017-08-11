@@ -1,21 +1,9 @@
-﻿using StardewModdingAPI;
-
-namespace MailOrderPigs
+﻿namespace MailOrderPigs
 {
-    internal class MailOrderPigsConfig : Config
+    internal class MailOrderPigsConfig
     {
-        public string keybind { get; set; }
+        public string keybind { get; set; } = "PageUp";
         public bool allowOvercrowding { get; set; }
         public bool enableLogging { get; set; }
-
-        public override T GenerateDefaultConfig<T>()
-        {
-            keybind = "PageUp";
-            allowOvercrowding = false;
-            enableLogging = false;
-
-            return this as T;
-        }
-
     }
 }

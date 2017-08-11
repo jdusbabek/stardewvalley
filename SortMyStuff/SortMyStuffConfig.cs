@@ -1,18 +1,8 @@
-﻿using StardewModdingAPI;
-
-namespace SortMyStuff
+﻿namespace SortMyStuff
 {
-    internal class SortMyStuffConfig : Config
+    internal class SortMyStuffConfig
     {
         public string keybind = "G";
-        public string chests;
-
-        public override T GenerateDefaultConfig<T>()
-        {
-            keybind = "G";
-            chests = "";
-
-            return this as T;
-        }
+        public string chests = "";
     }
 }

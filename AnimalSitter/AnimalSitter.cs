@@ -78,7 +78,7 @@ namespace ExtremePetting
 
         private void onLoaded(object sender, EventArgs e)
         {
-            AnimalSitter.config = new AnimalSitterConfig().InitializeConfig(this.BaseConfigPath);
+            AnimalSitter.config = this.Helper.ReadConfig<AnimalSitterConfig>();
 
             importConfiguration();
 
@@ -112,7 +112,7 @@ namespace ExtremePetting
             this.maxFullnessEnabled = AnimalSitter.config.maxFullnessEnabled;
             this.harvestEnabled = AnimalSitter.config.harvestEnabled;
             this.loggingEnabled = AnimalSitter.config.verboseLogging;
-            this.checker = AnimalSitter.config.whoChecks;
+            this.checker = AnimalSitter.config.WhoChecks;
             this.messagesEnabled = AnimalSitter.config.enableMessages;
             this.takeTrufflesFromPigs = AnimalSitter.config.takeTrufflesFromPigs;
             this.chestCoords = AnimalSitter.config.chestCoords;

@@ -30,11 +30,11 @@ namespace StardewLib
                 retVal = retVal.Replace(("%%" + field.Name + "%%"), field.GetValue(stats).ToString());
             }
 
-            retVal = retVal.Replace("%%checker%%", config.whoChecks);
+            retVal = retVal.Replace("%%checker%%", config.WhoChecks);
             if (Game1.player.isMarried())
                 retVal = retVal.Replace("%%spouse%%", Game1.player.getSpouse().getName());
             else
-                retVal = retVal.Replace("%%spouse%%", config.whoChecks);
+                retVal = retVal.Replace("%%spouse%%", config.WhoChecks);
 
             return retVal;
         }
@@ -70,7 +70,7 @@ namespace StardewLib
 
             if (identifier.Equals("smalltalk"))
             {
-                Dictionary<int, string> characterDialog = DialogueManager.readDialogue(config.whoChecks);
+                Dictionary<int, string> characterDialog = DialogueManager.readDialogue(config.WhoChecks);
 
                 if (characterDialog.Count > 0)
                 {

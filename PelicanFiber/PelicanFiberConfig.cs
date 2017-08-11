@@ -1,22 +1,11 @@
-﻿using StardewModdingAPI;
-
-namespace PelicanFiber
+﻿namespace PelicanFiber
 {
-    internal class PelicanFiberConfig : Config
+    internal class PelicanFiberConfig
     {
-        public string keybind { get; set; }
+        public string keybind { get; set; } = "PageDown";
 
         public bool internetFilter { get; set; }
 
         public bool giveAchievements { get; set; }
-
-        public override T GenerateDefaultConfig<T>()
-        {
-            keybind = "PageDown";
-            internetFilter = false;
-            giveAchievements = false;
-
-            return this as T;
-        }
     }
 }

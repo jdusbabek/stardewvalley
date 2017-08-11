@@ -29,7 +29,7 @@ namespace SortMyStuff
         {
             try
             {
-                SortMyStuff.config = new SortMyStuffConfig().InitializeConfig(this.BaseConfigPath);
+                SortMyStuff.config = this.Helper.ReadConfig<SortMyStuffConfig>();
 
                 if (!Enum.TryParse(config.keybind, true, out SortMyStuff.actionKey))
                 {

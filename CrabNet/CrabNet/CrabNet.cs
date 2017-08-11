@@ -96,7 +96,7 @@ namespace CrabNet
 
         private void onLoaded(object sender, EventArgs e)
         {
-            config = ConfigExtensions.InitializeConfig(new CrabNetConfig(), this.BaseConfigPath);
+            config = this.Helper.ReadConfig<CrabNetConfig>();
 
             if (!Enum.TryParse(config.keybind, true, out CrabNet.actionKey))
             {
