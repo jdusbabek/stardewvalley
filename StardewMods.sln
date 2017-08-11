@@ -26,7 +26,9 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = ".Common", "Common\.Common.s
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Common\Common.projitems*{1486ba17-0204-4e87-b646-a08809cf25de}*SharedItemsImports = 4
 		Common\Common.projitems*{46135a33-d821-4982-9333-619cc1194f98}*SharedItemsImports = 4
+		Common\Common.projitems*{5a4fa155-ecf4-4c38-909e-7e982599794a}*SharedItemsImports = 4
 		Common\Common.projitems*{678661ce-d642-4778-aa29-ced9c2be59a1}*SharedItemsImports = 4
 		Common\Common.projitems*{b2cb2cdf-445e-4d3c-8ba4-d9ba5e80196e}*SharedItemsImports = 4
 		Common\Common.projitems*{edc6b19b-a212-4692-8318-992a16d4dd44}*SharedItemsImports = 13

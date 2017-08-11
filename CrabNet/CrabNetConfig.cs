@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewLib;
 
 namespace CrabNet
 {
-    internal class CrabNetConfig
+    internal class CrabNetConfig : IConfig
     {
         // The hot key that performs this action.
         public string keybind { get; set; } = "H";
@@ -26,7 +27,7 @@ namespace CrabNet
         public int preferredBait { get; set; } = 685;
 
         // The name of the person who is performing the checks.  'spouse' and character names wil result in interaction.  Setting it to anything else will display that sting in all messages.
-        public string whoChecks { get; set; } = "spouse";
+        public string WhoChecks { get; set; } = "spouse";
 
         // Whether to display HUD messages and dialog.  Not to be confused with the logging setting.
         public bool enableMessages { get; set; } = true;

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using StardewLib;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Objects;
+using Log = StardewModdingAPI.Log;
 using SFarmer = StardewValley.Farmer;
 
 namespace CrabNet
@@ -87,7 +89,7 @@ namespace CrabNet
         // The configuration object.  Not used per-se, only to populate the local variables.
         private CrabNetConfig Config;
 
-        private DialogManager DialogueManager;
+        private DialogueManager DialogueManager;
 
 
         /*********
@@ -99,7 +101,7 @@ namespace CrabNet
         public override void Entry(params object[] objects)
         {
             this.Config = this.Helper.ReadConfig<CrabNetConfig>();
-            this.DialogueManager = new DialogManager(this.Config);
+            this.DialogueManager = new DialogueManager(this.Config, Game1.content.ServiceProvider, Game1.content.RootDirectory, new StardewLib.Log(false));
 
             PlayerEvents.LoadedGame += onLoaded;
             ControlEvents.KeyReleased += onKeyReleased;
@@ -130,7 +132,7 @@ namespace CrabNet
             costPerCheck = Math.Max(0, this.Config.costPerCheck);
             costPerEmpty = Math.Max(0, this.Config.costPerEmpty);
             free = this.Config.free;
-            checker = this.Config.whoChecks;
+            checker = this.Config.WhoChecks;
             enableMessages = this.Config.enableMessages;
             chestCoords = this.Config.chestCoords;
             bypassInventory = this.Config.bypassInventory;
@@ -439,18 +441,18 @@ namespace CrabNet
             {
                 if (Game1.player.isMarried())
                 {
-                    message += this.DialogueManager.PerformReplacement(dialog[1], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[1], stats, this.Config);
                     //message += Game1.player.getSpouse().getName() + " has emptied and baited " + stats.numChecked + " crab pots.";
                 }
                 else
                 {
-                    message += this.DialogueManager.PerformReplacement(dialog[2], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[2], stats, this.Config);
                     //message += "Your fishing assistant emptied and baited " + stats.numChecked + " crab pots. ";
                 }
 
                 if (totalCost > 0 && !free)
                 {
-                    message += this.DialogueManager.PerformReplacement(dialog[3], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[3], stats, this.Config);
                     //message += "Cost was " + totalCost + "g.";
                 }
 
@@ -464,30 +466,30 @@ namespace CrabNet
                 {
                     //this.isCheckerCharacter = true;
 
-                    message += this.DialogueManager.PerformReplacement(getRandomMessage(greetings), stats);
-                    message += " " + this.DialogueManager.PerformReplacement(dialog[4], stats);
+                    message += this.DialogueManager.PerformReplacement(getRandomMessage(greetings), stats, this.Config);
+                    message += " " + this.DialogueManager.PerformReplacement(dialog[4], stats, this.Config);
                     //message += "Hi @. I serviced " + stats.numChecked + " crab pots.";
 
                     if (!free)
                     {
                         //message += " The charge is " + totalCost + "g.";
-                        this.DialogueManager.PerformReplacement(dialog[5], stats);
+                        this.DialogueManager.PerformReplacement(dialog[5], stats, this.Config);
 
                         if (stats.hasUnfinishedBusiness())
                         {
                             if (inventoryAndChestFull)
                             {
-                                message += this.DialogueManager.PerformReplacement(getRandomMessage(inventoryMessages), stats);
+                                message += this.DialogueManager.PerformReplacement(getRandomMessage(inventoryMessages), stats, this.Config);
                             }
                             else
                             {
                                 if (allowFreebies)
                                 {
-                                    message += this.DialogueManager.PerformReplacement(getRandomMessage(freebieMessages), stats);
+                                    message += this.DialogueManager.PerformReplacement(getRandomMessage(freebieMessages), stats, this.Config);
                                 }
                                 else
                                 {
-                                    message += " " + this.DialogueManager.PerformReplacement(getRandomMessage(unfinishedMessages), stats);
+                                    message += " " + this.DialogueManager.PerformReplacement(getRandomMessage(unfinishedMessages), stats, this.Config);
                                 }
                             }
                         }
@@ -501,12 +503,12 @@ namespace CrabNet
                         //    message += " " + getRandomMessage(unfinishedMessages);
                         //}
 
-                        message += this.DialogueManager.PerformReplacement(getRandomMessage(smalltalk), stats);
+                        message += this.DialogueManager.PerformReplacement(getRandomMessage(smalltalk), stats, this.Config);
                         message += "#$e#";
                     }
                     else
                     {
-                        message += this.DialogueManager.PerformReplacement(getRandomMessage(smalltalk), stats);
+                        message += this.DialogueManager.PerformReplacement(getRandomMessage(smalltalk), stats, this.Config);
                         message += "#$e#";
                     }
 
@@ -515,7 +517,7 @@ namespace CrabNet
                 }
                 else
                 {
-                    message += this.DialogueManager.PerformReplacement(dialog[6], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[6], stats, this.Config);
                     HUDMessage msg = new HUDMessage(message);
                     Game1.addHUDMessage(msg);
                 }

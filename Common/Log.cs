@@ -18,19 +18,19 @@
 
         public void INFO(object o)
         {
-            if (enabled)
+            if (this.enabled)
                 StardewModdingAPI.Log.Info(o);
         }
 
         public void ERROR(object o)
         {
-            if (enabled)
+            if (this.enabled)
                 StardewModdingAPI.Log.Error(o);
         }
 
         public void DEBUG(object o)
         {
-            if (enabled)
+            if (this.enabled)
                 StardewModdingAPI.Log.Debug(o);
         }
 

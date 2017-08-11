@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewLib;
 
 namespace Replanter
 {
-    internal class ReplanterConfig
+    internal class ReplanterConfig : IConfig
     {
         public string keybind { get; set; } = "J";
 
@@ -12,7 +13,7 @@ namespace Replanter
 
         public int seedDiscount { get; set; }
 
-        public string whoChecks { get; set; } = "spouse";
+        public string WhoChecks { get; set; } = "spouse";
 
         public bool enableMessages { get; set; } = true;
 

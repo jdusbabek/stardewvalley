@@ -34,8 +34,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="chest\ChestDef.cs" />
-    <Compile Include="chest\ChestManager.cs" />
     <Compile Include="ItemContainer.cs" />
     <Compile Include="SortMyStuff.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

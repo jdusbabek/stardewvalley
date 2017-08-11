@@ -1,9 +1,9 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
 
 namespace StardewLib
 {
     internal interface IStats
     {
-        FieldInfo[] getFieldList();
+        IDictionary<string, object> GetFields();
     }
 }

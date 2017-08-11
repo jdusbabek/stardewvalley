@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using StardewLib;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
+using Log = StardewLib.Log;
 using SFarmer = StardewValley.Farmer;
 
 namespace Replanter
@@ -124,7 +126,7 @@ namespace Replanter
         // A flag for when an item could not be deposited into either the inventory or the chest.
         private bool inventoryAndChestFull;
 
-        private DialogManager DialogueManager;
+        private DialogueManager DialogueManager;
         private Log Log;
 
 
@@ -137,10 +139,9 @@ namespace Replanter
             this.config = this.Helper.ReadConfig<ReplanterConfig>();
             this.Log = new Log(config.enableLogging);
             importConfiguration();
-            
 
             // load dialogue manager
-            this.DialogueManager = new DialogManager(this.config, this.Log);
+            this.DialogueManager = new DialogueManager(this.config, Game1.content.ServiceProvider, Game1.content.RootDirectory, this.Log);
 
             // hook events
             PlayerEvents.LoadedGame += onLoaded;
@@ -214,7 +215,7 @@ namespace Replanter
 
             this.costPerHarvestedCrop = config.costPerCropHarvested;
             this.sellAfterHarvest = config.sellHarvestedCropsImmediately;
-            this.checker = config.whoChecks;
+            this.checker = config.WhoChecks;
             this.waterCrops = config.waterCrops;
 
             this.bypassInventory = config.bypassInventory;
@@ -613,16 +614,16 @@ namespace Replanter
             {
                 if (Game1.player.isMarried())
                 {
-                    message += this.DialogueManager.performReplacement(dialog[1], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[1], stats, this.config);
                 }
                 else
                 {
-                    message += this.DialogueManager.performReplacement(dialog[2], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[2], stats, this.config);
                 }
 
                 if (((stats.runningSeedCost + stats.farmhandCost) > 0) && !free)
                 {
-                    message += this.DialogueManager.performReplacement(dialog[3], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[3], stats, this.config);
                 }
 
                 HUDMessage msg = new HUDMessage(message);
@@ -633,29 +634,29 @@ namespace Replanter
                 NPC character = Game1.getCharacterFromName(checker);
                 if (character != null)
                 {
-                    message += this.DialogueManager.performReplacement(getRandomMessage(greetings), stats);
+                    message += this.DialogueManager.PerformReplacement(getRandomMessage(greetings), stats, this.config);
 
                     if (stats.cropsHarvested > 0)
                     {
-                        message += this.DialogueManager.performReplacement(dialog[4], stats);
+                        message += this.DialogueManager.PerformReplacement(dialog[4], stats, this.config);
                     }
                     else
                     {
-                        message += this.DialogueManager.performReplacement(dialog[7], stats);
+                        message += this.DialogueManager.PerformReplacement(dialog[7], stats, this.config);
                     }
 
                     if ((stats.cropsHarvested != stats.totalCrops) && !sellAfterHarvest)
                     {
-                        message += this.DialogueManager.performReplacement(dialog[8], stats);
-                        message += this.DialogueManager.performReplacement(getRandomMessage(inventoryMessages), stats);
+                        message += this.DialogueManager.PerformReplacement(dialog[8], stats, this.config);
+                        message += this.DialogueManager.PerformReplacement(getRandomMessage(inventoryMessages), stats, this.config);
                     }
 
                     if (!free && stats.cropsHarvested > 0)
                     {
-                        message += this.DialogueManager.performReplacement(dialog[5], stats);
+                        message += this.DialogueManager.PerformReplacement(dialog[5], stats, this.config);
 
                         if (stats.runningSeedCost > 0)
-                            message += this.DialogueManager.performReplacement(dialog[9], stats);
+                            message += this.DialogueManager.PerformReplacement(dialog[9], stats, this.config);
                         else
                             message += ".";
                     }
@@ -664,20 +665,20 @@ namespace Replanter
                     {
                         if (character.name == "Pierre")
                         {
-                            message += this.DialogueManager.performReplacement(dialog[10], stats);
+                            message += this.DialogueManager.PerformReplacement(dialog[10], stats, this.config);
                         }
                         else
                         {
-                            message += this.DialogueManager.performReplacement(dialog[11], stats);
+                            message += this.DialogueManager.PerformReplacement(dialog[11], stats, this.config);
                         }
                     }
 
                     if (stats.cropsWatered > 0)
                     {
-                        message += this.DialogueManager.performReplacement(dialog[12], stats);
+                        message += this.DialogueManager.PerformReplacement(dialog[12], stats, this.config);
                     }
 
-                    message += this.DialogueManager.performReplacement(getRandomMessage(smalltalk), stats);
+                    message += this.DialogueManager.PerformReplacement(getRandomMessage(smalltalk), stats, this.config);
                     message += "#$e#";
 
                     character.CurrentDialogue.Push(new Dialogue(message, character));
@@ -685,7 +686,7 @@ namespace Replanter
                 }
                 else
                 {
-                    message += this.DialogueManager.performReplacement(dialog[13], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[13], stats, this.config);
                     HUDMessage msg = new HUDMessage(message);
                     Game1.addHUDMessage(msg);
                 }
@@ -991,14 +992,14 @@ namespace Replanter
             {
                 allmessages = content.Load<Dictionary<string, string>>("dialog");
 
-                dialog = this.DialogueManager.getDialog("Xdialog", allmessages);
-                greetings = this.DialogueManager.getDialog("greeting", allmessages);
-                //unfinishedMessages = this.DialogueManager.getDialog("unfinishedmoney", allmessages);
-                freebieMessages = this.DialogueManager.getDialog("freebies", allmessages);
-                inventoryMessages = this.DialogueManager.getDialog("unfinishedinventory", allmessages);
-                smalltalk = this.DialogueManager.getDialog("smalltalk", allmessages);
+                dialog = this.DialogueManager.GetDialog("Xdialog", allmessages);
+                greetings = this.DialogueManager.GetDialog("greeting", allmessages);
+                //unfinishedMessages = this.DialogueManager.GetDialog("unfinishedmoney", allmessages);
+                freebieMessages = this.DialogueManager.GetDialog("freebies", allmessages);
+                inventoryMessages = this.DialogueManager.GetDialog("unfinishedinventory", allmessages);
+                smalltalk = this.DialogueManager.GetDialog("smalltalk", allmessages);
 
-                Dictionary<int, string> characterDialog = this.DialogueManager.getDialog(this.checker, allmessages);
+                Dictionary<int, string> characterDialog = this.DialogueManager.GetDialog(this.checker, allmessages);
 
                 if (characterDialog.Count > 0)
                 {

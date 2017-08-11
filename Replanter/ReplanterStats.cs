@@ -1,6 +1,10 @@
-﻿namespace Replanter
+﻿using System.Collections.Generic;
+using System.Linq;
+using StardewLib;
+
+namespace Replanter
 {
-    internal class ReplanterStats
+    internal class ReplanterStats : IStats
     {
         /*********
         ** Accessors
@@ -13,8 +17,8 @@
         public int cropsWatered { get; set; }
         public int plantsCleared { get; set; }
 
-        public int totalCost { get { return farmhandCost + runningSeedCost; } set {; } }
-        public int numUnharvested { get { return totalCrops - cropsHarvested; } set {; } }
+        public int totalCost { get { return farmhandCost + runningSeedCost; } }
+        public int numUnharvested { get { return totalCrops - cropsHarvested; } }
 
 
         /*********
@@ -27,5 +31,13 @@
             return (1 < 0);
         }
 
+        public IDictionary<string, object> GetFields()
+        {
+            IDictionary<string, object> fields = typeof(ReplanterStats)
+                .GetProperties()
+                .ToDictionary(p => p.Name, p => p.GetValue(this));
+            fields["runningLaborCost"] = this.farmhandCost;
+            return fields;
+        }
     }
 }

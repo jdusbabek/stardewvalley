@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using StardewLib;
 
 namespace ExtremePetting
@@ -8,16 +11,16 @@ namespace ExtremePetting
         /*********
         ** Accessors
         *********/
-        public int animalsPet = 0;
-        public int trufflesHarvested = 0;
-        public int productsHarvested = 0;
-        public int aged = 0;
-        public int fed = 0;
-        public int maxHappiness = 0;
-        public int maxFriendship = 0;
+        public int animalsPet { get; set; } = 0;
+        public int trufflesHarvested { get; set; } = 0;
+        public int productsHarvested { get; set; } = 0;
+        public int aged { get; set; } = 0;
+        public int fed { get; set; } = 0;
+        public int maxHappiness { get; set; } = 0;
+        public int maxFriendship { get; set; } = 0;
 
-        public int numActions = 0;
-        public int totalCost = 0;
+        public int numActions { get; set; } = 0;
+        public int totalCost { get; set; } = 0;
 
 
         /*********
@@ -33,9 +36,11 @@ namespace ExtremePetting
             return (((animalsPet + aged + fed + maxHappiness + maxFriendship) == 0) && getTaskCount() > 0);
         }
 
-        FieldInfo[] IStats.getFieldList()
+        public IDictionary<string, object> GetFields()
         {
-            return typeof(AnimalTasks).GetFields();
+            return typeof(AnimalTasks)
+                .GetProperties()
+                .ToDictionary(p => p.Name, p => p.GetValue(this));
         }
     }
 }

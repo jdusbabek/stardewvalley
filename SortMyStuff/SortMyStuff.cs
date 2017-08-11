@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using StardewLib;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Objects;
-using ChestDef = SortMyStuff.chest.ChestDef;
-using ChestManager = SortMyStuff.chest.ChestManager;
 using Log = StardewLib.Log;
 using Object = StardewValley.Object;
 
@@ -51,7 +50,7 @@ namespace SortMyStuff
                     Log.force_INFO("[SMS] Error parsing key binding. Defaulted to G");
                 }
 
-                ChestManager.parseChests(config.chests);
+                ChestManager.ParseChests(config.chests);
             }
             catch (Exception ex)
             {
@@ -82,14 +81,14 @@ namespace SortMyStuff
                         if (item != null)
                         {
                             Log.INFO(item.Name + "/" + item.parentSheetIndex);
-                            Object c = ChestManager.getChest(item.parentSheetIndex);
+                            Object c = ChestManager.GetChest(item.parentSheetIndex);
                             if (c != null && c is Chest)
                             {
                                 ic.Add(new ItemContainer((Chest)c, item));
                             }
                             else
                             {
-                                c = (Chest)ChestManager.getChest(item.category);
+                                c = (Chest)ChestManager.GetChest(item.category);
                                 if (c != null && c is Chest)
                                 {
                                     ic.Add(new ItemContainer((Chest)c, item));

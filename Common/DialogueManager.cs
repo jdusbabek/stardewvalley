@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using StardewValley;
 
 namespace StardewLib
@@ -14,7 +13,7 @@ namespace StardewLib
         private readonly Dictionary<string, Dictionary<int, string>> DialogueLookups = new Dictionary<string, Dictionary<int, string>>();
         private readonly IConfig Config;
         private readonly Random Random = new Random();
-        private Log Log;
+        private readonly Log Log;
         private Dictionary<string, string> AllMessages = new Dictionary<string, string>();
 
 
@@ -28,15 +27,20 @@ namespace StardewLib
             this.Log = log;
         }
 
+        /**
+         * Performs a string replacement of certain variables inside text strings, allowing
+         * the dialog to use elements of the actual situation.
+         */
         public string PerformReplacement(string message, IStats stats, IConfig config)
         {
-            String retVal = message;
+            string retVal = message;
 
-            FieldInfo[] fields = stats.getFieldList();
+            IDictionary<string, object> fields = stats.GetFields();
 
-            foreach (FieldInfo field in fields)
+
+            foreach (var field in fields)
             {
-                retVal = retVal.Replace(("%%" + field.Name + "%%"), field.GetValue(stats).ToString());
+                retVal = retVal.Replace(("%%" + field.Key + "%%"), field.Value.ToString());
             }
 
             retVal = retVal.Replace("%%checker%%", config.WhoChecks);
@@ -117,6 +121,39 @@ namespace StardewLib
             }
         }
 
+        /**
+         * Gets a set of dialogue strings that are identified in the source document by an index
+         * in the format indexGroup_number.  The numbers should be unique within each index group.
+         */
+        public Dictionary<int, string> GetDialog(string identifier, Dictionary<string, string> source)
+        {
+            Dictionary<int, string> result = new Dictionary<int, string>();
+
+            foreach (KeyValuePair<string, string> msgPair in source)
+            {
+                if (msgPair.Key.Contains("_"))
+                {
+                    string[] nameid = msgPair.Key.Split('_');
+                    if (nameid.Length == 2)
+                    {
+                        if (nameid[0] == identifier)
+                        {
+                            result.Add(Convert.ToInt32(nameid[1]), msgPair.Value);
+                        }
+                    }
+                    else
+                    {
+                        this.Log.force_ERROR("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
+                    }
+                }
+                else
+                {
+                    this.Log.force_ERROR("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
+                }
+            }
+
+            return result;
+        }
 
         /*********
         ** Private methods
