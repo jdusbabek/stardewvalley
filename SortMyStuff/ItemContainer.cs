@@ -5,9 +5,16 @@ namespace SortMyStuff
 {
     internal class ItemContainer
     {
-        public Chest chest;
-        public Item item;
+        /*********
+        ** Accessors
+        *********/
+        public Chest chest { get; set; }
+        public Item item { get; set; }
 
+
+        /*********
+        ** Public methods
+        *********/
         public ItemContainer() { }
 
         public ItemContainer(Chest c, Item i)

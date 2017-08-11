@@ -12,56 +12,70 @@ namespace StardewValley.Menus
 {
     internal class PelicanFiberMenu : IClickableMenu
     {
-        public static int menuHeight = 1216;
-        public static int menuWidth = 1354;
+        /*********
+        ** Properties
+        *********/
+        private static int menuHeight = 1216;
+        private static int menuWidth = 1354;
         private List<ClickableTextureComponent> linksToVisit = new List<ClickableTextureComponent>();
         private ClickableTextureComponent okButton;
         private ClickableTextureComponent hovered;
-
         private bool unfiltered = true;
-
         private TextBox textBox;
         private TextBoxEvent e;
-
         private float scale = 1.0f;
 
-        public PelicanFiberMenu(float scale = 1.0f, bool unfiltered = true)
+        private Texture2D Websites;
+        private ItemUtils ItemUtils;
+        private Action ReopenMainMenu;
+        private bool GiveAchievements;
+
+
+        /*********
+        ** Public methods
+        *********/
+        public PelicanFiberMenu(Texture2D websites, ItemUtils itemUtils, bool giveAchievements, Action reopenMainMenu, float scale = 1.0f, bool unfiltered = true)
           : base(Game1.viewport.Width / 2 - (int)(PelicanFiberMenu.menuWidth * scale) / 2 - IClickableMenu.borderWidth * 2,
                 Game1.viewport.Height / 2 - (int)(PelicanFiberMenu.menuHeight * scale) / 2 - IClickableMenu.borderWidth * 2,
                 (int)(PelicanFiberMenu.menuWidth * scale) + IClickableMenu.borderWidth * 2,
                 (int)(PelicanFiberMenu.menuHeight * scale) + IClickableMenu.borderWidth, true)
         {
+            this.Websites = websites;
+            this.ItemUtils = itemUtils;
+            this.GiveAchievements = giveAchievements;
+            this.ReopenMainMenu = reopenMainMenu;
+
             this.height += Game1.tileSize;
             this.scale = scale;
             this.unfiltered = unfiltered;
 
 
-            ClickableTextureComponent c1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(128f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(0, 0, 256, 128), scale);
-            ClickableTextureComponent c1_1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 313 * scale), (int)(256f * scale), (int)(128f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(0, 128, 256, 128), scale);
-            ClickableTextureComponent c2 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(128f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(257, 0, 256, 128), scale);
-            ClickableTextureComponent c2_1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 313 * scale), (int)(256f * scale), (int)(128f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(257, 128, 256, 128), scale);
-            ClickableTextureComponent c3 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(513, 0, 256, 256), scale);
-            ClickableTextureComponent c4 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(128f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(769, 0, 256, 128), scale);
-            ClickableTextureComponent c4_1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 313 * scale), (int)(256f * scale), (int)(128f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(769, 128, 256, 128), scale);
-            ClickableTextureComponent c17 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(1025, 0, 256, 256), scale);
+            ClickableTextureComponent c1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(128f * scale)), this.Websites, new Rectangle(0, 0, 256, 128), scale);
+            ClickableTextureComponent c1_1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 313 * scale), (int)(256f * scale), (int)(128f * scale)), this.Websites, new Rectangle(0, 128, 256, 128), scale);
+            ClickableTextureComponent c2 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(128f * scale)), this.Websites, new Rectangle(257, 0, 256, 128), scale);
+            ClickableTextureComponent c2_1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 313 * scale), (int)(256f * scale), (int)(128f * scale)), this.Websites, new Rectangle(257, 128, 256, 128), scale);
+            ClickableTextureComponent c3 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(513, 0, 256, 256), scale);
+            ClickableTextureComponent c4 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(128f * scale)), this.Websites, new Rectangle(769, 0, 256, 128), scale);
+            ClickableTextureComponent c4_1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 313 * scale), (int)(256f * scale), (int)(128f * scale)), this.Websites, new Rectangle(769, 128, 256, 128), scale);
+            ClickableTextureComponent c17 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(1025, 0, 256, 256), scale);
 
-            ClickableTextureComponent c5 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(0, 257, 256, 256), scale);
-            ClickableTextureComponent c6 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(257, 257, 256, 256), scale);
-            ClickableTextureComponent c7 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(513, 257, 256, 256), scale);
-            ClickableTextureComponent c8 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(769, 257, 256, 256), scale);
-            ClickableTextureComponent c18 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(1025, 257, 256, 256), scale);
+            ClickableTextureComponent c5 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(0, 257, 256, 256), scale);
+            ClickableTextureComponent c6 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(257, 257, 256, 256), scale);
+            ClickableTextureComponent c7 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(513, 257, 256, 256), scale);
+            ClickableTextureComponent c8 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(769, 257, 256, 256), scale);
+            ClickableTextureComponent c18 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(1025, 257, 256, 256), scale);
 
-            ClickableTextureComponent c9 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(0, 513, 256, 256), scale);
-            ClickableTextureComponent c10 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(257, 513, 256, 256), scale);
-            ClickableTextureComponent c11 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(513, 513, 256, 256), scale);
-            ClickableTextureComponent c12 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(769, 513, 256, 256), scale);
-            ClickableTextureComponent c19 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(1025, 513, 256, 256), scale);
+            ClickableTextureComponent c9 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(0, 513, 256, 256), scale);
+            ClickableTextureComponent c10 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(257, 513, 256, 256), scale);
+            ClickableTextureComponent c11 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(513, 513, 256, 256), scale);
+            ClickableTextureComponent c12 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(769, 513, 256, 256), scale);
+            ClickableTextureComponent c19 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(1025, 513, 256, 256), scale);
 
-            ClickableTextureComponent c13 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(0, 769, 256, 256), scale);
-            ClickableTextureComponent c14 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(257, 769, 256, 256), scale);
-            ClickableTextureComponent c15 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(513, 769, 256, 256), scale);
-            ClickableTextureComponent c16 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(769, 769, 256, 256), scale);
-            ClickableTextureComponent c20 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), PelicanFiber.PelicanFiber.websites, new Rectangle(1025, 769, 256, 256), scale);
+            ClickableTextureComponent c13 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(0, 769, 256, 256), scale);
+            ClickableTextureComponent c14 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(257, 769, 256, 256), scale);
+            ClickableTextureComponent c15 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(513, 769, 256, 256), scale);
+            ClickableTextureComponent c16 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(769, 769, 256, 256), scale);
+            ClickableTextureComponent c20 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), this.Websites, new Rectangle(1025, 769, 256, 256), scale);
 
             this.upperRightCloseButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width - 9 * Game1.pixelZoom, this.yPositionOnScreen - Game1.pixelZoom * 2, 12 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(337, 494, 12, 12), Game1.pixelZoom);
 
@@ -122,7 +136,6 @@ namespace StardewValley.Menus
             this.textBox.Height = Game1.tileSize * 3;
         }
 
-
         public override void receiveRightClick(int x, int y, bool playSound = true)
         {
 
@@ -140,101 +153,101 @@ namespace StardewValley.Menus
                     {
                         case "blacksmith":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(ItemUtils.getBlacksmithStock(unfiltered), 0, null, "Blacksmith");
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, ItemUtils.getBlacksmithStock(unfiltered), 0, null, "Blacksmith");
                             break;
                         case "blacksmith_tools":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(Utility.getBlacksmithUpgradeStock(Game1.player));
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getBlacksmithUpgradeStock(Game1.player));
                             break;
                         case "animals":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(Utility.getAnimalShopStock(), 0, null, "AnimalShop");
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getAnimalShopStock(), 0, null, "AnimalShop");
                             break;
                         case "animal_supplies":
                             this.exitThisMenu();
                             if (Game1.currentLocation is AnimalHouse)
-                                Game1.activeClickableMenu = new MailOrderPigMenu(ItemUtils.getPurchaseAnimalStock());
+                                Game1.activeClickableMenu = new MailOrderPigMenu(this.ItemUtils.getPurchaseAnimalStock(), this.ItemUtils, this.ReopenMainMenu);
                             else
-                                Game1.activeClickableMenu = new BuyAnimalMenu(Utility.getPurchaseAnimalStock());
+                                Game1.activeClickableMenu = new BuyAnimalMenu(Utility.getPurchaseAnimalStock(), this.ReopenMainMenu);
                             break;
                         case "produce":
                             this.exitThisMenu();
                             //Game1.activeClickableMenu = new ShopMenu2(Utility.getShopStock(true), 0, null, "SeedShop");
-                            Game1.activeClickableMenu = new ShopMenu2(ItemUtils.getShopStock(true, unfiltered), 0, null, "SeedShop");
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, ItemUtils.getShopStock(true, unfiltered), 0, null, "SeedShop");
                             break;
                         case "carpentry":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(ItemUtils.getCarpenterStock(unfiltered), 0, null, "ScienceHouse");
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, ItemUtils.getCarpenterStock(unfiltered), 0, null, "ScienceHouse");
                             break;
                         case "carpentry_build":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ConstructionMenu();
+                            Game1.activeClickableMenu = new ConstructionMenu(false, this.ReopenMainMenu);
                             break;
                         case "fish":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(ItemUtils.getFishShopStock(Game1.player, unfiltered), 0, null, "FishShop");
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, ItemUtils.getFishShopStock(Game1.player, unfiltered), 0, null, "FishShop");
                             break;
                         case "dining":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(ItemUtils.getSaloonStock(unfiltered));
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, ItemUtils.getSaloonStock(unfiltered));
                             break;
                         case "imports":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(Utility.getTravelingMerchantStock());
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getTravelingMerchantStock());
                             break;
                         case "adventure":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(getAdventureShopStock(), 0, null, "AdventureGuild");
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, getAdventureShopStock(), 0, null, "AdventureGuild");
                             break;
                         case "hats":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(Utility.getHatStock());
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getHatStock());
                             break;
                         case "hospital":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(Utility.getHospitalStock());
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getHospitalStock());
                             break;
                         case "wizard":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ConstructionMenu(true);
+                            Game1.activeClickableMenu = new ConstructionMenu(true, this.ReopenMainMenu);
                             break;
                         case "dwarf":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(Utility.getDwarfShopStock());
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getDwarfShopStock());
                             break;
                         case "krobus":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2((Game1.getLocationFromName("Sewer") as Sewer).getShadowShopStock(), 0, "Krobus");
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, (Game1.getLocationFromName("Sewer") as Sewer).getShadowShopStock(), 0, "Krobus");
                             break;
                         case "qi":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(Utility.getQiShopStock());
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getQiShopStock());
                             break;
                         case "joja":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(Utility.getJojaStock());
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getJojaStock());
                             break;
                         case "sandy":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(ItemUtils.getShopStock(false, unfiltered));
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, ItemUtils.getShopStock(false, unfiltered));
                             break;
                         case "sauce":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(ItemUtils.getRecipesStock(unfiltered), 0, null, "Recipe");
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, ItemUtils.getRecipesStock(unfiltered), 0, null, "Recipe");
                             break;
                         case "bundle":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(ItemUtils.getJunimoStock(), 0, null, "Junimo");
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, ItemUtils.getJunimoStock(), 0, null, "Junimo");
                             //ItemUtils.finishAllBundles();
                             //Game1.showRedMessage("Error 404: Not found. www.thejunimoconspiracy.com");
                             break;
                         case "artifact":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(ItemUtils.getMineralsAndArtifactsStock(unfiltered), 0, null, "Artifact");
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, ItemUtils.getMineralsAndArtifactsStock(unfiltered), 0, null, "Artifact");
                             break;
                         case "leah":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(ItemUtils.getLeahShopStock(unfiltered), 0, "Leah", "LeahCottage");
+                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, ItemUtils.getLeahShopStock(unfiltered), 0, "Leah", "LeahCottage");
                             break;
                     }
                 }
@@ -355,6 +368,9 @@ namespace StardewValley.Menus
         }
 
 
+        /*********
+        ** Private methods
+        *********/
         private Dictionary<Item, int[]> getAdventureShopStock()
         {
             Dictionary<Item, int[]> itemPriceAndStock = new Dictionary<Item, int[]>();
@@ -431,6 +447,5 @@ namespace StardewValley.Menus
 
             return itemPriceAndStock;
         }
-
     }
 }

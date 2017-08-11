@@ -13,7 +13,23 @@ namespace PelicanFiber
 {
     internal class ItemUtils
     {
-        public static List<Item> getShopStock(bool Pierres, bool unfiltered = false)
+        /*********
+        ** Properties
+        *********/
+        private readonly LocalizedContentManager ContentManager;
+        private readonly Log Log;
+
+
+        /*********
+        ** Public methods
+        *********/
+        public ItemUtils(LocalizedContentManager contentManager, Log log)
+        {
+            this.ContentManager = contentManager;
+            this.Log = log;
+        }
+
+        public List<Item> getShopStock(bool Pierres, bool unfiltered = false)
         {
             List<Item> objList1 = new List<Item>();
             if (Pierres)
@@ -106,7 +122,7 @@ namespace PelicanFiber
         }
 
 
-        public static List<Item> getCarpenterStock(bool unfiltered = false)
+        public List<Item> getCarpenterStock(bool unfiltered = false)
         {
             List<Item> stock = new List<Item>();
             stock.Add(new Object(Vector2.Zero, 388, int.MaxValue));
@@ -124,8 +140,8 @@ namespace PelicanFiber
                 switch (Game1.dayOfMonth % 7)
                 {
                     case 0:
-                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 1296, 1391));
-                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 416, 537));
+                        stock.Add(this.getRandomFurniture(r, stock, 1296, 1391));
+                        stock.Add(this.getRandomFurniture(r, stock, 416, 537));
                         break;
                     case 1:
                         stock.Add(new Furniture(0, Vector2.Zero));
@@ -152,22 +168,22 @@ namespace PelicanFiber
                         stock.Add(new Furniture(1395, Vector2.Zero));
                         break;
                     case 4:
-                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 1296, 1391));
-                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 1296, 1391));
+                        stock.Add(this.getRandomFurniture(r, stock, 1296, 1391));
+                        stock.Add(this.getRandomFurniture(r, stock, 1296, 1391));
                         break;
                     case 5:
-                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 1443, 1450));
-                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 288, 313));
+                        stock.Add(this.getRandomFurniture(r, stock, 1443, 1450));
+                        stock.Add(this.getRandomFurniture(r, stock, 288, 313));
                         break;
                     case 6:
-                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 1565, 1607));
-                        stock.Add(ItemUtils.getRandomFurniture(r, stock, 12, 129));
+                        stock.Add(this.getRandomFurniture(r, stock, 1565, 1607));
+                        stock.Add(this.getRandomFurniture(r, stock, 12, 129));
                         break;
                 }
-                stock.Add(ItemUtils.getRandomFurniture(r, stock));
-                stock.Add(ItemUtils.getRandomFurniture(r, stock));
+                stock.Add(this.getRandomFurniture(r, stock));
+                stock.Add(this.getRandomFurniture(r, stock));
                 while (r.NextDouble() < 0.25)
-                    stock.Add(ItemUtils.getRandomFurniture(r, stock, 1673, 1815));
+                    stock.Add(this.getRandomFurniture(r, stock, 1673, 1815));
                 stock.Add(new Furniture(1402, Vector2.Zero));
                 stock.Add(new TV(1466, Vector2.Zero));
                 stock.Add(new TV(1680, Vector2.Zero));
@@ -265,7 +281,7 @@ namespace PelicanFiber
         }
 
 
-        private static bool isFurnitureOffLimitsForSale(int index)
+        private bool isFurnitureOffLimitsForSale(int index)
         {
             switch (index)
             {
@@ -299,7 +315,7 @@ namespace PelicanFiber
         }
 
 
-        private static List<Item> getAllFurniture()
+        private List<Item> getAllFurniture()
         {
             List<Item> list = new List<Item>();
 
@@ -312,7 +328,7 @@ namespace PelicanFiber
             return list;
         }
 
-        private static Dictionary<Item, int[]> getAllFurnituresForFree()
+        private Dictionary<Item, int[]> getAllFurnituresForFree()
         {
             Dictionary<Item, int[]> dictionary = new Dictionary<Item, int[]>();
             foreach (KeyValuePair<int, string> keyValuePair in Game1.content.Load<Dictionary<int, string>>("Data\\Furniture"))
@@ -328,7 +344,7 @@ namespace PelicanFiber
         }
 
 
-        private static Furniture getRandomFurniture(Random r, List<Item> stock, int lowerIndexBound = 0, int upperIndexBound = 1462)
+        private Furniture getRandomFurniture(Random r, List<Item> stock, int lowerIndexBound = 0, int upperIndexBound = 1462)
         {
             Dictionary<int, string> dictionary = Game1.content.Load<Dictionary<int, string>>("Data\\Furniture");
             int num;
@@ -351,7 +367,7 @@ namespace PelicanFiber
         }
 
 
-        public static Dictionary<Item, int[]> getBlacksmithStock(bool unfiltered = false)
+        public Dictionary<Item, int[]> getBlacksmithStock(bool unfiltered = false)
         {
             if (unfiltered)
             {
@@ -382,7 +398,7 @@ namespace PelicanFiber
         }
 
 
-        public static Dictionary<Item, int[]> getFishShopStock(SFarmer who, bool unfiltered = false)
+        public Dictionary<Item, int[]> getFishShopStock(SFarmer who, bool unfiltered = false)
         {
             Dictionary<Item, int[]> dictionary = new Dictionary<Item, int[]>();
             dictionary.Add(new Object(219, 1), new[]
@@ -484,7 +500,7 @@ namespace PelicanFiber
         }
 
 
-        public static List<Item> getSaloonStock(bool unfiltered = false)
+        public List<Item> getSaloonStock(bool unfiltered = false)
         {
             List<Item> objList = new List<Item>();
             objList.Add(new Object(Vector2.Zero, 346, int.MaxValue));
@@ -527,7 +543,7 @@ namespace PelicanFiber
         }
 
 
-        public static List<Item> getLeahShopStock(bool unfiltered = false)
+        public List<Item> getLeahShopStock(bool unfiltered = false)
         {
             List<Item> stock = new List<Item>();
 
@@ -552,7 +568,7 @@ namespace PelicanFiber
         }
 
 
-        public static List<Item> getRecipesStock(bool unfiltered = false)
+        public List<Item> getRecipesStock(bool unfiltered = false)
         {
             List<Item> stock = new List<Item>();
 
@@ -578,7 +594,7 @@ namespace PelicanFiber
         }
 
 
-        public static List<Item> getMineralsAndArtifactsStock(bool unfiltered = false)
+        public List<Item> getMineralsAndArtifactsStock(bool unfiltered = false)
         {
             List<Item> stock = new List<Item>();
 
@@ -623,7 +639,7 @@ namespace PelicanFiber
         }
 
 
-        public static List<Object> getPurchaseAnimalStock()
+        public List<Object> getPurchaseAnimalStock()
         {
             //string locationName = ((AnimalHouse)Game1.currentLocation).Name;
             string locationName = ((AnimalHouse)Game1.currentLocation).getBuilding().buildingType;
@@ -638,7 +654,7 @@ namespace PelicanFiber
                 new Object(100, 1, false, 8000){ name = "Pig", type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" } };
         }
 
-        public static void finishAllBundles()
+        public void finishAllBundles()
         {
             foreach (KeyValuePair<int, bool[]> bundle in (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).bundles)
             {
@@ -647,14 +663,14 @@ namespace PelicanFiber
             }
         }
 
-        private static Dictionary<int, int> bundleToAreaDictionary;
+        private Dictionary<int, int> bundleToAreaDictionary;
 
-        public static List<Item> getJunimoStock()
+        public List<Item> getJunimoStock()
         {
             List<Item> junimoItems = new List<Item>();
-            Dictionary<int, string> junContent = PelicanFiber.content.Load<Dictionary<int, string>>("bundles");
+            Dictionary<int, string> junContent = this.ContentManager.Load<Dictionary<int, string>>("bundles");
             Dictionary<int, bool[]> bundleInfo = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).bundles;
-            ItemUtils.bundleToAreaDictionary = new Dictionary<int, int>();
+            this.bundleToAreaDictionary = new Dictionary<int, int>();
 
             foreach (KeyValuePair<int, string> kvp in junContent)
             {
@@ -675,7 +691,7 @@ namespace PelicanFiber
                     o.name = name;
                     o.specialVariable = bundleIndex;
 
-                    ItemUtils.bundleToAreaDictionary.Add(bundleIndex, ItemUtils.getAreaNumberFromName(area));
+                    this.bundleToAreaDictionary.Add(bundleIndex, this.getAreaNumberFromName(area));
 
                     foreach (KeyValuePair<int, bool[]> bundle in bundleInfo)
                     {
@@ -702,7 +718,7 @@ namespace PelicanFiber
         }
 
 
-        public static void addBundle(int bundleId)
+        public void addBundle(int bundleId)
         {
             CommunityCenter c = Game1.getLocationFromName("CommunityCenter") as CommunityCenter;
 
@@ -721,7 +737,7 @@ namespace PelicanFiber
 
 
             // Check if the note is there, if not, add it.
-            int area = ItemUtils.bundleToAreaDictionary[bundleId];
+            int area = this.bundleToAreaDictionary[bundleId];
             if (!c.isJunimoNoteAtArea(area))
                 c.addJunimoNote(area);
 
@@ -740,7 +756,7 @@ namespace PelicanFiber
         //(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).addJunimoNote(Convert.ToInt32(strArray[1]));
 
 
-        private static int getAreaNumberFromName(string name)
+        private int getAreaNumberFromName(string name)
         {
             switch (name)
             {

@@ -12,35 +12,44 @@ namespace MailOrderPigs
 {
     public class MailOrderPigs : Mod
     {
-        private static Keys menuKey = Keys.PageUp;
-
-        private static MailOrderPigsConfig config;
+        /*********
+        ** Properties
+        *********/
+        private Keys menuKey = Keys.PageUp;
+        private MailOrderPigsConfig config;
         private bool allowOvercrowding = false;
         private bool enableLogging = false;
+        private Log Log;
 
 
+        /*********
+        ** Public methods
+        *********/
         public override void Entry(params object[] objects)
         {
             PlayerEvents.LoadedGame += onLoaded;
             ControlEvents.KeyReleased += onKeyReleased;
         }
 
+
+        /*********
+        ** Private methods
+        *********/
         private void onLoaded(object sender, EventArgs e)
         {
             try
             {
-                MailOrderPigs.config = this.Helper.ReadConfig<MailOrderPigsConfig>();
+                this.config = this.Helper.ReadConfig<MailOrderPigsConfig>();
+                this.Log = new Log(this.config.enableLogging);
 
-                if (!Enum.TryParse(config.keybind, true, out MailOrderPigs.menuKey))
+                if (!Enum.TryParse(config.keybind, true, out this.menuKey))
                 {
-                    MailOrderPigs.menuKey = Keys.PageUp;
+                    this.menuKey = Keys.PageUp;
                     Log.force_ERROR("[MailOrderPigs] Error parsing key binding. Defaulted to Page Up");
                 }
 
                 this.allowOvercrowding = config.allowOvercrowding;
                 this.enableLogging = config.enableLogging;
-
-                Log.enabled = config.enableLogging;
 
                 Log.force_INFO("[MailOrderPigs] Mod loaded successfully.");
             }
@@ -65,7 +74,7 @@ namespace MailOrderPigs
                 return;
             }
 
-            if (e.KeyPressed == MailOrderPigs.menuKey)
+            if (e.KeyPressed == this.menuKey)
             {
                 Log.INFO("[MailOrderPigs] Attempting to bring up menu.");
                 if (Game1.currentLocation is AnimalHouse)
@@ -80,7 +89,7 @@ namespace MailOrderPigs
                         else
                         {
                             Log.INFO("[MailOrderPigs] Bringing up menu.");
-                            Game1.activeClickableMenu = new MailOrderPigMenu(getPurchaseAnimalStock());
+                            Game1.activeClickableMenu = new MailOrderPigMenu(this.getPurchaseAnimalStock());
                         }
                     }
                     catch (Exception ex)
@@ -95,7 +104,7 @@ namespace MailOrderPigs
             }
         }
 
-        private static List<Object> getPurchaseAnimalStock()
+        private List<Object> getPurchaseAnimalStock()
         {
             //string locationName = ((AnimalHouse)Game1.currentLocation).Name;
             string locationName = ((AnimalHouse)Game1.currentLocation).getBuilding().buildingType;

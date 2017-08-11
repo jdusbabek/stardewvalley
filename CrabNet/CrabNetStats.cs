@@ -2,6 +2,9 @@
 {
     internal class CrabNetStats
     {
+        /*********
+        ** Accessors
+        *********/
         // The total number of crab pots that are placed
         public int numTotal = 0;
 
@@ -36,6 +39,9 @@
         public int runningTotal = 0;
 
 
+        /*********
+        ** Public methods
+        *********/
         // Whether all pots were checked, emptied, and baited.
         public bool hasUnfinishedBusiness()
         {

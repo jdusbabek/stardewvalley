@@ -15,9 +15,18 @@ namespace SortMyStuff
 {
     public class SortMyStuff : Mod
     {
-        private static SortMyStuffConfig config;
-        private static Keys actionKey;
+        /*********
+        ** Properties
+        *********/
+        private SortMyStuffConfig config;
+        private Keys actionKey;
+        private Log Log;
+        private ChestManager ChestManager;
 
+
+        /*********
+        ** Public methods
+        *********/
         public override void Entry(params object[] objects)
         {
             PlayerEvents.LoadedGame += onLoaded;
@@ -25,15 +34,20 @@ namespace SortMyStuff
         }
 
 
+        /*********
+        ** Private methods
+        *********/
         private void onLoaded(object sender, EventArgs e)
         {
             try
             {
-                SortMyStuff.config = this.Helper.ReadConfig<SortMyStuffConfig>();
+                this.config = this.Helper.ReadConfig<SortMyStuffConfig>();
+                this.Log = new Log(false);
+                this.ChestManager = new ChestManager(this.Log);
 
-                if (!Enum.TryParse(config.keybind, true, out SortMyStuff.actionKey))
+                if (!Enum.TryParse(config.keybind, true, out this.actionKey))
                 {
-                    SortMyStuff.actionKey = Keys.G;
+                    this.actionKey = Keys.G;
                     Log.force_INFO("[SMS] Error parsing key binding. Defaulted to G");
                 }
 
@@ -43,7 +57,6 @@ namespace SortMyStuff
             {
                 Log.ERROR(ex.ToString());
             }
-
         }
 
         private void onKeyReleased(object sender, EventArgsKeyPressed e)
@@ -108,9 +121,7 @@ namespace SortMyStuff
                 {
                     Log.ERROR(ex.ToString());
                 }
-
             }
         }
-
     }
 }

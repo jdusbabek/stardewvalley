@@ -9,12 +9,25 @@ namespace StardewLib
 {
     internal class ChestManager
     {
-        private static ChestDef defaultChest;
-        private static Dictionary<int, ChestDef> chests;
+        /*********
+        ** Properties
+        *********/
+        private readonly Log Log;
+        private ChestDef DefaultChest;
+        private Dictionary<int, ChestDef> Chests;
 
-        public static void parseChests(string chestString)
+
+        /*********
+        ** Public methods
+        *********/
+        public ChestManager(Log log)
         {
-            ChestManager.chests = new Dictionary<int, ChestDef>();
+            this.Log = log;
+        }
+
+        public void ParseChests(string chestString)
+        {
+            this.Chests = new Dictionary<int, ChestDef>();
 
             string[] chestDefinitions = chestString.Split('|');
 
@@ -25,22 +38,22 @@ namespace StardewLib
                 {
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
-                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // A farm house chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
-                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
             }
         }
 
-        public static void parseChests(string[] chestList)
+        public void ParseChests(string[] chestList)
         {
-            ChestManager.chests = new Dictionary<int, ChestDef>();
+            this.Chests = new Dictionary<int, ChestDef>();
 
             foreach (string def in chestList)
             {
@@ -49,22 +62,22 @@ namespace StardewLib
                 {
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
-                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // Another location.
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
-                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
             }
         }
 
-        public static void parseChests(List<string> chestList)
+        public void ParseChests(List<string> chestList)
         {
-            ChestManager.chests = new Dictionary<int, ChestDef>();
+            this.Chests = new Dictionary<int, ChestDef>();
 
             foreach (string def in chestList)
             {
@@ -73,46 +86,33 @@ namespace StardewLib
                 {
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
-                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // Another location.
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
-                    ChestManager.chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                     Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
                 }
             }
         }
 
-        private static ChestDef getChestDef(int itemId)
+        public void SetDefault(Vector2 v)
         {
-            ChestDef def = null;
-            ChestManager.chests.TryGetValue(itemId, out def);
-
-            if (def == null)
-                return ChestManager.defaultChest;
-            else
-                return def;
+            this.DefaultChest = new ChestDef((int)v.X, (int)v.Y);
         }
 
 
-        public static void setDefault(Vector2 v)
+        public Object GetDefaultChest()
         {
-            ChestManager.defaultChest = new ChestDef((int)v.X, (int)v.Y);
+            return this.GetChest(-999999);
         }
 
-
-        public static Object getDefaultChest()
+        public Object GetChest(int itemId)
         {
-            return ChestManager.getChest(-999999);
-        }
-
-
-        public static Object getChest(int itemId)
-        {
-            ChestDef def = ChestManager.getChestDef(itemId);
+            ChestDef def = this.GetChestDef(itemId);
             if (def == null)
                 return null;
 
@@ -130,6 +130,21 @@ namespace StardewLib
             }
 
             return chest;
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        private ChestDef GetChestDef(int itemId)
+        {
+            ChestDef def;
+            this.Chests.TryGetValue(itemId, out def);
+
+            if (def == null)
+                return this.DefaultChest;
+            else
+                return def;
         }
     }
 }

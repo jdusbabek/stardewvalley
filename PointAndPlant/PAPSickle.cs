@@ -6,11 +6,21 @@ using SFarmer = StardewValley.Farmer;
 
 internal class PAPSickle : MeleeWeapon
 {
-    int radius = 4;
+    /*********
+    ** Properties
+    *********/
+    private int radius = 4;
+    private Vector2 Vector;
 
-    public PAPSickle(int spriteIndex, int radius) : base(spriteIndex)
+
+    /*********
+    ** Public methods
+    *********/
+    public PAPSickle(int spriteIndex, int radius, Vector2 vector)
+        : base(spriteIndex)
     {
         this.radius = radius;
+        this.Vector = vector;
     }
 
     public void DoDamage(GameLocation location, int x, int y, int facingDirection, int power, SFarmer who)
@@ -31,7 +41,7 @@ internal class PAPSickle : MeleeWeapon
         {
             for (int ny = min; ny <= max; ny++)
             {
-                newvec.Add(PointAndPlant.PointAndPlant.vector + new Vector2(nx, ny));
+                newvec.Add(this.Vector + new Vector2(nx, ny));
             }
         }
 

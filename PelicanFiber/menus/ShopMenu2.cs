@@ -12,6 +12,9 @@ namespace StardewValley.Menus
 {
     internal class ShopMenu2 : IClickableMenu
     {
+        /*********
+        ** Properties
+        *********/
         private string descriptionText = "";
         private string hoverText = "";
         private string boldTitleText = "";
@@ -22,13 +25,13 @@ namespace StardewValley.Menus
         private float sellPercentage = 1f;
         private List<TemporaryAnimatedSprite> animations = new List<TemporaryAnimatedSprite>();
         private int hoverPrice = -1;
-        public const int howManyRecipesFitOnPage = 28;
-        public const int infiniteStock = 2147483647;
-        public const int salePriceIndex = 0;
-        public const int stockIndex = 1;
-        public const int extraTradeItemIndex = 2;
-        public const int itemsPerPage = 4;
-        public const int numberRequiredForExtraItemTrade = 5;
+        private const int howManyRecipesFitOnPage = 28;
+        private const int infiniteStock = 2147483647;
+        private const int salePriceIndex = 0;
+        private const int stockIndex = 1;
+        private const int extraTradeItemIndex = 2;
+        private const int itemsPerPage = 4;
+        private const int numberRequiredForExtraItemTrade = 5;
         private InventoryMenu inventory;
         private Item heldItem;
         private Item hoveredItem;
@@ -44,13 +47,20 @@ namespace StardewValley.Menus
         private ClickableTextureComponent scrollBar;
         private ClickableTextureComponent backButton;
 
-        public NPC portraitPerson;
-        public string potraitPersonDialogue;
+        private NPC portraitPerson;
+        private string potraitPersonDialogue;
         private bool scrolling;
         private String locationName;
 
-        public ShopMenu2(Dictionary<Item, int[]> itemPriceAndStock, int currency = 0, string who = null, String locationName = "")
-          : this(itemPriceAndStock.Keys.ToList(), currency, who, locationName)
+        private readonly Action ShowMainMenu;
+        private readonly ItemUtils ItemUtils;
+        private readonly bool GiveAchievements;
+
+        /*********
+        ** Public methods
+        *********/
+        public ShopMenu2(Action showMainMenu, ItemUtils itemUtils, bool giveAchievements, Dictionary<Item, int[]> itemPriceAndStock, int currency = 0, string who = null, String locationName = "")
+          : this(showMainMenu, itemUtils, giveAchievements, itemPriceAndStock.Keys.ToList(), currency, who, locationName)
         {
             this.locationName = locationName;
             this.itemPriceAndStock = itemPriceAndStock;
@@ -59,9 +69,13 @@ namespace StardewValley.Menus
             this.setUpShopOwner(who);
         }
 
-        public ShopMenu2(List<Item> itemsForSale, int currency = 0, string who = null, string locationName = "")
+        public ShopMenu2(Action showMainMenu, ItemUtils itemUtils, bool giveAchievements, List<Item> itemsForSale, int currency = 0, string who = null, string locationName = "")
           : base(Game1.viewport.Width / 2 - (800 + IClickableMenu.borderWidth * 2) / 2, Game1.viewport.Height / 2 - (600 + IClickableMenu.borderWidth * 2) / 2, 1000 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2, true)
         {
+            this.ShowMainMenu = showMainMenu;
+            this.ItemUtils = itemUtils;
+            this.GiveAchievements = giveAchievements;
+
             this.locationName = locationName;
             this.currency = currency;
             if (Game1.viewport.Width < 1500)
@@ -159,6 +173,374 @@ namespace StardewValley.Menus
             Game1.currentLocation.Name.Equals("SeedShop");
         }
 
+        public override void leftClickHeld(int x, int y)
+        {
+            base.leftClickHeld(x, y);
+            if (!this.scrolling)
+                return;
+            int y1 = this.scrollBar.bounds.Y;
+            this.scrollBar.bounds.Y = Math.Min(this.yPositionOnScreen + this.height - Game1.tileSize - Game1.pixelZoom * 3 - this.scrollBar.bounds.Height, Math.Max(y, this.yPositionOnScreen + this.upArrow.bounds.Height + Game1.pixelZoom * 5));
+            this.currentItemIndex = Math.Min(this.forSale.Count - 4, Math.Max(0, (int)(this.forSale.Count * (double)((y - this.scrollBarRunner.Y) / (float)this.scrollBarRunner.Height))));
+            this.setScrollBarToCurrentIndex();
+            if (y1 == this.scrollBar.bounds.Y)
+                return;
+            Game1.playSound("shiny4");
+        }
+
+        public override void releaseLeftClick(int x, int y)
+        {
+            base.releaseLeftClick(x, y);
+            this.scrolling = false;
+        }
+
+        public override void receiveScrollWheelAction(int direction)
+        {
+            base.receiveScrollWheelAction(direction);
+            if (direction > 0 && this.currentItemIndex > 0)
+            {
+                this.upArrowPressed();
+                Game1.playSound("shiny4");
+            }
+            else
+            {
+                if (direction >= 0 || this.currentItemIndex >= Math.Max(0, this.forSale.Count - 4))
+                    return;
+                this.downArrowPressed();
+                Game1.playSound("shiny4");
+            }
+        }
+
+        public override void receiveLeftClick(int x, int y, bool playSound = true)
+        {
+            base.receiveLeftClick(x, y);
+            if (Game1.activeClickableMenu == null)
+                return;
+            Vector2 clickableComponent = this.inventory.snapToClickableComponent(x, y);
+            if (this.backButton.containsPoint(x, y))
+            {
+                this.backButton.scale = this.backButton.baseScale;
+                backButtonPressed();
+            }
+            else if (this.downArrow.containsPoint(x, y) && this.currentItemIndex < Math.Max(0, this.forSale.Count - 4))
+            {
+                this.downArrowPressed();
+                Game1.playSound("shwip");
+            }
+            else if (this.upArrow.containsPoint(x, y) && this.currentItemIndex > 0)
+            {
+                this.upArrowPressed();
+                Game1.playSound("shwip");
+            }
+            else if (this.scrollBar.containsPoint(x, y))
+                this.scrolling = true;
+            else if (!this.downArrow.containsPoint(x, y) && x > this.xPositionOnScreen + this.width && (x < this.xPositionOnScreen + this.width + Game1.tileSize * 2 && y > this.yPositionOnScreen) && y < this.yPositionOnScreen + this.height)
+            {
+                this.scrolling = true;
+                this.leftClickHeld(x, y);
+                this.releaseLeftClick(x, y);
+            }
+            this.currentItemIndex = Math.Max(0, Math.Min(this.forSale.Count - 4, this.currentItemIndex));
+            if (this.heldItem == null)
+            {
+                Item obj = this.inventory.leftClick(x, y, null, false);
+                if (obj != null)
+                {
+                    this.chargePlayer(Game1.player, this.currency, -((obj is Object ? (int)((obj as Object).sellToStorePrice() * (double)this.sellPercentage) : (int)(obj.salePrice() / 2 * (double)this.sellPercentage)) * obj.Stack));
+                    int num = obj.Stack / 8 + 2;
+                    for (int index = 0; index < num; ++index)
+                    {
+                        this.animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
+                        {
+                            alphaFade = 0.025f,
+                            motion = new Vector2(Game1.random.Next(-3, 4), -4f),
+                            acceleration = new Vector2(0.0f, 0.5f),
+                            delayBeforeAnimationStart = index * 25,
+                            scale = Game1.pixelZoom * 0.5f
+                        });
+                        this.animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
+                        {
+                            scale = Game1.pixelZoom,
+                            alphaFade = 0.025f,
+                            delayBeforeAnimationStart = index * 50,
+                            motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2(this.xPositionOnScreen - Game1.pixelZoom * 9, this.yPositionOnScreen + this.height - this.inventory.height - Game1.pixelZoom * 4), 8f),
+                            acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2(this.xPositionOnScreen - Game1.pixelZoom * 9, this.yPositionOnScreen + this.height - this.inventory.height - Game1.pixelZoom * 4), 0.5f)
+                        });
+                    }
+                    if (obj is Object && (obj as Object).edibility != -300)
+                    {
+                        for (int index = 0; index < obj.Stack; ++index)
+                        {
+                            if (Game1.random.NextDouble() < 0.04)
+                                (Game1.getLocationFromName("SeedShop") as SeedShop).itemsToStartSellingTomorrow.Add(obj.getOne());
+                        }
+                    }
+                    Game1.playSound("sell");
+                    Game1.playSound("purchase");
+                    if (this.inventory.getItemAt(x, y) == null)
+                        this.animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White)
+                        {
+                            motion = new Vector2(0.0f, -0.5f)
+                        });
+                }
+            }
+            else
+                this.heldItem = this.inventory.leftClick(x, y, this.heldItem);
+            for (int index1 = 0; index1 < this.forSaleButtons.Count; ++index1)
+            {
+
+                if (this.currentItemIndex + index1 < this.forSale.Count && this.forSaleButtons[index1].containsPoint(x, y))
+                {
+                    int index2 = this.currentItemIndex + index1;
+                    if (this.forSale[index2] != null)
+                    {
+                        int numberToBuy = Math.Min(Game1.oldKBState.IsKeyDown(Keys.LeftShift) ? Math.Min(Math.Min(5, this.getPlayerCurrencyAmount(Game1.player, this.currency) / Math.Max(1, this.itemPriceAndStock[this.forSale[index2]][0])), Math.Max(1, this.itemPriceAndStock[this.forSale[index2]][1])) : 1, this.forSale[index2].maximumStackSize());
+                        if (numberToBuy == -1)
+                            numberToBuy = 1;
+                        if (numberToBuy > 0 && this.tryToPurchaseItem(this.forSale[index2], this.heldItem, numberToBuy, x, y, index2))
+                        {
+                            this.itemPriceAndStock.Remove(this.forSale[index2]);
+                            this.forSale.RemoveAt(index2);
+                        }
+                        else if (numberToBuy <= 0)
+                        {
+                            Game1.dayTimeMoneyBox.moneyShakeTimer = 1000;
+                            Game1.playSound("cancel");
+                        }
+                    }
+                    this.currentItemIndex = Math.Max(0, Math.Min(this.forSale.Count - 4, this.currentItemIndex));
+                    return;
+                }
+            }
+            if (!this.readyToClose() || x >= this.xPositionOnScreen - Game1.tileSize && y >= this.yPositionOnScreen - Game1.tileSize && (x <= this.xPositionOnScreen + this.width + Game1.tileSize * 2 && y <= this.yPositionOnScreen + this.height + Game1.tileSize))
+                return;
+            this.exitThisMenu();
+        }
+
+        public override bool readyToClose()
+        {
+            if (this.heldItem == null)
+                return this.animations.Count == 0;
+            return false;
+        }
+
+        public override void emergencyShutDown()
+        {
+            base.emergencyShutDown();
+            if (this.heldItem == null)
+                return;
+            Game1.player.addItemToInventoryBool(this.heldItem);
+            Game1.playSound("coin");
+        }
+
+        public override void receiveRightClick(int x, int y, bool playSound = true)
+        {
+            Vector2 clickableComponent = this.inventory.snapToClickableComponent(x, y);
+            if (this.heldItem == null)
+            {
+                Item obj1 = this.inventory.rightClick(x, y, null, false);
+                if (obj1 != null)
+                {
+                    this.chargePlayer(Game1.player, this.currency, -((obj1 is Object ? (int)((obj1 as Object).sellToStorePrice() * (double)this.sellPercentage) : (int)(obj1.salePrice() / 2 * (double)this.sellPercentage)) * obj1.Stack));
+                    Item obj2 = null;
+                    if (Game1.mouseClickPolling > 300)
+                        Game1.playSound("purchaseRepeat");
+                    else
+                        Game1.playSound("purchaseClick");
+                    this.animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * Game1.tileSize, 256, Game1.tileSize, Game1.tileSize), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
+                    {
+                        alphaFade = 0.025f,
+                        motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 12f),
+                        acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 0.5f)
+                    });
+                    if (obj2 is Object && (obj2 as Object).edibility != -300 && Game1.random.NextDouble() < 0.04)
+                        (Game1.getLocationFromName("SeedShop") as SeedShop).itemsToStartSellingTomorrow.Add(obj2.getOne());
+                    if (this.inventory.getItemAt(x, y) == null)
+                    {
+                        Game1.playSound("sell");
+                        this.animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White)
+                        {
+                            motion = new Vector2(0.0f, -0.5f)
+                        });
+                    }
+                }
+            }
+            else
+                this.heldItem = this.inventory.rightClick(x, y, this.heldItem);
+            for (int index1 = 0; index1 < this.forSaleButtons.Count; ++index1)
+            {
+                if (this.currentItemIndex + index1 < this.forSale.Count && this.forSaleButtons[index1].containsPoint(x, y))
+                {
+                    int index2 = this.currentItemIndex + index1;
+                    if (this.forSale[index2] == null)
+                        break;
+                    int numberToBuy = Game1.oldKBState.IsKeyDown(Keys.LeftShift) ? Math.Min(Math.Min(5, this.getPlayerCurrencyAmount(Game1.player, this.currency) / this.itemPriceAndStock[this.forSale[index2]][0]), this.itemPriceAndStock[this.forSale[index2]][1]) : 1;
+                    if (numberToBuy <= 0 || !this.tryToPurchaseItem(this.forSale[index2], this.heldItem, numberToBuy, x, y, index2))
+                        break;
+
+                    this.itemPriceAndStock.Remove(this.forSale[index2]);
+                    this.forSale.RemoveAt(index2);
+                    break;
+                }
+            }
+        }
+
+        public override void performHoverAction(int x, int y)
+        {
+            this.backButton.tryHover(x, y, 1f);
+
+            base.performHoverAction(x, y);
+            this.descriptionText = "";
+            this.hoverText = "";
+            this.hoveredItem = null;
+            this.hoverPrice = -1;
+            this.boldTitleText = "";
+            this.upArrow.tryHover(x, y);
+            this.downArrow.tryHover(x, y);
+            this.scrollBar.tryHover(x, y);
+            if (this.scrolling)
+                return;
+            for (int index = 0; index < this.forSaleButtons.Count; ++index)
+            {
+                if (this.currentItemIndex + index < this.forSale.Count && this.forSaleButtons[index].containsPoint(x, y))
+                {
+                    Item key = this.forSale[this.currentItemIndex + index];
+                    this.hoverText = key.getDescription();
+                    if (key.category == -425)
+                        this.boldTitleText = ((Object)key).name;
+                    else
+                        this.boldTitleText = key.Name;
+                    this.hoverPrice = this.itemPriceAndStock == null || !this.itemPriceAndStock.ContainsKey(key) ? key.salePrice() : this.itemPriceAndStock[key][0];
+                    this.hoveredItem = key;
+                    this.forSaleButtons[index].scale = Math.Min(this.forSaleButtons[index].scale + 0.03f, 1.1f);
+                }
+                else
+                    this.forSaleButtons[index].scale = Math.Max(1f, this.forSaleButtons[index].scale - 0.03f);
+            }
+            if (this.heldItem != null)
+                return;
+            foreach (ClickableComponent c in this.inventory.inventory)
+            {
+                if (c.containsPoint(x, y))
+                {
+                    Item clickableComponent = this.inventory.getItemFromClickableComponent(c);
+                    if (clickableComponent != null && this.highlightItemToSell(clickableComponent))
+                    {
+                        if (clickableComponent.category == -425)
+                            this.hoverText = ((Object)clickableComponent).name + " x " + clickableComponent.Stack;
+                        else
+                            this.hoverText = clickableComponent.Name + " x " + clickableComponent.Stack;
+                        this.hoverPrice = (clickableComponent is Object ? (int)((clickableComponent as Object).sellToStorePrice() * (double)this.sellPercentage) : (int)(clickableComponent.salePrice() / 2 * (double)this.sellPercentage)) * clickableComponent.Stack;
+                    }
+                }
+            }
+        }
+
+        public override void update(GameTime time)
+        {
+            base.update(time);
+            if (this.poof == null || !this.poof.update(time))
+                return;
+            this.poof = null;
+        }
+
+        public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
+        {
+            this.xPositionOnScreen = Game1.viewport.Width / 2 - (800 + IClickableMenu.borderWidth * 2) / 2;
+            this.yPositionOnScreen = Game1.viewport.Height / 2 - (600 + IClickableMenu.borderWidth * 2) / 2;
+            this.width = 1000 + IClickableMenu.borderWidth * 2;
+            this.height = 600 + IClickableMenu.borderWidth * 2;
+            this.initializeUpperRightCloseButton();
+            if (Game1.viewport.Width < 1500)
+                this.xPositionOnScreen = Game1.tileSize / 2;
+            Game1.player.forceCanMove();
+            this.inventory = new InventoryMenu(this.xPositionOnScreen + this.width, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + Game1.tileSize * 5 + Game1.pixelZoom * 10, false, null, this.highlightItemToSell)
+            {
+                showGrayedOutSlots = true
+            };
+            this.inventory.movePosition(-this.inventory.width - Game1.tileSize / 2, 0);
+            int positionOnScreen1 = this.xPositionOnScreen;
+            int borderWidth1 = IClickableMenu.borderWidth;
+            int toClearSideBorder = IClickableMenu.spaceToClearSideBorder;
+            int positionOnScreen2 = this.yPositionOnScreen;
+            int borderWidth2 = IClickableMenu.borderWidth;
+            int toClearTopBorder = IClickableMenu.spaceToClearTopBorder;
+            this.upArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), Game1.pixelZoom);
+            this.downArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + this.height - Game1.tileSize, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), Game1.pixelZoom);
+            this.scrollBar = new ClickableTextureComponent(new Rectangle(this.upArrow.bounds.X + Game1.pixelZoom * 3, this.upArrow.bounds.Y + this.upArrow.bounds.Height + Game1.pixelZoom, 6 * Game1.pixelZoom, 10 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), Game1.pixelZoom);
+            this.scrollBarRunner = new Rectangle(this.scrollBar.bounds.X, this.upArrow.bounds.Y + this.upArrow.bounds.Height + Game1.pixelZoom, this.scrollBar.bounds.Width, this.height - Game1.tileSize - this.upArrow.bounds.Height - Game1.pixelZoom * 7);
+            this.forSaleButtons.Clear();
+            for (int index = 0; index < 4; ++index)
+                this.forSaleButtons.Add(new ClickableComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4 + index * ((this.height - Game1.tileSize * 4) / 4), this.width - Game1.tileSize / 2, (this.height - Game1.tileSize * 4) / 4 + Game1.pixelZoom), string.Concat(index)));
+        }
+
+        public override void draw(SpriteBatch b)
+        {
+            if (!Game1.options.showMenuBackground)
+                b.Draw(Game1.fadeToBlackRect, Game1.graphics.GraphicsDevice.Viewport.Bounds, Color.Black * 0.75f);
+            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), this.xPositionOnScreen + this.width - this.inventory.width - Game1.tileSize / 2 - Game1.pixelZoom * 6, this.yPositionOnScreen + this.height - Game1.tileSize * 4 + Game1.pixelZoom * 10, this.inventory.width + Game1.pixelZoom * 14, this.height - Game1.tileSize * 7 + Game1.pixelZoom * 5, Color.White, Game1.pixelZoom);
+            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height - Game1.tileSize * 4 + Game1.tileSize / 2 + Game1.pixelZoom, Color.White, Game1.pixelZoom);
+            this.drawCurrency(b);
+            for (int index = 0; index < this.forSaleButtons.Count; ++index)
+            {
+                if (this.currentItemIndex + index < this.forSale.Count)
+                {
+                    IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), this.forSaleButtons[index].bounds.X, this.forSaleButtons[index].bounds.Y, this.forSaleButtons[index].bounds.Width, this.forSaleButtons[index].bounds.Height, !this.forSaleButtons[index].containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) || this.scrolling ? Color.White : Color.Wheat, Game1.pixelZoom, false);
+                    b.Draw(Game1.mouseCursors, new Vector2(this.forSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 3, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 6 - Game1.pixelZoom), new Rectangle?(new Rectangle(296, 363, 18, 18)), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1f);
+                    this.forSale[this.currentItemIndex + index].drawInMenu(b, new Vector2(this.forSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 2, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 6), 1f);
+                    if (this.forSale[this.currentItemIndex + index].category == -425)
+                        SpriteText.drawString(b, ((Object)this.forSale[this.currentItemIndex + index]).name, this.forSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7);
+
+                    else
+                        SpriteText.drawString(b, this.forSale[this.currentItemIndex + index].Name, this.forSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7);
+                    SpriteText.drawString(b, this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0].ToString() + " ", this.forSaleButtons[index].bounds.Right - SpriteText.getWidthOfString(this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0].ToString() + " ") - Game1.pixelZoom * 8, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7, 999999, -1, 999999, this.getPlayerCurrencyAmount(Game1.player, this.currency) >= this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0] ? 1f : 0.5f);
+                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.forSaleButtons[index].bounds.Right - Game1.pixelZoom * 13, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 10 - Game1.pixelZoom), new Rectangle(193 + this.currency * 9, 373, 9, 10), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, false, 1f);
+                }
+            }
+            if (this.forSale.Count == 0)
+                SpriteText.drawString(b, "Out of stock", this.xPositionOnScreen + this.width / 2 - SpriteText.getWidthOfString("Out of stock.") / 2, this.yPositionOnScreen + this.height / 2 - Game1.tileSize * 2);
+            this.inventory.draw(b);
+            for (int index = this.animations.Count - 1; index >= 0; --index)
+            {
+                if (this.animations[index].update(Game1.currentGameTime))
+                    this.animations.RemoveAt(index);
+                else
+                    this.animations[index].draw(b, true);
+            }
+            if (this.poof != null)
+                this.poof.draw(b);
+            this.upArrow.draw(b);
+            this.downArrow.draw(b);
+            if (this.forSale.Count > 4)
+            {
+                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollBarRunner.X, this.scrollBarRunner.Y, this.scrollBarRunner.Width, this.scrollBarRunner.Height, Color.White, Game1.pixelZoom);
+                this.scrollBar.draw(b);
+            }
+            if (!this.hoverText.Equals(""))
+                IClickableMenu.drawToolTip(b, this.hoverText, this.boldTitleText, this.hoveredItem, this.heldItem != null, -1, this.currency, this.getHoveredItemExtraItemIndex(), this.getHoveredItemExtraItemAmount(), null, this.hoverPrice);
+            if (this.heldItem != null)
+                this.heldItem.drawInMenu(b, new Vector2(Game1.getOldMouseX() + 8, Game1.getOldMouseY() + 8), 1f);
+            base.draw(b);
+            if (Game1.viewport.Width > 1800 && Game1.options.showMerchantPortraits)
+            {
+                if (this.portraitPerson != null)
+                {
+                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.xPositionOnScreen - 80 * Game1.pixelZoom, this.yPositionOnScreen), new Rectangle(603, 414, 74, 74), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, false, 0.91f);
+                    if (this.portraitPerson.Portrait != null)
+                        b.Draw(this.portraitPerson.Portrait, new Vector2(this.xPositionOnScreen - 80 * Game1.pixelZoom + Game1.pixelZoom * 5, this.yPositionOnScreen + Game1.pixelZoom * 5), new Rectangle?(new Rectangle(0, 0, 64, 64)), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.92f);
+                }
+                if (this.potraitPersonDialogue != null)
+                    IClickableMenu.drawHoverText(b, this.potraitPersonDialogue, Game1.dialogueFont, 0, 0, -1, null, -1, null, null, 0, -1, -1, this.xPositionOnScreen - (int)Game1.dialogueFont.MeasureString(this.potraitPersonDialogue).X - Game1.tileSize, this.yPositionOnScreen + (this.portraitPerson != null ? 78 * Game1.pixelZoom : 0));
+            }
+
+            this.backButton.draw(b);
+
+            this.drawMouse(b);
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
         private void setUpShopOwner(string who)
         {
             if (who == null)
@@ -363,7 +745,7 @@ namespace StardewValley.Menus
             return this.categoriesToSellHere.Contains(i.category);
         }
 
-        private static int getPlayerCurrencyAmount(Farmer who, int currencyType)
+        private int getPlayerCurrencyAmount(Farmer who, int currencyType)
         {
             switch (currencyType)
             {
@@ -378,26 +760,6 @@ namespace StardewValley.Menus
             }
         }
 
-        public override void leftClickHeld(int x, int y)
-        {
-            base.leftClickHeld(x, y);
-            if (!this.scrolling)
-                return;
-            int y1 = this.scrollBar.bounds.Y;
-            this.scrollBar.bounds.Y = Math.Min(this.yPositionOnScreen + this.height - Game1.tileSize - Game1.pixelZoom * 3 - this.scrollBar.bounds.Height, Math.Max(y, this.yPositionOnScreen + this.upArrow.bounds.Height + Game1.pixelZoom * 5));
-            this.currentItemIndex = Math.Min(this.forSale.Count - 4, Math.Max(0, (int)(this.forSale.Count * (double)((y - this.scrollBarRunner.Y) / (float)this.scrollBarRunner.Height))));
-            this.setScrollBarToCurrentIndex();
-            if (y1 == this.scrollBar.bounds.Y)
-                return;
-            Game1.playSound("shiny4");
-        }
-
-        public override void releaseLeftClick(int x, int y)
-        {
-            base.releaseLeftClick(x, y);
-            this.scrolling = false;
-        }
-
         private void setScrollBarToCurrentIndex()
         {
             if (this.forSale.Count <= 0)
@@ -406,23 +768,6 @@ namespace StardewValley.Menus
             if (this.currentItemIndex != this.forSale.Count - 4)
                 return;
             this.scrollBar.bounds.Y = this.downArrow.bounds.Y - this.scrollBar.bounds.Height - Game1.pixelZoom;
-        }
-
-        public override void receiveScrollWheelAction(int direction)
-        {
-            base.receiveScrollWheelAction(direction);
-            if (direction > 0 && this.currentItemIndex > 0)
-            {
-                this.upArrowPressed();
-                Game1.playSound("shiny4");
-            }
-            else
-            {
-                if (direction >= 0 || this.currentItemIndex >= Math.Max(0, this.forSale.Count - 4))
-                    return;
-                this.downArrowPressed();
-                Game1.playSound("shiny4");
-            }
         }
 
         private void downArrowPressed()
@@ -444,133 +789,11 @@ namespace StardewValley.Menus
             if (this.readyToClose())
             {
                 this.exitThisMenu();
-                PelicanFiber.PelicanFiber.showTheMenu();
+                this.ShowMainMenu();
             }
         }
 
-        public override void receiveLeftClick(int x, int y, bool playSound = true)
-        {
-            base.receiveLeftClick(x, y);
-            if (Game1.activeClickableMenu == null)
-                return;
-            Vector2 clickableComponent = this.inventory.snapToClickableComponent(x, y);
-            if (this.backButton.containsPoint(x, y))
-            {
-                this.backButton.scale = this.backButton.baseScale;
-                backButtonPressed();
-            }
-            else if (this.downArrow.containsPoint(x, y) && this.currentItemIndex < Math.Max(0, this.forSale.Count - 4))
-            {
-                this.downArrowPressed();
-                Game1.playSound("shwip");
-            }
-            else if (this.upArrow.containsPoint(x, y) && this.currentItemIndex > 0)
-            {
-                this.upArrowPressed();
-                Game1.playSound("shwip");
-            }
-            else if (this.scrollBar.containsPoint(x, y))
-                this.scrolling = true;
-            else if (!this.downArrow.containsPoint(x, y) && x > this.xPositionOnScreen + this.width && (x < this.xPositionOnScreen + this.width + Game1.tileSize * 2 && y > this.yPositionOnScreen) && y < this.yPositionOnScreen + this.height)
-            {
-                this.scrolling = true;
-                this.leftClickHeld(x, y);
-                this.releaseLeftClick(x, y);
-            }
-            this.currentItemIndex = Math.Max(0, Math.Min(this.forSale.Count - 4, this.currentItemIndex));
-            if (this.heldItem == null)
-            {
-                Item obj = this.inventory.leftClick(x, y, null, false);
-                if (obj != null)
-                {
-                    ShopMenu2.chargePlayer(Game1.player, this.currency, -((obj is Object ? (int)((obj as Object).sellToStorePrice() * (double)this.sellPercentage) : (int)(obj.salePrice() / 2 * (double)this.sellPercentage)) * obj.Stack));
-                    int num = obj.Stack / 8 + 2;
-                    for (int index = 0; index < num; ++index)
-                    {
-                        this.animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
-                        {
-                            alphaFade = 0.025f,
-                            motion = new Vector2(Game1.random.Next(-3, 4), -4f),
-                            acceleration = new Vector2(0.0f, 0.5f),
-                            delayBeforeAnimationStart = index * 25,
-                            scale = Game1.pixelZoom * 0.5f
-                        });
-                        this.animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
-                        {
-                            scale = Game1.pixelZoom,
-                            alphaFade = 0.025f,
-                            delayBeforeAnimationStart = index * 50,
-                            motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2(this.xPositionOnScreen - Game1.pixelZoom * 9, this.yPositionOnScreen + this.height - this.inventory.height - Game1.pixelZoom * 4), 8f),
-                            acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2(this.xPositionOnScreen - Game1.pixelZoom * 9, this.yPositionOnScreen + this.height - this.inventory.height - Game1.pixelZoom * 4), 0.5f)
-                        });
-                    }
-                    if (obj is Object && (obj as Object).edibility != -300)
-                    {
-                        for (int index = 0; index < obj.Stack; ++index)
-                        {
-                            if (Game1.random.NextDouble() < 0.04)
-                                (Game1.getLocationFromName("SeedShop") as SeedShop).itemsToStartSellingTomorrow.Add(obj.getOne());
-                        }
-                    }
-                    Game1.playSound("sell");
-                    Game1.playSound("purchase");
-                    if (this.inventory.getItemAt(x, y) == null)
-                        this.animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White)
-                        {
-                            motion = new Vector2(0.0f, -0.5f)
-                        });
-                }
-            }
-            else
-                this.heldItem = this.inventory.leftClick(x, y, this.heldItem);
-            for (int index1 = 0; index1 < this.forSaleButtons.Count; ++index1)
-            {
-
-                if (this.currentItemIndex + index1 < this.forSale.Count && this.forSaleButtons[index1].containsPoint(x, y))
-                {
-                    int index2 = this.currentItemIndex + index1;
-                    if (this.forSale[index2] != null)
-                    {
-                        int numberToBuy = Math.Min(Game1.oldKBState.IsKeyDown(Keys.LeftShift) ? Math.Min(Math.Min(5, ShopMenu2.getPlayerCurrencyAmount(Game1.player, this.currency) / Math.Max(1, this.itemPriceAndStock[this.forSale[index2]][0])), Math.Max(1, this.itemPriceAndStock[this.forSale[index2]][1])) : 1, this.forSale[index2].maximumStackSize());
-                        if (numberToBuy == -1)
-                            numberToBuy = 1;
-                        if (numberToBuy > 0 && this.tryToPurchaseItem(this.forSale[index2], this.heldItem, numberToBuy, x, y, index2))
-                        {
-                            this.itemPriceAndStock.Remove(this.forSale[index2]);
-                            this.forSale.RemoveAt(index2);
-                        }
-                        else if (numberToBuy <= 0)
-                        {
-                            Game1.dayTimeMoneyBox.moneyShakeTimer = 1000;
-                            Game1.playSound("cancel");
-                        }
-                    }
-                    this.currentItemIndex = Math.Max(0, Math.Min(this.forSale.Count - 4, this.currentItemIndex));
-                    return;
-                }
-            }
-            if (!this.readyToClose() || x >= this.xPositionOnScreen - Game1.tileSize && y >= this.yPositionOnScreen - Game1.tileSize && (x <= this.xPositionOnScreen + this.width + Game1.tileSize * 2 && y <= this.yPositionOnScreen + this.height + Game1.tileSize))
-                return;
-            this.exitThisMenu();
-        }
-
-        public override bool readyToClose()
-        {
-            if (this.heldItem == null)
-                return this.animations.Count == 0;
-            return false;
-        }
-
-        public override void emergencyShutDown()
-        {
-            base.emergencyShutDown();
-            if (this.heldItem == null)
-                return;
-            Game1.player.addItemToInventoryBool(this.heldItem);
-            Game1.playSound("coin");
-        }
-
-        public static void chargePlayer(Farmer who, int currencyType, int amount)
+        private void chargePlayer(Farmer who, int currencyType, int amount)
         {
             switch (currencyType)
             {
@@ -594,7 +817,7 @@ namespace StardewValley.Menus
                 int num = -1;
                 if (this.itemPriceAndStock[item].Length > 2)
                     num = this.itemPriceAndStock[item][2];
-                if (ShopMenu2.getPlayerCurrencyAmount(Game1.player, this.currency) >= amount && (num == -1 || Game1.player.hasItemInInventory(num, 5)))
+                if (this.getPlayerCurrencyAmount(Game1.player, this.currency) >= amount && (num == -1 || Game1.player.hasItemInInventory(num, 5)))
                 {
                     this.heldItem = item.getOne();
                     this.heldItem.Stack = numberToBuy;
@@ -609,7 +832,7 @@ namespace StardewValley.Menus
                         this.itemPriceAndStock[item][1] -= numberToBuy;
                         this.forSale[indexInForSaleList].Stack -= numberToBuy;
                     }
-                    ShopMenu2.chargePlayer(Game1.player, this.currency, amount);
+                    this.chargePlayer(Game1.player, this.currency, amount);
                     if (num != -1)
                         Game1.player.removeItemsFromInventory(num, 5);
                     if (item.actionWhenPurchased())
@@ -618,7 +841,7 @@ namespace StardewValley.Menus
                         {
                             if ((this.heldItem as Object).name.Contains("Bundle"))
                             {
-                                ItemUtils.addBundle((this.heldItem as Object).specialVariable);
+                                this.ItemUtils.addBundle((this.heldItem as Object).specialVariable);
                                 Game1.playSound("newRecipe");
                                 heldItem = null;
                                 this.heldItem = null;
@@ -632,7 +855,7 @@ namespace StardewValley.Menus
                                     {
                                         Game1.player.cookingRecipes.Add(key, 0);
 
-                                        if (this.locationName.Equals("Recipe") && PelicanFiber.PelicanFiber.giveAchievements)
+                                        if (this.locationName.Equals("Recipe") && this.GiveAchievements)
                                         {
                                             Game1.player.cookedRecipe(item.parentSheetIndex);
                                             Game1.stats.checkForCookingAchievements();
@@ -670,12 +893,12 @@ namespace StardewValley.Menus
                     int index = -1;
                     if (this.itemPriceAndStock[item].Length > 2)
                         index = this.itemPriceAndStock[item][2];
-                    if (ShopMenu2.getPlayerCurrencyAmount(Game1.player, this.currency) >= amount)
+                    if (this.getPlayerCurrencyAmount(Game1.player, this.currency) >= amount)
                     {
                         this.heldItem.Stack += numberToBuy;
                         if (this.itemPriceAndStock[item][1] != int.MaxValue)
                             this.itemPriceAndStock[item][1] -= numberToBuy;
-                        ShopMenu2.chargePlayer(Game1.player, this.currency, amount);
+                        this.chargePlayer(Game1.player, this.currency, amount);
                         if (Game1.mouseClickPolling > 300)
                             Game1.playSound("purchaseRepeat");
                         else
@@ -694,7 +917,7 @@ namespace StardewValley.Menus
             }
             if (this.itemPriceAndStock[item][1] > 0)
             {
-                if (PelicanFiber.PelicanFiber.giveAchievements)
+                if (this.GiveAchievements)
                 {
                     if (this.locationName.Equals("FishShop"))
                     {
@@ -718,117 +941,6 @@ namespace StardewValley.Menus
             return true;
         }
 
-        public override void receiveRightClick(int x, int y, bool playSound = true)
-        {
-            Vector2 clickableComponent = this.inventory.snapToClickableComponent(x, y);
-            if (this.heldItem == null)
-            {
-                Item obj1 = this.inventory.rightClick(x, y, null, false);
-                if (obj1 != null)
-                {
-                    ShopMenu2.chargePlayer(Game1.player, this.currency, -((obj1 is Object ? (int)((obj1 as Object).sellToStorePrice() * (double)this.sellPercentage) : (int)(obj1.salePrice() / 2 * (double)this.sellPercentage)) * obj1.Stack));
-                    Item obj2 = null;
-                    if (Game1.mouseClickPolling > 300)
-                        Game1.playSound("purchaseRepeat");
-                    else
-                        Game1.playSound("purchaseClick");
-                    this.animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * Game1.tileSize, 256, Game1.tileSize, Game1.tileSize), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
-                    {
-                        alphaFade = 0.025f,
-                        motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 12f),
-                        acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 0.5f)
-                    });
-                    if (obj2 is Object && (obj2 as Object).edibility != -300 && Game1.random.NextDouble() < 0.04)
-                        (Game1.getLocationFromName("SeedShop") as SeedShop).itemsToStartSellingTomorrow.Add(obj2.getOne());
-                    if (this.inventory.getItemAt(x, y) == null)
-                    {
-                        Game1.playSound("sell");
-                        this.animations.Add(new TemporaryAnimatedSprite(5, clickableComponent + new Vector2(32f, 32f), Color.White)
-                        {
-                            motion = new Vector2(0.0f, -0.5f)
-                        });
-                    }
-                }
-            }
-            else
-                this.heldItem = this.inventory.rightClick(x, y, this.heldItem);
-            for (int index1 = 0; index1 < this.forSaleButtons.Count; ++index1)
-            {
-                if (this.currentItemIndex + index1 < this.forSale.Count && this.forSaleButtons[index1].containsPoint(x, y))
-                {
-                    int index2 = this.currentItemIndex + index1;
-                    if (this.forSale[index2] == null)
-                        break;
-                    int numberToBuy = Game1.oldKBState.IsKeyDown(Keys.LeftShift) ? Math.Min(Math.Min(5, ShopMenu2.getPlayerCurrencyAmount(Game1.player, this.currency) / this.itemPriceAndStock[this.forSale[index2]][0]), this.itemPriceAndStock[this.forSale[index2]][1]) : 1;
-                    if (numberToBuy <= 0 || !this.tryToPurchaseItem(this.forSale[index2], this.heldItem, numberToBuy, x, y, index2))
-                        break;
-
-                    this.itemPriceAndStock.Remove(this.forSale[index2]);
-                    this.forSale.RemoveAt(index2);
-                    break;
-                }
-            }
-        }
-
-        public override void performHoverAction(int x, int y)
-        {
-            this.backButton.tryHover(x, y, 1f);
-
-            base.performHoverAction(x, y);
-            this.descriptionText = "";
-            this.hoverText = "";
-            this.hoveredItem = null;
-            this.hoverPrice = -1;
-            this.boldTitleText = "";
-            this.upArrow.tryHover(x, y);
-            this.downArrow.tryHover(x, y);
-            this.scrollBar.tryHover(x, y);
-            if (this.scrolling)
-                return;
-            for (int index = 0; index < this.forSaleButtons.Count; ++index)
-            {
-                if (this.currentItemIndex + index < this.forSale.Count && this.forSaleButtons[index].containsPoint(x, y))
-                {
-                    Item key = this.forSale[this.currentItemIndex + index];
-                    this.hoverText = key.getDescription();
-                    if (key.category == -425)
-                        this.boldTitleText = ((Object)key).name;
-                    else
-                        this.boldTitleText = key.Name;
-                    this.hoverPrice = this.itemPriceAndStock == null || !this.itemPriceAndStock.ContainsKey(key) ? key.salePrice() : this.itemPriceAndStock[key][0];
-                    this.hoveredItem = key;
-                    this.forSaleButtons[index].scale = Math.Min(this.forSaleButtons[index].scale + 0.03f, 1.1f);
-                }
-                else
-                    this.forSaleButtons[index].scale = Math.Max(1f, this.forSaleButtons[index].scale - 0.03f);
-            }
-            if (this.heldItem != null)
-                return;
-            foreach (ClickableComponent c in this.inventory.inventory)
-            {
-                if (c.containsPoint(x, y))
-                {
-                    Item clickableComponent = this.inventory.getItemFromClickableComponent(c);
-                    if (clickableComponent != null && this.highlightItemToSell(clickableComponent))
-                    {
-                        if (clickableComponent.category == -425)
-                            this.hoverText = ((Object)clickableComponent).name + " x " + clickableComponent.Stack;
-                        else
-                            this.hoverText = clickableComponent.Name + " x " + clickableComponent.Stack;
-                        this.hoverPrice = (clickableComponent is Object ? (int)((clickableComponent as Object).sellToStorePrice() * (double)this.sellPercentage) : (int)(clickableComponent.salePrice() / 2 * (double)this.sellPercentage)) * clickableComponent.Stack;
-                    }
-                }
-            }
-        }
-
-        public override void update(GameTime time)
-        {
-            base.update(time);
-            if (this.poof == null || !this.poof.update(time))
-                return;
-            this.poof = null;
-        }
-
         private void drawCurrency(SpriteBatch b)
         {
             switch (this.currency)
@@ -849,100 +961,6 @@ namespace StardewValley.Menus
         private int getHoveredItemExtraItemAmount()
         {
             return 5;
-        }
-
-        public override void gameWindowSizeChanged(Rectangle oldBounds, Rectangle newBounds)
-        {
-            this.xPositionOnScreen = Game1.viewport.Width / 2 - (800 + IClickableMenu.borderWidth * 2) / 2;
-            this.yPositionOnScreen = Game1.viewport.Height / 2 - (600 + IClickableMenu.borderWidth * 2) / 2;
-            this.width = 1000 + IClickableMenu.borderWidth * 2;
-            this.height = 600 + IClickableMenu.borderWidth * 2;
-            this.initializeUpperRightCloseButton();
-            if (Game1.viewport.Width < 1500)
-                this.xPositionOnScreen = Game1.tileSize / 2;
-            Game1.player.forceCanMove();
-            this.inventory = new InventoryMenu(this.xPositionOnScreen + this.width, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth + Game1.tileSize * 5 + Game1.pixelZoom * 10, false, null, this.highlightItemToSell)
-            {
-                showGrayedOutSlots = true
-            };
-            this.inventory.movePosition(-this.inventory.width - Game1.tileSize / 2, 0);
-            int positionOnScreen1 = this.xPositionOnScreen;
-            int borderWidth1 = IClickableMenu.borderWidth;
-            int toClearSideBorder = IClickableMenu.spaceToClearSideBorder;
-            int positionOnScreen2 = this.yPositionOnScreen;
-            int borderWidth2 = IClickableMenu.borderWidth;
-            int toClearTopBorder = IClickableMenu.spaceToClearTopBorder;
-            this.upArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), Game1.pixelZoom);
-            this.downArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + this.height - Game1.tileSize, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), Game1.pixelZoom);
-            this.scrollBar = new ClickableTextureComponent(new Rectangle(this.upArrow.bounds.X + Game1.pixelZoom * 3, this.upArrow.bounds.Y + this.upArrow.bounds.Height + Game1.pixelZoom, 6 * Game1.pixelZoom, 10 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), Game1.pixelZoom);
-            this.scrollBarRunner = new Rectangle(this.scrollBar.bounds.X, this.upArrow.bounds.Y + this.upArrow.bounds.Height + Game1.pixelZoom, this.scrollBar.bounds.Width, this.height - Game1.tileSize - this.upArrow.bounds.Height - Game1.pixelZoom * 7);
-            this.forSaleButtons.Clear();
-            for (int index = 0; index < 4; ++index)
-                this.forSaleButtons.Add(new ClickableComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4 + index * ((this.height - Game1.tileSize * 4) / 4), this.width - Game1.tileSize / 2, (this.height - Game1.tileSize * 4) / 4 + Game1.pixelZoom), string.Concat(index)));
-        }
-
-        public override void draw(SpriteBatch b)
-        {
-            if (!Game1.options.showMenuBackground)
-                b.Draw(Game1.fadeToBlackRect, Game1.graphics.GraphicsDevice.Viewport.Bounds, Color.Black * 0.75f);
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), this.xPositionOnScreen + this.width - this.inventory.width - Game1.tileSize / 2 - Game1.pixelZoom * 6, this.yPositionOnScreen + this.height - Game1.tileSize * 4 + Game1.pixelZoom * 10, this.inventory.width + Game1.pixelZoom * 14, this.height - Game1.tileSize * 7 + Game1.pixelZoom * 5, Color.White, Game1.pixelZoom);
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height - Game1.tileSize * 4 + Game1.tileSize / 2 + Game1.pixelZoom, Color.White, Game1.pixelZoom);
-            this.drawCurrency(b);
-            for (int index = 0; index < this.forSaleButtons.Count; ++index)
-            {
-                if (this.currentItemIndex + index < this.forSale.Count)
-                {
-                    IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), this.forSaleButtons[index].bounds.X, this.forSaleButtons[index].bounds.Y, this.forSaleButtons[index].bounds.Width, this.forSaleButtons[index].bounds.Height, !this.forSaleButtons[index].containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) || this.scrolling ? Color.White : Color.Wheat, Game1.pixelZoom, false);
-                    b.Draw(Game1.mouseCursors, new Vector2(this.forSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 3, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 6 - Game1.pixelZoom), new Rectangle?(new Rectangle(296, 363, 18, 18)), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1f);
-                    this.forSale[this.currentItemIndex + index].drawInMenu(b, new Vector2(this.forSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 2, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 6), 1f);
-                    if (this.forSale[this.currentItemIndex + index].category == -425)
-                        SpriteText.drawString(b, ((Object)this.forSale[this.currentItemIndex + index]).name, this.forSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7);
-
-                    else
-                        SpriteText.drawString(b, this.forSale[this.currentItemIndex + index].Name, this.forSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7);
-                    SpriteText.drawString(b, this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0].ToString() + " ", this.forSaleButtons[index].bounds.Right - SpriteText.getWidthOfString(this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0].ToString() + " ") - Game1.pixelZoom * 8, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 7, 999999, -1, 999999, ShopMenu2.getPlayerCurrencyAmount(Game1.player, this.currency) >= this.itemPriceAndStock[this.forSale[this.currentItemIndex + index]][0] ? 1f : 0.5f);
-                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.forSaleButtons[index].bounds.Right - Game1.pixelZoom * 13, this.forSaleButtons[index].bounds.Y + Game1.pixelZoom * 10 - Game1.pixelZoom), new Rectangle(193 + this.currency * 9, 373, 9, 10), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, false, 1f);
-                }
-            }
-            if (this.forSale.Count == 0)
-                SpriteText.drawString(b, "Out of stock", this.xPositionOnScreen + this.width / 2 - SpriteText.getWidthOfString("Out of stock.") / 2, this.yPositionOnScreen + this.height / 2 - Game1.tileSize * 2);
-            this.inventory.draw(b);
-            for (int index = this.animations.Count - 1; index >= 0; --index)
-            {
-                if (this.animations[index].update(Game1.currentGameTime))
-                    this.animations.RemoveAt(index);
-                else
-                    this.animations[index].draw(b, true);
-            }
-            if (this.poof != null)
-                this.poof.draw(b);
-            this.upArrow.draw(b);
-            this.downArrow.draw(b);
-            if (this.forSale.Count > 4)
-            {
-                IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.scrollBarRunner.X, this.scrollBarRunner.Y, this.scrollBarRunner.Width, this.scrollBarRunner.Height, Color.White, Game1.pixelZoom);
-                this.scrollBar.draw(b);
-            }
-            if (!this.hoverText.Equals(""))
-                IClickableMenu.drawToolTip(b, this.hoverText, this.boldTitleText, this.hoveredItem, this.heldItem != null, -1, this.currency, this.getHoveredItemExtraItemIndex(), this.getHoveredItemExtraItemAmount(), null, this.hoverPrice);
-            if (this.heldItem != null)
-                this.heldItem.drawInMenu(b, new Vector2(Game1.getOldMouseX() + 8, Game1.getOldMouseY() + 8), 1f);
-            base.draw(b);
-            if (Game1.viewport.Width > 1800 && Game1.options.showMerchantPortraits)
-            {
-                if (this.portraitPerson != null)
-                {
-                    Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.xPositionOnScreen - 80 * Game1.pixelZoom, this.yPositionOnScreen), new Rectangle(603, 414, 74, 74), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, false, 0.91f);
-                    if (this.portraitPerson.Portrait != null)
-                        b.Draw(this.portraitPerson.Portrait, new Vector2(this.xPositionOnScreen - 80 * Game1.pixelZoom + Game1.pixelZoom * 5, this.yPositionOnScreen + Game1.pixelZoom * 5), new Rectangle?(new Rectangle(0, 0, 64, 64)), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.92f);
-                }
-                if (this.potraitPersonDialogue != null)
-                    IClickableMenu.drawHoverText(b, this.potraitPersonDialogue, Game1.dialogueFont, 0, 0, -1, null, -1, null, null, 0, -1, -1, this.xPositionOnScreen - (int)Game1.dialogueFont.MeasureString(this.potraitPersonDialogue).X - Game1.tileSize, this.yPositionOnScreen + (this.portraitPerson != null ? 78 * Game1.pixelZoom : 0));
-            }
-
-            this.backButton.draw(b);
-
-            this.drawMouse(b);
         }
     }
 }

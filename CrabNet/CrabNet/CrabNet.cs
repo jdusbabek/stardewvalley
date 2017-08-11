@@ -12,8 +12,11 @@ namespace CrabNet
 {
     public class CrabNet : Mod
     {
+        /*********
+        ** Properties
+        *********/
         // Local variable for config setting "keybind"
-        private static Keys actionKey;
+        private Keys actionKey;
 
         // Local variable for config setting "loggingEnabled"
         private bool loggingEnabled;
@@ -47,7 +50,6 @@ namespace CrabNet
 
         // Local variable for config setting "allowFreebies"
         private bool allowFreebies = true;
-
 
         // The cost per 1 bait, as determined from the user's bait preference
         private int baitCost;
@@ -83,47 +85,56 @@ namespace CrabNet
         private bool inventoryAndChestFull;
 
         // The configuration object.  Not used per-se, only to populate the local variables.
-        internal static CrabNetConfig config;
+        private CrabNetConfig Config;
 
+        private DialogManager DialogueManager;
+
+
+        /*********
+        ** Public methods
+        *********/
         /**
          * The SMAPI entry point.
          */
         public override void Entry(params object[] objects)
         {
+            this.Config = this.Helper.ReadConfig<CrabNetConfig>();
+            this.DialogueManager = new DialogManager(this.Config);
+
             PlayerEvents.LoadedGame += onLoaded;
             ControlEvents.KeyReleased += onKeyReleased;
         }
 
+
+        /*********
+        ** Private methods
+        *********/
         private void onLoaded(object sender, EventArgs e)
         {
-            config = this.Helper.ReadConfig<CrabNetConfig>();
-
-            if (!Enum.TryParse(config.keybind, true, out CrabNet.actionKey))
+            if (!Enum.TryParse(this.Config.keybind, true, out this.actionKey))
             {
-                CrabNet.actionKey = Keys.H;
+                this.actionKey = Keys.H;
                 Log.Info("[CrabNet] Error parsing key binding. Defaulted to H");
             }
 
-            loggingEnabled = config.enableLogging;
+            loggingEnabled = this.Config.enableLogging;
 
             // 685, or 774
-            if (config.preferredBait == 685 || config.preferredBait == 774)
-                baitChoice = config.preferredBait;
+            if (this.Config.preferredBait == 685 || this.Config.preferredBait == 774)
+                baitChoice = this.Config.preferredBait;
             else
                 baitChoice = 685;
 
             baitCost = new StardewValley.Object(baitChoice, 1).Price;
-            chargeForBait = config.chargeForBait;
-            costPerCheck = Math.Max(0, config.costPerCheck);
-            costPerEmpty = Math.Max(0, config.costPerEmpty);
-            free = config.free;
-            checker = config.whoChecks;
-            enableMessages = config.enableMessages;
-            chestCoords = config.chestCoords;
-            bypassInventory = config.bypassInventory;
-            allowFreebies = config.allowFreebies;
-
-            DialogManager.config = config;
+            chargeForBait = this.Config.chargeForBait;
+            costPerCheck = Math.Max(0, this.Config.costPerCheck);
+            costPerEmpty = Math.Max(0, this.Config.costPerEmpty);
+            free = this.Config.free;
+            checker = this.Config.whoChecks;
+            enableMessages = this.Config.enableMessages;
+            chestCoords = this.Config.chestCoords;
+            bypassInventory = this.Config.bypassInventory;
+            allowFreebies = this.Config.allowFreebies;
 
             this.content = new LocalizedContentManager(Game1.content.ServiceProvider, this.PathOnDisk);
             readInMessages();
@@ -144,7 +155,7 @@ namespace CrabNet
                 return;
             }
 
-            if (e.KeyPressed == CrabNet.actionKey)
+            if (e.KeyPressed == this.actionKey)
             {
                 try
                 {
@@ -428,18 +439,18 @@ namespace CrabNet
             {
                 if (Game1.player.isMarried())
                 {
-                    message += DialogManager.performReplacement(dialog[1], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[1], stats);
                     //message += Game1.player.getSpouse().getName() + " has emptied and baited " + stats.numChecked + " crab pots.";
                 }
                 else
                 {
-                    message += DialogManager.performReplacement(dialog[2], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[2], stats);
                     //message += "Your fishing assistant emptied and baited " + stats.numChecked + " crab pots. ";
                 }
 
                 if (totalCost > 0 && !free)
                 {
-                    message += DialogManager.performReplacement(dialog[3], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[3], stats);
                     //message += "Cost was " + totalCost + "g.";
                 }
 
@@ -453,30 +464,30 @@ namespace CrabNet
                 {
                     //this.isCheckerCharacter = true;
 
-                    message += DialogManager.performReplacement(getRandomMessage(greetings), stats);
-                    message += " " + DialogManager.performReplacement(dialog[4], stats);
+                    message += this.DialogueManager.PerformReplacement(getRandomMessage(greetings), stats);
+                    message += " " + this.DialogueManager.PerformReplacement(dialog[4], stats);
                     //message += "Hi @. I serviced " + stats.numChecked + " crab pots.";
 
                     if (!free)
                     {
                         //message += " The charge is " + totalCost + "g.";
-                        DialogManager.performReplacement(dialog[5], stats);
+                        this.DialogueManager.PerformReplacement(dialog[5], stats);
 
                         if (stats.hasUnfinishedBusiness())
                         {
                             if (inventoryAndChestFull)
                             {
-                                message += DialogManager.performReplacement(getRandomMessage(inventoryMessages), stats);
+                                message += this.DialogueManager.PerformReplacement(getRandomMessage(inventoryMessages), stats);
                             }
                             else
                             {
                                 if (allowFreebies)
                                 {
-                                    message += DialogManager.performReplacement(getRandomMessage(freebieMessages), stats);
+                                    message += this.DialogueManager.PerformReplacement(getRandomMessage(freebieMessages), stats);
                                 }
                                 else
                                 {
-                                    message += " " + DialogManager.performReplacement(getRandomMessage(unfinishedMessages), stats);
+                                    message += " " + this.DialogueManager.PerformReplacement(getRandomMessage(unfinishedMessages), stats);
                                 }
                             }
                         }
@@ -490,12 +501,12 @@ namespace CrabNet
                         //    message += " " + getRandomMessage(unfinishedMessages);
                         //}
 
-                        message += DialogManager.performReplacement(getRandomMessage(smalltalk), stats);
+                        message += this.DialogueManager.PerformReplacement(getRandomMessage(smalltalk), stats);
                         message += "#$e#";
                     }
                     else
                     {
-                        message += DialogManager.performReplacement(getRandomMessage(smalltalk), stats);
+                        message += this.DialogueManager.PerformReplacement(getRandomMessage(smalltalk), stats);
                         message += "#$e#";
                     }
 
@@ -504,7 +515,7 @@ namespace CrabNet
                 }
                 else
                 {
-                    message += DialogManager.performReplacement(dialog[6], stats);
+                    message += this.DialogueManager.PerformReplacement(dialog[6], stats);
                     HUDMessage msg = new HUDMessage(message);
                     Game1.addHUDMessage(msg);
                 }
@@ -548,14 +559,14 @@ namespace CrabNet
             {
                 allmessages = content.Load<Dictionary<string, string>>("dialog");
 
-                dialog = DialogManager.getDialog("Xdialog", allmessages);
-                greetings = DialogManager.getDialog("greeting", allmessages);
-                unfinishedMessages = DialogManager.getDialog("unfinishedmoney", allmessages);
-                freebieMessages = DialogManager.getDialog("freebies", allmessages);
-                inventoryMessages = DialogManager.getDialog("unfinishedinventory", allmessages);
-                smalltalk = DialogManager.getDialog("smalltalk", allmessages);
+                dialog = this.DialogueManager.GetDialog("Xdialog", allmessages);
+                greetings = this.DialogueManager.GetDialog("greeting", allmessages);
+                unfinishedMessages = this.DialogueManager.GetDialog("unfinishedmoney", allmessages);
+                freebieMessages = this.DialogueManager.GetDialog("freebies", allmessages);
+                inventoryMessages = this.DialogueManager.GetDialog("unfinishedinventory", allmessages);
+                smalltalk = this.DialogueManager.GetDialog("smalltalk", allmessages);
 
-                Dictionary<int, string> characterDialog = DialogManager.getDialog(this.checker, allmessages);
+                Dictionary<int, string> characterDialog = this.DialogueManager.GetDialog(this.checker, allmessages);
 
                 if (characterDialog.Count > 0)
                 {

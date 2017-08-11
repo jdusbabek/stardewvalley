@@ -7,13 +7,25 @@ namespace CrabNet
 {
     internal class DialogManager
     {
-        public static CrabNetConfig config;
+        /*********
+        ** Properties
+        *********/
+        private readonly CrabNetConfig Config;
+
+
+        /*********
+        ** Public methods
+        *********/
+        public DialogManager(CrabNetConfig config)
+        {
+            this.Config = config;
+        }
 
         /**
          * Performs a string replacement of certain variables inside text strings, allowing
          * the dialog to use elements of the actual situation.
          */
-        public static string performReplacement(string message, CrabNetStats stats)
+        public string PerformReplacement(string message, CrabNetStats stats)
         {
             String retVal = message.Replace("%%numTotal%%", stats.numTotal.ToString());
             retVal = retVal.Replace("%%numChecked%%", stats.numTotal.ToString());
@@ -26,7 +38,7 @@ namespace CrabNet
             if (Game1.player.isMarried())
                 retVal = retVal.Replace("%%spouse%%", Game1.player.getSpouse().getName());
             else
-                retVal = retVal.Replace("%%spouse%%", config.whoChecks);
+                retVal = retVal.Replace("%%spouse%%", this.Config.whoChecks);
 
             return retVal;
         }
@@ -35,7 +47,7 @@ namespace CrabNet
          * Gets a set of dialogue strings that are identified in the source document by an index
          * in the format indexGroup_number.  The numbers should be unique within each index group.
          */
-        public static Dictionary<int, string> getDialog(string identifier, Dictionary<string, string> source)
+        public Dictionary<int, string> GetDialog(string identifier, Dictionary<string, string> source)
         {
             Dictionary<int, string> result = new Dictionary<int, string>();
 

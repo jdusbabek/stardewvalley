@@ -17,7 +17,10 @@ namespace ExtremePetting
 {
     public class AnimalSitter : Mod
     {
-        private static Keys petKey;
+        /*********
+        ** Properties
+        *********/
+        private Keys petKey;
 
         // Whether to use dark magic to age the animals to maturity when visiting the animals.
         private bool growUpEnabled = true;
@@ -67,10 +70,25 @@ namespace ExtremePetting
         // How many days the farmer has not been able to afford to pay the laborer.
         private int shortDays;
         
-        private static AnimalSitterConfig config;
+        private AnimalSitterConfig Config;
 
+        private DialogueManager DialogueManager;
+
+        private ChestManager ChestManager;
+
+        private Log Log;
+
+
+        /*********
+        ** Public methods
+        *********/
         public override void Entry(params object[] objects)
         {
+            this.Config = this.Helper.ReadConfig<AnimalSitterConfig>();
+            this.Log = new Log(this.Config.verboseLogging);
+            this.DialogueManager = new DialogueManager(this.Config, Game1.content.ServiceProvider, this.PathOnDisk, this.Log);
+            this.ChestManager = new ChestManager(this.Log);
+
             PlayerEvents.LoadedGame += onLoaded;
             ControlEvents.KeyReleased += onKeyReleased;
         }
@@ -78,18 +96,14 @@ namespace ExtremePetting
 
         private void onLoaded(object sender, EventArgs e)
         {
-            AnimalSitter.config = this.Helper.ReadConfig<AnimalSitterConfig>();
-
             importConfiguration();
 
             //parseChestLocations();
-            ChestManager.parseChests(this.chestDefs);
-            ChestManager.setDefault(this.chestCoords);
+            this.ChestManager.ParseChests(this.chestDefs);
+            this.ChestManager.SetDefault(this.chestCoords);
 
             // Read in dialogue
-            DialogueManager.initialize(Game1.content.ServiceProvider, this.PathOnDisk);
-            DialogueManager.config = AnimalSitter.config;
-            DialogueManager.readInMessages();
+            this.DialogueManager.ReadInMessages();
 
             Log.INFO("[Animal-Sitter] chestCoords:" + this.chestCoords.X + "," + this.chestCoords.Y);
         }
@@ -97,30 +111,28 @@ namespace ExtremePetting
 
         private void importConfiguration()
         {
-            Log.enabled = AnimalSitter.config.verboseLogging;
-
-            if (!Enum.TryParse(AnimalSitter.config.keybind, true, out AnimalSitter.petKey))
+            if (!Enum.TryParse(this.Config.keybind, true, out this.petKey))
             {
-                AnimalSitter.petKey = Keys.O;
+                this.petKey = Keys.O;
                 Log.force_INFO("[Animal-Sitter] Error parsing key binding. Defaulted to O");
             }
 
-            this.pettingEnabled = AnimalSitter.config.pettingEnabled;
-            this.growUpEnabled = AnimalSitter.config.growUpEnabled;
-            this.maxHappinessEnabled = AnimalSitter.config.maxHappinessEnabled;
-            this.maxFriendshipEnabled = AnimalSitter.config.maxFriendshipEnabled;
-            this.maxFullnessEnabled = AnimalSitter.config.maxFullnessEnabled;
-            this.harvestEnabled = AnimalSitter.config.harvestEnabled;
-            this.loggingEnabled = AnimalSitter.config.verboseLogging;
-            this.checker = AnimalSitter.config.WhoChecks;
-            this.messagesEnabled = AnimalSitter.config.enableMessages;
-            this.takeTrufflesFromPigs = AnimalSitter.config.takeTrufflesFromPigs;
-            this.chestCoords = AnimalSitter.config.chestCoords;
+            this.pettingEnabled = this.Config.pettingEnabled;
+            this.growUpEnabled = this.Config.growUpEnabled;
+            this.maxHappinessEnabled = this.Config.maxHappinessEnabled;
+            this.maxFriendshipEnabled = this.Config.maxFriendshipEnabled;
+            this.maxFullnessEnabled = this.Config.maxFullnessEnabled;
+            this.harvestEnabled = this.Config.harvestEnabled;
+            this.loggingEnabled = this.Config.verboseLogging;
+            this.checker = this.Config.WhoChecks;
+            this.messagesEnabled = this.Config.enableMessages;
+            this.takeTrufflesFromPigs = this.Config.takeTrufflesFromPigs;
+            this.chestCoords = this.Config.chestCoords;
 
-            this.bypassInventory = AnimalSitter.config.bypassInventory;
-            this.chestDefs = AnimalSitter.config.chestDefs;
+            this.bypassInventory = this.Config.bypassInventory;
+            this.chestDefs = this.Config.chestDefs;
 
-            if (AnimalSitter.config.costPerAction < 0)
+            if (this.Config.costPerAction < 0)
             {
                 Log.INFO("[Animal-Sitter] I'll do it for free, but I'm not paying YOU to take care of YOUR stinking animals!");
                 Log.force_INFO("[Animal-Sitter] Setting costPerAction to 0.");
@@ -128,7 +140,7 @@ namespace ExtremePetting
             }
             else
             {
-                this.costPerAnimal = AnimalSitter.config.costPerAction;
+                this.costPerAnimal = this.Config.costPerAction;
             }
         }
 
@@ -147,7 +159,7 @@ namespace ExtremePetting
                 return;
             }
 
-            if (e.KeyPressed == AnimalSitter.petKey)
+            if (e.KeyPressed == this.petKey)
             {
                 try
                 {
@@ -399,7 +411,7 @@ namespace ExtremePetting
             }
 
             // Get the preferred chest (could be default)
-            Object chest = ChestManager.getChest(obj.parentSheetIndex);
+            Object chest = this.ChestManager.GetChest(obj.parentSheetIndex);
 
             if (chest != null && (chest is Chest))
             {
@@ -409,7 +421,7 @@ namespace ExtremePetting
             }
 
             // We haven't returned, get the default chest.
-            chest = ChestManager.getDefaultChest();
+            chest = this.ChestManager.GetDefaultChest();
 
             if (chest != null && (chest is Chest))
             {
@@ -481,16 +493,16 @@ namespace ExtremePetting
                 {
                     if (Game1.player.isMarried())
                     {
-                        message += DialogueManager.performReplacement(DialogueManager.getMessageAt(1, "Xdialog"), stats, AnimalSitter.config);
+                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(1, "Xdialog"), stats, this.Config);
                     }
                     else
                     {
-                        message += DialogueManager.performReplacement(DialogueManager.getMessageAt(2, "Xdialog"), stats, AnimalSitter.config);
+                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(2, "Xdialog"), stats, this.Config);
                     }
 
                     if (totalCost > 0 && costPerAnimal > 0)
                     {
-                        message += DialogueManager.performReplacement(DialogueManager.getMessageAt(3, "Xdialog"), stats, AnimalSitter.config);
+                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(3, "Xdialog"), stats, this.Config);
                     }
 
                     HUDMessage msg = new HUDMessage(message);
@@ -498,11 +510,11 @@ namespace ExtremePetting
                 }
                 else if (gatheringOnly)
                 {
-                    message += DialogueManager.performReplacement(DialogueManager.getMessageAt(4, "Xdialog"), stats, AnimalSitter.config);
+                    message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(4, "Xdialog"), stats, this.Config);
 
                     if (totalCost > 0 && costPerAnimal > 0)
                     {
-                        message += DialogueManager.performReplacement(DialogueManager.getMessageAt(3, "Xdialog"), stats, AnimalSitter.config);
+                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(3, "Xdialog"), stats, this.Config);
                     }
 
                     HUDMessage msg = new HUDMessage(message);
@@ -526,19 +538,19 @@ namespace ExtremePetting
                             spouseName = Game1.player.getSpouse().getName();
                         }
 
-                        message += DialogueManager.performReplacement(DialogueManager.getRandomMessage("greeting"), stats, AnimalSitter.config);
-                        message += DialogueManager.performReplacement(DialogueManager.getMessageAt(5, "Xdialog"), stats, AnimalSitter.config);
+                        message += DialogueManager.PerformReplacement(DialogueManager.GetRandomMessage("greeting"), stats, this.Config);
+                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(5, "Xdialog"), stats, this.Config);
 
                         if (costPerAnimal > 0)
                         {
                             if (doesPlayerHaveEnoughCash)
                             {
-                                message += DialogueManager.performReplacement(DialogueManager.getMessageAt(6, "Xdialog"), stats, AnimalSitter.config);
+                                message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(6, "Xdialog"), stats, this.Config);
                                 shortDays = 0;
                             }
                             else
                             {
-                                message += DialogueManager.performReplacement(DialogueManager.getRandomMessage("unfinishedmoney"), stats, AnimalSitter.config);
+                                message += DialogueManager.PerformReplacement(DialogueManager.GetRandomMessage("unfinishedmoney"), stats, this.Config);
                             }
                         }
                         else
@@ -547,7 +559,7 @@ namespace ExtremePetting
                             //message += portrait + "#$e#";
                         }
 
-                        message += DialogueManager.performReplacement(DialogueManager.getRandomMessage("smalltalk"), stats, AnimalSitter.config);
+                        message += DialogueManager.PerformReplacement(DialogueManager.GetRandomMessage("smalltalk"), stats, this.Config);
                         message += portrait + "#$e#";
 
                         character.CurrentDialogue.Push(new Dialogue(message, character));
@@ -556,7 +568,7 @@ namespace ExtremePetting
                     else
                     {
                         //message += checker + " has performed " + numActions + " for your animals.";
-                        message += DialogueManager.performReplacement(DialogueManager.getMessageAt(7, "Xdialog"), stats, AnimalSitter.config);
+                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(7, "Xdialog"), stats, this.Config);
                         HUDMessage msg = new HUDMessage(message);
                         Game1.addHUDMessage(msg);
                     }

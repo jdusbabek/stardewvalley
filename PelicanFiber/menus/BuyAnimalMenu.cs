@@ -14,10 +14,12 @@ namespace StardewValley.Menus
 {
     internal class BuyAnimalMenu : IClickableMenu
     {
-        public string whereToGo = "";
-
-        public static int menuHeight = Game1.tileSize * 5;
-        public static int menuWidth = Game1.tileSize * 7;
+        /*********
+        ** Properties
+        *********/
+        private string whereToGo = "";
+        private static int menuHeight = Game1.tileSize * 5;
+        private static int menuWidth = Game1.tileSize * 7;
         private List<ClickableTextureComponent> animalsToPurchase = new List<ClickableTextureComponent>();
         private ClickableTextureComponent okButton;
         private ClickableTextureComponent doneNamingButton;
@@ -32,10 +34,16 @@ namespace StardewValley.Menus
         private TextBoxEvent e;
         private Building newAnimalHome;
         private int priceOfAnimal;
+        private Action ShowMainMenu;
 
-        public BuyAnimalMenu(List<Object> stock)
+
+        /*********
+        ** Public methods
+        *********/
+        public BuyAnimalMenu(List<Object> stock, Action showMainMenu)
           : base(Game1.viewport.Width / 2 - BuyAnimalMenu.menuWidth / 2 - IClickableMenu.borderWidth * 2, Game1.viewport.Height / 2 - BuyAnimalMenu.menuHeight - IClickableMenu.borderWidth * 2, BuyAnimalMenu.menuWidth + IClickableMenu.borderWidth * 2, BuyAnimalMenu.menuHeight + IClickableMenu.borderWidth)
         {
+            this.ShowMainMenu = showMainMenu;
             this.whereToGo = Game1.player.currentLocation.Name;
 
             this.height += Game1.tileSize;
@@ -60,119 +68,6 @@ namespace StardewValley.Menus
             this.randomButton = new ClickableTextureComponent(new Rectangle(this.textBox.X + this.textBox.Width + Game1.tileSize + Game1.tileSize * 3 / 4 - Game1.pixelZoom * 2, Game1.viewport.Height / 2 + Game1.pixelZoom, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), Game1.pixelZoom);
             this.doneNamingButton = new ClickableTextureComponent(new Rectangle(this.textBox.X + this.textBox.Width + Game1.tileSize / 2 + Game1.pixelZoom, Game1.viewport.Height / 2 - Game1.pixelZoom * 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f);
             this.backButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen - 10, this.yPositionOnScreen + 10, 12 * Game1.pixelZoom, 11 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(352, 495, 12, 11), Game1.pixelZoom);
-
-        }
-
-        private void textBoxEnter(TextBox sender)
-        {
-            if (!this.namingAnimal)
-                return;
-            if (Game1.activeClickableMenu == null || !(Game1.activeClickableMenu is BuyAnimalMenu))
-            {
-                this.textBox.OnEnterPressed -= this.e;
-            }
-            else
-            {
-                if (sender.Text.Length < 1)
-                    return;
-                if (Utility.areThereAnyOtherAnimalsWithThisName(sender.Text))
-                {
-                    Game1.showRedMessage("Name Unavailable");
-                }
-                else
-                {
-                    this.textBox.OnEnterPressed -= this.e;
-                    this.animalBeingPurchased.name = sender.Text;
-                    this.animalBeingPurchased.home = this.newAnimalHome;
-                    this.animalBeingPurchased.homeLocation = new Vector2(this.newAnimalHome.tileX, this.newAnimalHome.tileY);
-                    this.animalBeingPurchased.setRandomPosition(this.animalBeingPurchased.home.indoors);
-                    (this.newAnimalHome.indoors as AnimalHouse).animals.Add(this.animalBeingPurchased.myID, this.animalBeingPurchased);
-                    (this.newAnimalHome.indoors as AnimalHouse).animalsThatLiveHere.Add(this.animalBeingPurchased.myID);
-                    this.newAnimalHome = null;
-                    this.namingAnimal = false;
-                    Game1.player.money -= this.priceOfAnimal;
-                    Game1.globalFadeToBlack(this.setUpForReturnAfterPurchasingAnimal);
-                }
-            }
-        }
-
-        private void setUpForReturnAfterPurchasingAnimal()
-        {
-            Game1.currentLocation.cleanupBeforePlayerExit();
-            //Game1.currentLocation = Game1.getLocationFromName("AnimalShop");
-            Game1.currentLocation = Game1.getLocationFromName(whereToGo);
-            Game1.currentLocation.resetForPlayerEntry();
-            Game1.globalFadeToClear();
-            this.onFarm = false;
-            this.okButton.bounds.X = this.xPositionOnScreen + this.width + 4;
-            Game1.displayHUD = true;
-            Game1.displayFarmer = true;
-            this.freeze = false;
-            this.textBox.OnEnterPressed -= this.e;
-            this.textBox.Selected = false;
-            Game1.viewportFreeze = false;
-            Game1.globalFadeToClear(this.marnieAnimalPurchaseMessage);
-        }
-
-        //public void marnieAnimalPurchaseMessage()
-        //{
-        //    this.exitThisMenu(true);
-        //    //Game1.player.position = this.whereAt;
-        //    Game1.player.forceCanMove();
-        //    this.freeze = false;
-        //    //Game1.drawDialogue(Game1.getCharacterFromName("Marnie"), "Great! I'll send little " + this.animalBeingPurchased.name + " to " + (this.animalBeingPurchased.isMale() ? "his" : "her") + " new home right away.");
-        //}
-
-        private void marnieAnimalPurchaseMessage()
-        {
-            this.exitThisMenu();
-            Game1.player.forceCanMove();
-            this.freeze = false;
-
-            Game1.activeClickableMenu = PelicanFiber.PelicanFiber.getBuyAnimalMenu();
-        }
-
-        private void backButtonPressed()
-        {
-            if (this.readyToClose())
-            {
-                this.exitThisMenu();
-                PelicanFiber.PelicanFiber.showTheMenu();
-            }
-        }
-
-        private void setUpForAnimalPlacement()
-        {
-            Game1.displayFarmer = false;
-            Game1.currentLocation = Game1.getLocationFromName("Farm");
-            Game1.currentLocation.resetForPlayerEntry();
-            Game1.globalFadeToClear();
-            this.onFarm = true;
-            this.freeze = false;
-            this.okButton.bounds.X = Game1.viewport.Width - Game1.tileSize * 2;
-            this.okButton.bounds.Y = Game1.viewport.Height - Game1.tileSize * 2;
-            Game1.displayHUD = false;
-            Game1.viewportFreeze = true;
-            Game1.viewport.Location = new Location(49 * Game1.tileSize, 5 * Game1.tileSize);
-            Game1.panScreen(0, 0);
-        }
-
-        private void setUpForReturnToShopMenu()
-        {
-            this.freeze = false;
-            Game1.displayFarmer = true;
-            Game1.currentLocation.cleanupBeforePlayerExit();
-            //Game1.currentLocation = Game1.getLocationFromName("AnimalShop");
-            Game1.currentLocation.resetForPlayerEntry();
-            Game1.globalFadeToClear();
-            this.onFarm = false;
-            this.okButton.bounds.X = this.xPositionOnScreen + this.width + 4;
-            this.okButton.bounds.Y = this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth;
-            Game1.displayHUD = true;
-            Game1.viewportFreeze = false;
-            this.namingAnimal = false;
-            this.textBox.OnEnterPressed -= this.e;
-            this.textBox.Selected = false;
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
@@ -389,29 +284,6 @@ namespace StardewValley.Menus
             }
         }
 
-        private static string getAnimalDescription(string name)
-        {
-            switch (name)
-            {
-                case "Chicken":
-                    return "Well cared-for adult chickens lay eggs every day." + Environment.NewLine + "Lives in the coop.";
-                case "Duck":
-                    return "Happy adults lay duck eggs every other day." + Environment.NewLine + "Lives in the coop.";
-                case "Rabbit":
-                    return "These are wooly rabbits! They shed precious wool every few days." + Environment.NewLine + "Lives in the coop.";
-                case "Dairy Cow":
-                    return "Adults can be milked daily. A milk pail is required to harvest the milk." + Environment.NewLine + "Lives in the barn.";
-                case "Pig":
-                    return "These pigs are trained to find truffles!" + Environment.NewLine + "Lives in the barn.";
-                case "Goat":
-                    return "Happy adults provide goat milk every other day. A milk pail is required to harvest the milk." + Environment.NewLine + "Lives in the barn.";
-                case "Sheep":
-                    return "Adults can be shorn for wool. Sheep who form a close bond with their owners can grow wool faster. A pair of shears is required to harvest the wool." + Environment.NewLine + "Lives in the barn.";
-                default:
-                    return "";
-            }
-        }
-
         public override void draw(SpriteBatch b)
         {
             if (!this.onFarm && !Game1.dialogueUp && !Game1.globalFade)
@@ -451,10 +323,149 @@ namespace StardewValley.Menus
                 {
                     SpriteText.drawStringWithScrollBackground(b, this.hovered.hoverText, this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + Game1.tileSize, this.yPositionOnScreen + this.height + -Game1.tileSize / 2 + IClickableMenu.spaceToClearTopBorder / 2 + 8, "Truffle Pig");
                     SpriteText.drawStringWithScrollBackground(b, "$" + this.hovered.name + "g", this.xPositionOnScreen + IClickableMenu.spaceToClearSideBorder + Game1.tileSize * 2, this.yPositionOnScreen + this.height + Game1.tileSize + IClickableMenu.spaceToClearTopBorder / 2 + 8, "$99999g", Game1.player.Money >= Convert.ToInt32(this.hovered.name) ? 1f : 0.5f);
-                    IClickableMenu.drawHoverText(b, Game1.parseText(BuyAnimalMenu.getAnimalDescription(this.hovered.hoverText), Game1.smallFont, Game1.tileSize * 5), Game1.smallFont, 0, 0, -1, this.hovered.hoverText);
+                    IClickableMenu.drawHoverText(b, Game1.parseText(this.getAnimalDescription(this.hovered.hoverText), Game1.smallFont, Game1.tileSize * 5), Game1.smallFont, 0, 0, -1, this.hovered.hoverText);
                 }
             }
             this.drawMouse(b);
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        private void textBoxEnter(TextBox sender)
+        {
+            if (!this.namingAnimal)
+                return;
+            if (Game1.activeClickableMenu == null || !(Game1.activeClickableMenu is BuyAnimalMenu))
+            {
+                this.textBox.OnEnterPressed -= this.e;
+            }
+            else
+            {
+                if (sender.Text.Length < 1)
+                    return;
+                if (Utility.areThereAnyOtherAnimalsWithThisName(sender.Text))
+                {
+                    Game1.showRedMessage("Name Unavailable");
+                }
+                else
+                {
+                    this.textBox.OnEnterPressed -= this.e;
+                    this.animalBeingPurchased.name = sender.Text;
+                    this.animalBeingPurchased.home = this.newAnimalHome;
+                    this.animalBeingPurchased.homeLocation = new Vector2(this.newAnimalHome.tileX, this.newAnimalHome.tileY);
+                    this.animalBeingPurchased.setRandomPosition(this.animalBeingPurchased.home.indoors);
+                    (this.newAnimalHome.indoors as AnimalHouse).animals.Add(this.animalBeingPurchased.myID, this.animalBeingPurchased);
+                    (this.newAnimalHome.indoors as AnimalHouse).animalsThatLiveHere.Add(this.animalBeingPurchased.myID);
+                    this.newAnimalHome = null;
+                    this.namingAnimal = false;
+                    Game1.player.money -= this.priceOfAnimal;
+                    Game1.globalFadeToBlack(this.setUpForReturnAfterPurchasingAnimal);
+                }
+            }
+        }
+
+        private void setUpForReturnAfterPurchasingAnimal()
+        {
+            Game1.currentLocation.cleanupBeforePlayerExit();
+            //Game1.currentLocation = Game1.getLocationFromName("AnimalShop");
+            Game1.currentLocation = Game1.getLocationFromName(whereToGo);
+            Game1.currentLocation.resetForPlayerEntry();
+            Game1.globalFadeToClear();
+            this.onFarm = false;
+            this.okButton.bounds.X = this.xPositionOnScreen + this.width + 4;
+            Game1.displayHUD = true;
+            Game1.displayFarmer = true;
+            this.freeze = false;
+            this.textBox.OnEnterPressed -= this.e;
+            this.textBox.Selected = false;
+            Game1.viewportFreeze = false;
+            Game1.globalFadeToClear(this.marnieAnimalPurchaseMessage);
+        }
+
+        //public void marnieAnimalPurchaseMessage()
+        //{
+        //    this.exitThisMenu(true);
+        //    //Game1.player.position = this.whereAt;
+        //    Game1.player.forceCanMove();
+        //    this.freeze = false;
+        //    //Game1.drawDialogue(Game1.getCharacterFromName("Marnie"), "Great! I'll send little " + this.animalBeingPurchased.name + " to " + (this.animalBeingPurchased.isMale() ? "his" : "her") + " new home right away.");
+        //}
+
+        private void marnieAnimalPurchaseMessage()
+        {
+            this.exitThisMenu();
+            Game1.player.forceCanMove();
+            this.freeze = false;
+
+            Game1.activeClickableMenu = new BuyAnimalMenu(Utility.getPurchaseAnimalStock(), this.ShowMainMenu);
+        }
+
+        private void backButtonPressed()
+        {
+            if (this.readyToClose())
+            {
+                this.exitThisMenu();
+                this.ShowMainMenu();
+            }
+        }
+
+        private void setUpForAnimalPlacement()
+        {
+            Game1.displayFarmer = false;
+            Game1.currentLocation = Game1.getLocationFromName("Farm");
+            Game1.currentLocation.resetForPlayerEntry();
+            Game1.globalFadeToClear();
+            this.onFarm = true;
+            this.freeze = false;
+            this.okButton.bounds.X = Game1.viewport.Width - Game1.tileSize * 2;
+            this.okButton.bounds.Y = Game1.viewport.Height - Game1.tileSize * 2;
+            Game1.displayHUD = false;
+            Game1.viewportFreeze = true;
+            Game1.viewport.Location = new Location(49 * Game1.tileSize, 5 * Game1.tileSize);
+            Game1.panScreen(0, 0);
+        }
+
+        private void setUpForReturnToShopMenu()
+        {
+            this.freeze = false;
+            Game1.displayFarmer = true;
+            Game1.currentLocation.cleanupBeforePlayerExit();
+            //Game1.currentLocation = Game1.getLocationFromName("AnimalShop");
+            Game1.currentLocation.resetForPlayerEntry();
+            Game1.globalFadeToClear();
+            this.onFarm = false;
+            this.okButton.bounds.X = this.xPositionOnScreen + this.width + 4;
+            this.okButton.bounds.Y = this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth;
+            Game1.displayHUD = true;
+            Game1.viewportFreeze = false;
+            this.namingAnimal = false;
+            this.textBox.OnEnterPressed -= this.e;
+            this.textBox.Selected = false;
+        }
+
+        private string getAnimalDescription(string name)
+        {
+            switch (name)
+            {
+                case "Chicken":
+                    return "Well cared-for adult chickens lay eggs every day." + Environment.NewLine + "Lives in the coop.";
+                case "Duck":
+                    return "Happy adults lay duck eggs every other day." + Environment.NewLine + "Lives in the coop.";
+                case "Rabbit":
+                    return "These are wooly rabbits! They shed precious wool every few days." + Environment.NewLine + "Lives in the coop.";
+                case "Dairy Cow":
+                    return "Adults can be milked daily. A milk pail is required to harvest the milk." + Environment.NewLine + "Lives in the barn.";
+                case "Pig":
+                    return "These pigs are trained to find truffles!" + Environment.NewLine + "Lives in the barn.";
+                case "Goat":
+                    return "Happy adults provide goat milk every other day. A milk pail is required to harvest the milk." + Environment.NewLine + "Lives in the barn.";
+                case "Sheep":
+                    return "Adults can be shorn for wool. Sheep who form a close bond with their owners can grow wool faster. A pair of shears is required to harvest the wool." + Environment.NewLine + "Lives in the barn.";
+                default:
+                    return "";
+            }
         }
     }
 }

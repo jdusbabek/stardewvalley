@@ -11,46 +11,54 @@ namespace PelicanFiber
 {
     public class PelicanFiber : Mod
     {
-        private static Keys menuKey = Keys.PageDown;
-        internal static LocalizedContentManager content;
-        internal static Texture2D websites;
-        private static PelicanFiberConfig config;
-
+        /*********
+        ** Properties
+        *********/
+        private Keys menuKey = Keys.PageDown;
+        private LocalizedContentManager content;
+        private Texture2D websites;
+        private PelicanFiberConfig config;
         private bool unfiltered = true;
-        internal static bool giveAchievements;
+        private ItemUtils ItemUtils;
+        private readonly Log Log = new Log(false);
 
 
+        /*********
+        ** Public methods
+        *********/
         public override void Entry(params object[] objects)
         {
-            PlayerEvents.LoadedGame += onLoaded;
-            ControlEvents.KeyReleased += onKeyReleased;
-        }
-
-        private void onLoaded(object sender, EventArgs e)
-        {
-            PelicanFiber.config = this.Helper.ReadConfig<PelicanFiberConfig>();
-
-            if (!Enum.TryParse(config.keybind, true, out PelicanFiber.menuKey))
+            // load config
+            this.config = this.Helper.ReadConfig<PelicanFiberConfig>();
+            if (!Enum.TryParse(config.keybind, true, out this.menuKey))
             {
-                PelicanFiber.menuKey = Keys.PageDown;
+                this.menuKey = Keys.PageDown;
                 Log.force_ERROR("[PelicanFiber] 404 Not Found: Error parsing key binding. Defaulted to Page Down");
             }
-
             this.unfiltered = !config.internetFilter;
-            PelicanFiber.giveAchievements = config.giveAchievements;
 
+            // load textures
             try
             {
-                PelicanFiber.content = new LocalizedContentManager(Game1.content.ServiceProvider, this.PathOnDisk);
-                PelicanFiber.websites = PelicanFiber.content.Load<Texture2D>("websites");
+                this.content = new LocalizedContentManager(Game1.content.ServiceProvider, this.PathOnDisk);
+                this.websites = this.content.Load<Texture2D>("websites");
             }
             catch (Exception ex)
             {
                 Log.force_ERROR("[PelicanFiber] 400 Bad Request: Could not load image content. " + ex);
             }
 
+            // load utils
+            this.ItemUtils = new ItemUtils(this.content, this.Log);
+
+            // hook events
+            ControlEvents.KeyReleased += onKeyReleased;
         }
 
+
+        /*********
+        ** Private methods
+        *********/
         private void onKeyReleased(object sender, EventArgsKeyPressed e)
         {
             if (Game1.currentLocation == null
@@ -65,7 +73,7 @@ namespace PelicanFiber
                 return;
             }
 
-            if (e.KeyPressed == PelicanFiber.menuKey)
+            if (e.KeyPressed == this.menuKey)
             {
                 try
                 {
@@ -73,7 +81,7 @@ namespace PelicanFiber
                     if (Game1.viewport.Height < 1325)
                         scale = Game1.viewport.Height / 1325f;
 
-                    Game1.activeClickableMenu = new PelicanFiberMenu(scale, unfiltered);
+                    Game1.activeClickableMenu = new PelicanFiberMenu(this.websites, this.ItemUtils, this.config.giveAchievements, this.ShowMainMenu, scale, unfiltered);
                 }
                 catch (Exception ex)
                 {
@@ -83,7 +91,7 @@ namespace PelicanFiber
             }
         }
 
-        internal static void showTheMenu()
+        private void ShowMainMenu()
         {
             try
             {
@@ -91,28 +99,12 @@ namespace PelicanFiber
                 if (Game1.viewport.Height < 1325)
                     scale = Game1.viewport.Height / 1325f;
 
-                Game1.activeClickableMenu = new PelicanFiberMenu(scale, !config.internetFilter);
+                Game1.activeClickableMenu = new PelicanFiberMenu(this.websites, this.ItemUtils, this.config.giveAchievements, this.ShowMainMenu, scale, !this.config.internetFilter);
             }
             catch (Exception ex)
             {
                 Log.force_ERROR("[PelicanFiber] 500 Internal Error: " + ex);
             }
         }
-
-        internal static MailOrderPigMenu getMailOrderPigMenu()
-        {
-            return new MailOrderPigMenu(ItemUtils.getPurchaseAnimalStock());
-        }
-
-        internal static BuyAnimalMenu getBuyAnimalMenu()
-        {
-            return new BuyAnimalMenu(Utility.getPurchaseAnimalStock());
-        }
-
-        internal static ConstructionMenu getConstructionMenu(bool magical)
-        {
-            return new ConstructionMenu(magical);
-        }
-
     }
 }

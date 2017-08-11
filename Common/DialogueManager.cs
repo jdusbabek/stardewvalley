@@ -7,19 +7,28 @@ namespace StardewLib
 {
     internal class DialogueManager
     {
-        private static LocalizedContentManager content;
-        private static Dictionary<string, Dictionary<int, string>> dialogueLookups = new Dictionary<string, Dictionary<int, string>>();
-        private static Dictionary<string, string> allmessages = new Dictionary<string, string>();
-        public static IConfig config;
+        /*********
+        ** Properties
+        *********/
+        private readonly LocalizedContentManager Content;
+        private readonly Dictionary<string, Dictionary<int, string>> DialogueLookups = new Dictionary<string, Dictionary<int, string>>();
+        private readonly IConfig Config;
+        private readonly Random Random = new Random();
+        private Log Log;
+        private Dictionary<string, string> AllMessages = new Dictionary<string, string>();
 
-        private static Random random = new Random();
 
-        public static void initialize(IServiceProvider provider, string path)
+        /*********
+        ** Public methods
+        *********/
+        public DialogueManager(IConfig config, IServiceProvider provider, string path, Log log)
         {
-            DialogueManager.content = new LocalizedContentManager(provider, path);
+            this.Config = config;
+            this.Content = new LocalizedContentManager(provider, path);
+            this.Log = log;
         }
 
-        public static string performReplacement(string message, IStats stats, IConfig config)
+        public string PerformReplacement(string message, IStats stats, IConfig config)
         {
             String retVal = message;
 
@@ -39,12 +48,84 @@ namespace StardewLib
             return retVal;
         }
 
+        public string GetRandomMessage(string messageStoreName)
+        {
+            string value = "";
 
-        private static Dictionary<int, string> readDialogue(string identifier)
+            Dictionary<int, string> messagePool = null;
+            this.DialogueLookups.TryGetValue(messageStoreName, out messagePool);
+
+            if (messagePool == null)
+            {
+                messagePool = readDialogue(messageStoreName);
+            }
+            else if (messagePool.Count == 0)
+            {
+                return "...$h#$e#";
+            }
+
+            int rand = this.Random.Next(1, messagePool.Count + 1);
+            messagePool.TryGetValue(rand, out value);
+
+            if (value == null)
+            {
+                return "...$h#$e#";
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        public string GetMessageAt(int index, string messageStoreName)
+        {
+            Dictionary<int, string> messagePool = null;
+            this.DialogueLookups.TryGetValue(messageStoreName, out messagePool);
+
+            if (messagePool == null)
+            {
+                messagePool = readDialogue(messageStoreName);
+            }
+            else if (messagePool.Count == 0)
+            {
+                return "...$h#$e#";
+            }
+            else if (messagePool.Count < index)
+            {
+                return "...$h#$e#";
+            }
+
+            Log.INFO("[jwdred-StardewLib] Returning message " + index + ": " + messagePool[index]);
+            return messagePool[index];
+            //return messagePool.ElementAt(index).Value;
+        }
+
+
+        /**
+         * Loads the dialog.xnb file and sets up each of the dialog lookup files.
+         */
+        public void ReadInMessages()
+        {
+            //Dictionary<int, string> objects = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
+            try
+            {
+                this.AllMessages = this.Content.Load<Dictionary<string, string>>("dialog");
+            }
+            catch (Exception ex)
+            {
+                Log.force_ERROR((object)("[jwdred-StardewLib] Exception loading content:" + ex.ToString()));
+            }
+        }
+
+
+        /*********
+        ** Private methods
+        *********/
+        private Dictionary<int, string> readDialogue(string identifier)
         {
             Dictionary<int, string> result = new Dictionary<int, string>();
 
-            foreach (KeyValuePair<string, string> msgPair in (Dictionary<string, string>)allmessages)
+            foreach (KeyValuePair<string, string> msgPair in this.AllMessages)
             {
                 if (msgPair.Key.Contains("_"))
                 {
@@ -70,7 +151,7 @@ namespace StardewLib
 
             if (identifier.Equals("smalltalk"))
             {
-                Dictionary<int, string> characterDialog = DialogueManager.readDialogue(config.WhoChecks);
+                Dictionary<int, string> characterDialog = this.readDialogue(this.Config.WhoChecks);
 
                 if (characterDialog.Count > 0)
                 {
@@ -83,80 +164,9 @@ namespace StardewLib
                 }
             }
 
-            dialogueLookups.Add(identifier, result);
+            this.DialogueLookups.Add(identifier, result);
 
             return result;
-        }
-
-
-        public static string getRandomMessage(string messageStoreName)
-        {
-            string value = "";
-
-            Dictionary<int, string> messagePool = null;
-            dialogueLookups.TryGetValue(messageStoreName, out messagePool);
-
-            if (messagePool == null)
-            {
-                messagePool = readDialogue(messageStoreName);
-            }
-            else if (messagePool.Count == 0)
-            {
-                return "...$h#$e#";
-            }
-
-            int rand = random.Next(1, messagePool.Count + 1);
-            messagePool.TryGetValue(rand, out value);
-
-            if (value == null)
-            {
-                return "...$h#$e#";
-            }
-            else
-            {
-                return value;
-            }
-        }
-
-
-        public static string getMessageAt(int index, string messageStoreName)
-        {
-            Dictionary<int, string> messagePool = null;
-            dialogueLookups.TryGetValue(messageStoreName, out messagePool);
-
-            if (messagePool == null)
-            {
-                messagePool = readDialogue(messageStoreName);
-            }
-            else if (messagePool.Count == 0)
-            {
-                return "...$h#$e#";
-            }
-            else if (messagePool.Count < index)
-            {
-                return "...$h#$e#";
-            }
-
-            Log.INFO("[jwdred-StardewLib] Returning message " + index + ": " + messagePool[index]);
-            return messagePool[index];
-            //return messagePool.ElementAt(index).Value;
-        }
-
-
-        /**
-         * Loads the dialog.xnb file and sets up each of the dialog lookup files.
-         */
-        public static void readInMessages()
-        {
-            //Dictionary<int, string> objects = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
-            try
-            {
-                allmessages = DialogueManager.content.Load<Dictionary<string, string>>("dialog");
-            }
-            catch (Exception ex)
-            {
-                Log.force_ERROR((object)("[jwdred-StardewLib] Exception loading content:" + ex.ToString()));
-            }
         }
     }
 }

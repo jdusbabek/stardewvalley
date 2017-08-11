@@ -2,44 +2,49 @@
 {
     internal class Log
     {
-        public static int sequence = 0;
+        /*********
+        ** Properties
+        *********/
+        private bool enabled;
 
-        public static bool enabled = false;
 
+        /*********
+        ** Public methods
+        *********/
         public Log(bool enabled)
         {
-            Log.enabled = enabled;
+            this.enabled = enabled;
         }
 
-        public static void INFO(object o)
+        public void INFO(object o)
         {
-            if (enabled)
+            if (this.enabled)
                 StardewModdingAPI.Log.Info(o);
         }
 
-        public static void ERROR(object o)
+        public void ERROR(object o)
         {
-            if (enabled)
+            if (this.enabled)
                 StardewModdingAPI.Log.Error(o);
         }
 
-        public static void DEBUG(object o)
+        public void DEBUG(object o)
         {
-            if (enabled)
+            if (this.enabled)
                 StardewModdingAPI.Log.Debug(o);
         }
 
-        public static void force_INFO(object o)
+        public void force_INFO(object o)
         {
             StardewModdingAPI.Log.Info(o);
         }
 
-        public static void force_ERROR(object o)
+        public void force_ERROR(object o)
         {
             StardewModdingAPI.Log.Error(o);
         }
 
-        public static void force_DEBUG(object o)
+        public void force_DEBUG(object o)
         {
             StardewModdingAPI.Log.Debug(o);
         }

@@ -15,8 +15,11 @@ namespace Replanter
 {
     public class Replanter : Mod
     {
+        /*********
+        ** Properties
+        *********/
         // The hot key which activates this mod.
-        private static Keys actionKey;
+        private Keys actionKey;
 
         // A dictionary that allows seeds to be looked up by the crop's id.
         private Dictionary<int, int> cropToSeed;
@@ -40,7 +43,7 @@ namespace Replanter
         private HashSet<int> neverSellLookup;
 
         // The mod's configuration file.
-        private static ReplanterConfig config;
+        private ReplanterConfig config;
 
         // Whether to disregard all cost mechanisms, or to enforce them.
         private bool free;
@@ -121,23 +124,35 @@ namespace Replanter
         // A flag for when an item could not be deposited into either the inventory or the chest.
         private bool inventoryAndChestFull;
 
+        private DialogManager DialogueManager;
+        private Log Log;
 
+
+        /*********
+        ** Public methods
+        *********/
         public override void Entry(params object[] objects)
         {
+            // load config
+            this.config = this.Helper.ReadConfig<ReplanterConfig>();
+            this.Log = new Log(config.enableLogging);
+            importConfiguration();
+            
+
+            // load dialogue manager
+            this.DialogueManager = new DialogManager(this.config, this.Log);
+
+            // hook events
             PlayerEvents.LoadedGame += onLoaded;
             ControlEvents.KeyReleased += onKeyReleased;
         }
 
 
+        /*********
+        ** Private methods
+        *********/
         private void onLoaded(object sender, EventArgs e)
         {
-            Replanter.config = this.Helper.ReadConfig<ReplanterConfig>();
-
-            // Loads and validates the configuration settings.
-            importConfiguration();
-
-            DialogManager.config = config;
-
             // Parses the always sell, never sell, and never harvest lists.
             generateLists();
 
@@ -151,7 +166,6 @@ namespace Replanter
             readInMessages();
         }
 
-
         private void onKeyReleased(object sender, EventArgsKeyPressed e)
         {
             if (Game1.currentLocation == null
@@ -164,7 +178,7 @@ namespace Replanter
                 || Game1.gameMode != 3)
                 return;
 
-            if (e.KeyPressed == Replanter.actionKey)
+            if (e.KeyPressed == this.actionKey)
             {
                 try
                 {
@@ -177,17 +191,13 @@ namespace Replanter
                 }
 
             }
-
         }
-
 
         private void importConfiguration()
         {
-            Log.enabled = config.enableLogging;
-
-            if (!Enum.TryParse(config.keybind, true, out Replanter.actionKey))
+            if (!Enum.TryParse(config.keybind, true, out this.actionKey))
             {
-                Replanter.actionKey = Keys.J;
+                this.actionKey = Keys.J;
                 Log.force_INFO("[Replanter] Error parsing key binding. Defaulted to J");
             }
 
@@ -219,7 +229,6 @@ namespace Replanter
             this.clearDeadPlants = config.clearDeadPlants;
             this.smartReplantingEnabled = config.smartReplantingEnabled;
         }
-
 
         private void performAction()
         {
@@ -421,7 +430,6 @@ namespace Replanter
             }
         }
 
-
         private StardewValley.Object getHarvestedFruit(FruitTree tree)
         {
             int quality = 0;
@@ -487,7 +495,6 @@ namespace Replanter
 
             return item;
         }
-
 
         private bool replantCrop(Crop c, GameLocation location)
         {
@@ -555,7 +562,6 @@ namespace Replanter
             return replanted;
         }
 
-
         private string getNextSeason(string season)
         {
             switch (season)
@@ -572,7 +578,6 @@ namespace Replanter
                     return "spring";
             }
         }
-
 
         private void handleSunflower(SFarmer farmer, ReplanterStats stats, int quality, int tileX = 0, int tileY = 0)
         {
@@ -600,7 +605,6 @@ namespace Replanter
             }
         }
 
-
         private void showMessage(ReplanterStats stats)
         {
             string message = "";
@@ -609,16 +613,16 @@ namespace Replanter
             {
                 if (Game1.player.isMarried())
                 {
-                    message += DialogManager.performReplacement(dialog[1], stats);
+                    message += this.DialogueManager.performReplacement(dialog[1], stats);
                 }
                 else
                 {
-                    message += DialogManager.performReplacement(dialog[2], stats);
+                    message += this.DialogueManager.performReplacement(dialog[2], stats);
                 }
 
                 if (((stats.runningSeedCost + stats.farmhandCost) > 0) && !free)
                 {
-                    message += DialogManager.performReplacement(dialog[3], stats);
+                    message += this.DialogueManager.performReplacement(dialog[3], stats);
                 }
 
                 HUDMessage msg = new HUDMessage(message);
@@ -629,29 +633,29 @@ namespace Replanter
                 NPC character = Game1.getCharacterFromName(checker);
                 if (character != null)
                 {
-                    message += DialogManager.performReplacement(getRandomMessage(greetings), stats);
+                    message += this.DialogueManager.performReplacement(getRandomMessage(greetings), stats);
 
                     if (stats.cropsHarvested > 0)
                     {
-                        message += DialogManager.performReplacement(dialog[4], stats);
+                        message += this.DialogueManager.performReplacement(dialog[4], stats);
                     }
                     else
                     {
-                        message += DialogManager.performReplacement(dialog[7], stats);
+                        message += this.DialogueManager.performReplacement(dialog[7], stats);
                     }
 
                     if ((stats.cropsHarvested != stats.totalCrops) && !sellAfterHarvest)
                     {
-                        message += DialogManager.performReplacement(dialog[8], stats);
-                        message += DialogManager.performReplacement(getRandomMessage(inventoryMessages), stats);
+                        message += this.DialogueManager.performReplacement(dialog[8], stats);
+                        message += this.DialogueManager.performReplacement(getRandomMessage(inventoryMessages), stats);
                     }
 
                     if (!free && stats.cropsHarvested > 0)
                     {
-                        message += DialogManager.performReplacement(dialog[5], stats);
+                        message += this.DialogueManager.performReplacement(dialog[5], stats);
 
                         if (stats.runningSeedCost > 0)
-                            message += DialogManager.performReplacement(dialog[9], stats);
+                            message += this.DialogueManager.performReplacement(dialog[9], stats);
                         else
                             message += ".";
                     }
@@ -660,20 +664,20 @@ namespace Replanter
                     {
                         if (character.name == "Pierre")
                         {
-                            message += DialogManager.performReplacement(dialog[10], stats);
+                            message += this.DialogueManager.performReplacement(dialog[10], stats);
                         }
                         else
                         {
-                            message += DialogManager.performReplacement(dialog[11], stats);
+                            message += this.DialogueManager.performReplacement(dialog[11], stats);
                         }
                     }
 
                     if (stats.cropsWatered > 0)
                     {
-                        message += DialogManager.performReplacement(dialog[12], stats);
+                        message += this.DialogueManager.performReplacement(dialog[12], stats);
                     }
 
-                    message += DialogManager.performReplacement(getRandomMessage(smalltalk), stats);
+                    message += this.DialogueManager.performReplacement(getRandomMessage(smalltalk), stats);
                     message += "#$e#";
 
                     character.CurrentDialogue.Push(new Dialogue(message, character));
@@ -681,14 +685,13 @@ namespace Replanter
                 }
                 else
                 {
-                    message += DialogManager.performReplacement(dialog[13], stats);
+                    message += this.DialogueManager.performReplacement(dialog[13], stats);
                     HUDMessage msg = new HUDMessage(message);
                     Game1.addHUDMessage(msg);
                 }
             }
 
         }
-
 
         /**
          * Parses the neverSell, alwaysSell, neverHarvest crops.
@@ -726,7 +729,6 @@ namespace Replanter
             }
         }
 
-
         private void parseChestLocations()
         {
             chests = new Dictionary<int, ChestDef>();
@@ -751,7 +753,6 @@ namespace Replanter
                 }
             }
         }
-
 
         /**
          * Generates the lookup dictionaries needed to get crop and seed prices.
@@ -800,7 +801,6 @@ namespace Replanter
 
         }
 
-
         /**
          * Gets the cost of the seed based off its harvest ID, (not the item id of the seed)
          */
@@ -815,7 +815,6 @@ namespace Replanter
             else
                 return seedToPrice[id];
         }
-
 
         /**
          * Sells the crops, and adds them to the inventory if they are on the never-sell list.
@@ -832,7 +831,6 @@ namespace Replanter
 
         }
 
-
         /**
          * Determines of a crop is on the always-sell list.
          */
@@ -840,7 +838,6 @@ namespace Replanter
         {
             return alwaysSellLookup.Contains(cropId);
         }
-
 
         /**
          * Determines if a crop is on the never-sell list.  This does an alwaysSell lookup, because the always sell list trumps the never sell list,
@@ -854,7 +851,6 @@ namespace Replanter
                 return neverSellLookup.Contains(cropId);
         }
 
-
         /**
          * Determines if a crop in on the ignore (do-not-harvest) list.
          */
@@ -862,7 +858,6 @@ namespace Replanter
         {
             return ignoreLookup.Contains(cropId);
         }
-
 
         /**
          * Attempts to add the crop to the farmer's inventory.  If the crop is on the always sell list, it is sold instead.
@@ -970,7 +965,6 @@ namespace Replanter
             return wasAdded;
         }
 
-
         /**
          * Gets a random message from a specific list.
          */
@@ -987,7 +981,6 @@ namespace Replanter
             return value;
         }
 
-
         /**
          * Loads the dialog.xnb file and sets up each of the dialog lookup files.
          */
@@ -998,14 +991,14 @@ namespace Replanter
             {
                 allmessages = content.Load<Dictionary<string, string>>("dialog");
 
-                dialog = DialogManager.getDialog("Xdialog", allmessages);
-                greetings = DialogManager.getDialog("greeting", allmessages);
-                //unfinishedMessages = DialogManager.getDialog("unfinishedmoney", allmessages);
-                freebieMessages = DialogManager.getDialog("freebies", allmessages);
-                inventoryMessages = DialogManager.getDialog("unfinishedinventory", allmessages);
-                smalltalk = DialogManager.getDialog("smalltalk", allmessages);
+                dialog = this.DialogueManager.getDialog("Xdialog", allmessages);
+                greetings = this.DialogueManager.getDialog("greeting", allmessages);
+                //unfinishedMessages = this.DialogueManager.getDialog("unfinishedmoney", allmessages);
+                freebieMessages = this.DialogueManager.getDialog("freebies", allmessages);
+                inventoryMessages = this.DialogueManager.getDialog("unfinishedinventory", allmessages);
+                smalltalk = this.DialogueManager.getDialog("smalltalk", allmessages);
 
-                Dictionary<int, string> characterDialog = DialogManager.getDialog(this.checker, allmessages);
+                Dictionary<int, string> characterDialog = this.DialogueManager.getDialog(this.checker, allmessages);
 
                 if (characterDialog.Count > 0)
                 {
@@ -1022,6 +1015,5 @@ namespace Replanter
                 Log.force_ERROR("[Replanter] Exception loading content:" + ex);
             }
         }
-
     }
 }

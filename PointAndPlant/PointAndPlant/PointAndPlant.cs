@@ -15,11 +15,14 @@ namespace PointAndPlant
 {
     public class PointAndPlant : Mod
     {
-        private static Keys plowKey;
-        private static Keys plantKey;
-        private static Keys growKey;
-        private static Keys harvestKey;
-        private static Keys grassKey;
+        /*********
+        ** Properties
+        *********/
+        private Keys plowKey;
+        private Keys plantKey;
+        private Keys growKey;
+        private Keys harvestKey;
+        private Keys grassKey;
 
         private bool plowEnabled;
         private bool plantEnabled;
@@ -40,21 +43,25 @@ namespace PointAndPlant
         private int tileX;
         private int tileY;
 
-        internal static Vector2 vector;
+        private Vector2 vector;
         private Texture2D buildingTiles;
 
-        private static PAPConfig config;
+        private PAPConfig config;
 
-        private static Hoe papHoe;
-        private static PAPSickle papSickle;
-        private static Axe phantomAxe;
-        private static Pickaxe phantomPick;
+        private Hoe papHoe;
+        private PAPSickle papSickle;
+        private Axe phantomAxe;
+        private Pickaxe phantomPick;
 
-        private static int power = -1;
-        private static int toolLevel = 4;
+        private int power = -1;
+        private int toolLevel = 4;
 
-        private static bool loggingEnabled;
+        private bool loggingEnabled;
 
+
+        /*********
+        ** Public methods
+        *********/
         public override void Entry(params object[] objects)
         {
             PlayerEvents.LoadedGame += onLoaded;
@@ -63,9 +70,12 @@ namespace PointAndPlant
         }
 
 
+        /*********
+        ** Private methods
+        *********/
         private void onLoaded(object sender, EventArgs e)
         {
-            PointAndPlant.config = this.Helper.ReadConfig<PAPConfig>();
+            this.config = this.Helper.ReadConfig<PAPConfig>();
 
             this.plowEnabled = config.plowEnabled;
             this.plantEnabled = config.plantEnabled;
@@ -81,7 +91,7 @@ namespace PointAndPlant
 
             this.fertilizer = config.fertilizer;
 
-            PointAndPlant.loggingEnabled = config.loggingEnabled;
+            this.loggingEnabled = config.loggingEnabled;
 
             if (config.plowWidth < 1)
             {
@@ -155,9 +165,9 @@ namespace PointAndPlant
 
 
 
-            if (!Enum.TryParse(config.plowKey, true, out PointAndPlant.plowKey))
+            if (!Enum.TryParse(config.plowKey, true, out this.plowKey))
             {
-                PointAndPlant.plowKey = Keys.Z;
+                this.plowKey = Keys.Z;
 
                 if (this.plowEnabled)
                 {
@@ -165,9 +175,9 @@ namespace PointAndPlant
                 }
             }
 
-            if (!Enum.TryParse(config.plantKey, true, out PointAndPlant.plantKey))
+            if (!Enum.TryParse(config.plantKey, true, out this.plantKey))
             {
-                PointAndPlant.plantKey = Keys.A;
+                this.plantKey = Keys.A;
 
                 if (this.plantEnabled)
                 {
@@ -176,9 +186,9 @@ namespace PointAndPlant
 
             }
 
-            if (!Enum.TryParse(config.growKey, true, out PointAndPlant.growKey))
+            if (!Enum.TryParse(config.growKey, true, out this.growKey))
             {
-                PointAndPlant.growKey = Keys.S;
+                this.growKey = Keys.S;
 
                 if (this.growEnabled)
                 {
@@ -186,9 +196,9 @@ namespace PointAndPlant
                 }
             }
 
-            if (!Enum.TryParse(config.harvestKey, true, out PointAndPlant.harvestKey))
+            if (!Enum.TryParse(config.harvestKey, true, out this.harvestKey))
             {
-                PointAndPlant.harvestKey = Keys.D;
+                this.harvestKey = Keys.D;
 
                 if (this.harvestEnabled)
                 {
@@ -197,11 +207,11 @@ namespace PointAndPlant
 
             }
 
-            PointAndPlant.grassKey = Keys.Q;
+            this.grassKey = Keys.Q;
 
-            PointAndPlant.papSickle = new PAPSickle(47, config.harvestRadius);
-            PointAndPlant.papHoe = new Hoe();
-            PointAndPlant.papHoe.upgradeLevel = PointAndPlant.toolLevel;
+            this.papSickle = new PAPSickle(47, config.harvestRadius, this.vector);
+            this.papHoe = new Hoe();
+            this.papHoe.upgradeLevel = this.toolLevel;
         }
 
         private void onKeyReleased(object sender, EventArgsKeyPressed e)
@@ -219,7 +229,7 @@ namespace PointAndPlant
 
             if (Game1.hasLoadedGame)
             {
-                if (e.KeyPressed == PointAndPlant.plowKey && config.plowEnabled)
+                if (e.KeyPressed == this.plowKey && config.plowEnabled)
                 {
                     try
                     {
@@ -227,7 +237,7 @@ namespace PointAndPlant
                     }
                     catch (Exception ex)
                     {
-                        if (PointAndPlant.loggingEnabled)
+                        if (this.loggingEnabled)
                         {
                             Log.Info("[Point-and-Plant] Plow (key handler) Exception: " + ex.Message);
                             Log.Error("[Point-and-Plant] Plow (key handler) Stack Trace: " + ex);
@@ -235,7 +245,7 @@ namespace PointAndPlant
                         }
                     }
                 }
-                else if (e.KeyPressed == PointAndPlant.plantKey && config.plantEnabled)
+                else if (e.KeyPressed == this.plantKey && config.plantEnabled)
                 {
                     try
                     {
@@ -243,7 +253,7 @@ namespace PointAndPlant
                     }
                     catch (Exception ex)
                     {
-                        if (PointAndPlant.loggingEnabled)
+                        if (this.loggingEnabled)
                         {
                             Log.Info("[Point-and-Plant] Plant (key handler) Exception: " + ex.Message);
                             Log.Error("[Point-and-Plant] Plant (key handler) Stack Trace: " + ex);
@@ -252,7 +262,7 @@ namespace PointAndPlant
                     }
 
                 }
-                else if (e.KeyPressed == PointAndPlant.growKey && config.growEnabled)
+                else if (e.KeyPressed == this.growKey && config.growEnabled)
                 {
                     try
                     {
@@ -260,7 +270,7 @@ namespace PointAndPlant
                     }
                     catch (Exception ex)
                     {
-                        if (PointAndPlant.loggingEnabled)
+                        if (this.loggingEnabled)
                         {
                             Log.Info("[Point-and-Plant] Grow (key handler) Exception: " + ex.Message);
                             Log.Error("[Point-and-Plant] Grow (key handler) Stack Trace: " + ex);
@@ -269,7 +279,7 @@ namespace PointAndPlant
                     }
 
                 }
-                else if (e.KeyPressed == PointAndPlant.harvestKey && config.harvestEnabled)
+                else if (e.KeyPressed == this.harvestKey && config.harvestEnabled)
                 {
                     try
                     {
@@ -277,7 +287,7 @@ namespace PointAndPlant
                     }
                     catch (Exception ex)
                     {
-                        if (PointAndPlant.loggingEnabled)
+                        if (this.loggingEnabled)
                         {
                             Log.Info("[Point-and-Plant] Harvest (key handler) Exception: " + ex.Message);
                             Log.Error("[Point-and-Plant] Harvest (key handler) Stack Trace: " + ex);
@@ -285,7 +295,7 @@ namespace PointAndPlant
                         }
                     }
                 }
-                else if (e.KeyPressed == PointAndPlant.grassKey)
+                else if (e.KeyPressed == this.grassKey)
                 {
                     try
                     {
@@ -314,7 +324,7 @@ namespace PointAndPlant
                     }
                     catch (Exception ex)
                     {
-                        if (PointAndPlant.loggingEnabled)
+                        if (this.loggingEnabled)
                         {
                             Log.Info("[Point-and-Plant] Plant Grass (key handler) Exception: " + ex.Message);
                             Log.Error("[Point-and-Plant] Plant Grass (key handler) Stack Trace: " + ex);
@@ -366,12 +376,12 @@ namespace PointAndPlant
                     //index.Equals(vector2);
                     if (location.terrainFeatures.ContainsKey(index))
                     {
-                        if (location.terrainFeatures[index].performToolAction(PointAndPlant.papHoe, 0, index))
+                        if (location.terrainFeatures[index].performToolAction(this.papHoe, 0, index))
                             location.terrainFeatures.Remove(index);
                     }
                     else
                     {
-                        if (location.objects.ContainsKey(index) && location.Objects[index].performToolAction(PointAndPlant.papHoe))
+                        if (location.objects.ContainsKey(index) && location.Objects[index].performToolAction(this.papHoe))
                         {
                             if (location.Objects[index].type.Equals("Crafting") && location.Objects[index].fragility != 2)
                                 location.debris.Add(new Debris(location.Objects[index].bigCraftable ? -location.Objects[index].ParentSheetIndex : location.Objects[index].ParentSheetIndex, Game1.player.GetToolLocation(), new Vector2(Game1.player.GetBoundingBox().Center.X, Game1.player.GetBoundingBox().Center.Y)));
@@ -415,7 +425,7 @@ namespace PointAndPlant
                 }
                 catch (Exception exception)
                 {
-                    if (PointAndPlant.loggingEnabled)
+                    if (this.loggingEnabled)
                     {
                         Log.Info("[Point-and-Plant] Plow Exception: " + exception.Message);
                         Log.Error("[Point-and-Plant] Plow Stack Trace: " + exception);
@@ -478,7 +488,7 @@ namespace PointAndPlant
                 }
                 catch (Exception exception)
                 {
-                    if (PointAndPlant.loggingEnabled)
+                    if (this.loggingEnabled)
                     {
                         Log.Info("[Point-and-Plant] Planting Exception: " + exception.Message);
                         Log.Error("[Point-and-Plant] Planting Stack Trace: " + exception);
@@ -528,7 +538,7 @@ namespace PointAndPlant
                 }
                 catch (Exception exception)
                 {
-                    if (PointAndPlant.loggingEnabled)
+                    if (this.loggingEnabled)
                     {
                         Log.Info("[Point-and-Plant] Planting Exception: " + exception.Message);
                         Log.Error("[Point-and-Plant] Planting Stack Trace: " + exception);
@@ -544,10 +554,10 @@ namespace PointAndPlant
             SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
-            if (PointAndPlant.phantomAxe == null)
+            if (this.phantomAxe == null)
             {
-                PointAndPlant.phantomAxe = new Axe();
-                PointAndPlant.phantomAxe.upgradeLevel = 4;
+                this.phantomAxe = new Axe();
+                this.phantomAxe.upgradeLevel = 4;
             }
 
             int min = this.plantRadius * -1;
@@ -566,13 +576,13 @@ namespace PointAndPlant
                 {
                     if (plr.currentLocation.terrainFeatures.ContainsKey(index) && plr.currentLocation.terrainFeatures[index] is Tree)
                     {
-                        PointAndPlant.phantomAxe.DoFunction(plr.currentLocation, (int)(index.X * Game1.tileSize), (int)(index.Y * Game1.tileSize), 4, plr);
+                        this.phantomAxe.DoFunction(plr.currentLocation, (int)(index.X * Game1.tileSize), (int)(index.Y * Game1.tileSize), 4, plr);
                     }
 
                 }
                 catch (Exception exception)
                 {
-                    if (PointAndPlant.loggingEnabled)
+                    if (this.loggingEnabled)
                     {
                         Log.Info("[Point-and-Plant] Tree Chopping Exception: " + exception.Message);
                         Log.Error("[Point-and-Plant] Tree Chopping Trace: " + exception);
@@ -588,10 +598,10 @@ namespace PointAndPlant
             SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
-            if (PointAndPlant.phantomPick == null)
+            if (this.phantomPick == null)
             {
-                PointAndPlant.phantomPick = new Pickaxe();
-                PointAndPlant.phantomPick.upgradeLevel = 4;
+                this.phantomPick = new Pickaxe();
+                this.phantomPick.upgradeLevel = 4;
             }
 
             int min = this.plantRadius * -1;
@@ -614,13 +624,13 @@ namespace PointAndPlant
                         if (o != null && o.name.Equals("Stone"))
                         {
                             o.minutesUntilReady = 0;
-                            PointAndPlant.phantomPick.DoFunction(plr.currentLocation, (int)(index.X * Game1.tileSize), (int)(index.Y * Game1.tileSize), 4, plr);
+                            this.phantomPick.DoFunction(plr.currentLocation, (int)(index.X * Game1.tileSize), (int)(index.Y * Game1.tileSize), 4, plr);
                         }
                     }
                 }
                 catch (Exception exception)
                 {
-                    if (PointAndPlant.loggingEnabled)
+                    if (this.loggingEnabled)
                     {
                         Log.Info("[Point-and-Plant] Rock Pounding Exception: " + exception.Message);
                         Log.Error("[Point-and-Plant] Rock Pounding  Trace: " + exception);
@@ -661,7 +671,7 @@ namespace PointAndPlant
                 }
                 catch (Exception exception)
                 {
-                    if (PointAndPlant.loggingEnabled)
+                    if (this.loggingEnabled)
                     {
                         Log.Info("[Point-and-Plant] Grow Exception: " + exception.Message);
                         Log.Error("[Point-and-Plant] Grow Stack Trace: " + exception);
@@ -680,8 +690,8 @@ namespace PointAndPlant
             GameLocation currentLocation = Game1.currentLocation;
             StardewValley.Object @object = null;
             TerrainFeature terrainFeature = null;
-            currentLocation.Objects.TryGetValue(PointAndPlant.vector, out @object);
-            currentLocation.terrainFeatures.TryGetValue(PointAndPlant.vector, out terrainFeature);
+            currentLocation.Objects.TryGetValue(this.vector, out @object);
+            currentLocation.terrainFeatures.TryGetValue(this.vector, out terrainFeature);
 
             //List<Vector2> tiles = new List<Vector2>();
             try
@@ -692,7 +702,7 @@ namespace PointAndPlant
                     {
                         if (((HoeDirt)terrainFeature).crop != null && (((HoeDirt)terrainFeature).crop.harvestMethod == 1 && ((HoeDirt)terrainFeature).readyForHarvest() || ((HoeDirt)terrainFeature).crop.dead))
                         {
-                            PointAndPlant.papSickle.DoDamage(currentLocation, this.mouseX, this.mouseY, Game1.player.getFacingDirection(), 0, Game1.player);
+                            this.papSickle.DoDamage(currentLocation, this.mouseX, this.mouseY, Game1.player.getFacingDirection(), 0, Game1.player);
                         }
                         else if (((HoeDirt)terrainFeature).crop != null && (((HoeDirt)terrainFeature).crop.harvestMethod != 1 && ((HoeDirt)terrainFeature).readyForHarvest()))
                         {
@@ -726,7 +736,7 @@ namespace PointAndPlant
                                 }
                                 catch (Exception exception)
                                 {
-                                    if (PointAndPlant.loggingEnabled)
+                                    if (this.loggingEnabled)
                                     {
                                         Log.Info("[Point-and-Plant] Harvest Inner Exception: " + exception.Message);
                                         Log.Error("[Point-and-Plant] Harvest Inner Stack Trace: " + exception);
@@ -743,7 +753,7 @@ namespace PointAndPlant
             }
             catch (Exception exception)
             {
-                if (PointAndPlant.loggingEnabled)
+                if (this.loggingEnabled)
                 {
                     Log.Info("[Point-and-Plant] Harvest Outer Exception: " + exception.Message);
                     Log.Error("[Point-and-Plant] Harvest Outer Stack Trace: " + exception);
@@ -767,11 +777,11 @@ namespace PointAndPlant
 
                 KeyboardState keyboard = Keyboard.GetState();
 
-                if ((!keyboard.IsKeyDown(PointAndPlant.grassKey) &&
-                    !keyboard.IsKeyDown(PointAndPlant.plowKey) &&
-                    !keyboard.IsKeyDown(PointAndPlant.plantKey) &&
-                    !keyboard.IsKeyDown(PointAndPlant.growKey) &&
-                    !keyboard.IsKeyDown(PointAndPlant.harvestKey)) ||
+                if ((!keyboard.IsKeyDown(this.grassKey) &&
+                    !keyboard.IsKeyDown(this.plowKey) &&
+                    !keyboard.IsKeyDown(this.plantKey) &&
+                    !keyboard.IsKeyDown(this.growKey) &&
+                    !keyboard.IsKeyDown(this.harvestKey)) ||
                     Game1.currentLocation == null ||
                     (Game1.player == null ||
                     Game1.hasLoadedGame == false) ||
@@ -787,22 +797,22 @@ namespace PointAndPlant
 
                 this.tileX = this.mouseX / Game1.tileSize;
                 this.tileY = this.mouseY / Game1.tileSize;
-                PointAndPlant.vector = new Vector2(this.tileX, this.tileY);
+                this.vector = new Vector2(this.tileX, this.tileY);
 
-                if (keyboard.IsKeyDown(PointAndPlant.plowKey))
+                if (keyboard.IsKeyDown(this.plowKey))
                 {
-                    foreach (Vector2 vector2 in this.tilesAffected(PointAndPlant.vector, 0, Game1.player))
+                    foreach (Vector2 vector2 in this.tilesAffected(this.vector, 0, Game1.player))
                         Game1.spriteBatch.Draw(this.buildingTiles, Game1.GlobalToLocal(Game1.viewport, vector2 * Game1.tileSize), Game1.getSourceRectForStandardTileSheet(this.buildingTiles, 0), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
                 }
-                else if (keyboard.IsKeyDown(PointAndPlant.grassKey))
+                else if (keyboard.IsKeyDown(this.grassKey))
                 {
-                    foreach (Vector2 vector2 in this.tilesAffectedGrass(PointAndPlant.vector, Game1.player))
+                    foreach (Vector2 vector2 in this.tilesAffectedGrass(this.vector, Game1.player))
                         Game1.spriteBatch.Draw(this.buildingTiles, Game1.GlobalToLocal(Game1.viewport, vector2 * Game1.tileSize), Game1.getSourceRectForStandardTileSheet(this.buildingTiles, 0), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
                 }
             }
             catch (Exception exception)
             {
-                if (PointAndPlant.loggingEnabled)
+                if (this.loggingEnabled)
                 {
                     Log.Info("[Point-and-Plant] Drawing Plow Overlay: " + exception.Message);
                     Log.Error("[Point-and-Plant] Drawing Plow Overlay Stack Trace: " + exception);

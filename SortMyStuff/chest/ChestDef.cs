@@ -5,13 +5,20 @@ namespace SortMyStuff.chest
 {
     internal class ChestDef
     {
-        public int x;
-        public int y;
-        public Vector2 vector;
-        public string location;
-        public int count;
-        public Chest chest;
+        /*********
+        ** Accessors
+        *********/
+        public int x { get; set; }
+        public int y { get; set; }
+        public Vector2 vector { get; set; }
+        public string location { get; set; }
+        public int count { get; set; }
+        public Chest chest { get; set; }
 
+
+        /*********
+        ** Public methods
+        *********/
         public ChestDef()
         {
             x = -1;
@@ -57,10 +64,9 @@ namespace SortMyStuff.chest
             this.chest = chest;
         }
 
-        override public string ToString()
+        public override string ToString()
         {
             return location + " " + this.vector + " #" + count;
         }
     }
-
 }

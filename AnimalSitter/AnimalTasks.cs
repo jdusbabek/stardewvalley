@@ -5,6 +5,9 @@ namespace ExtremePetting
 {
     internal class AnimalTasks : IStats
     {
+        /*********
+        ** Accessors
+        *********/
         public int animalsPet = 0;
         public int trufflesHarvested = 0;
         public int productsHarvested = 0;
@@ -16,6 +19,10 @@ namespace ExtremePetting
         public int numActions = 0;
         public int totalCost = 0;
 
+
+        /*********
+        ** Public methods
+        *********/
         public int getTaskCount()
         {
             return animalsPet + trufflesHarvested + productsHarvested + aged + fed + maxHappiness + maxFriendship;

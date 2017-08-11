@@ -4,11 +4,18 @@ namespace StardewLib
 {
     internal class ChestDef
     {
-        public int x;
-        public int y;
-        public Vector2 vector;
-        public string location;
+        /*********
+        ** Accessors
+        *********/
+        public int x { get; set; }
+        public int y { get; set; }
+        public Vector2 vector { get; set; }
+        public string location { get; set; }
 
+
+        /*********
+        ** Public methods
+        *********/
         public ChestDef()
         {
             this.x = -1;
