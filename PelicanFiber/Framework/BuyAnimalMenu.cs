@@ -20,24 +20,24 @@ namespace PelicanFiber.Framework
         /*********
         ** Properties
         *********/
-        private string WhereToGo = "";
-        private static int MenuHeight = Game1.tileSize * 5;
-        private static int MenuWidth = Game1.tileSize * 7;
-        private List<ClickableTextureComponent> AnimalsToPurchase = new List<ClickableTextureComponent>();
-        private ClickableTextureComponent OkButton;
-        private ClickableTextureComponent DoneNamingButton;
-        private ClickableTextureComponent RandomButton;
+        private readonly string WhereToGo;
+        private static readonly int MenuHeight = Game1.tileSize * 5;
+        private static readonly int MenuWidth = Game1.tileSize * 7;
+        private readonly List<ClickableTextureComponent> AnimalsToPurchase = new List<ClickableTextureComponent>();
+        private readonly ClickableTextureComponent OkButton;
+        private readonly ClickableTextureComponent DoneNamingButton;
+        private readonly ClickableTextureComponent RandomButton;
         private ClickableTextureComponent Hovered;
-        private ClickableTextureComponent BackButton;
+        private readonly ClickableTextureComponent BackButton;
         private bool OnFarm;
         private bool NamingAnimal;
         private bool Freeze;
         private FarmAnimal AnimalBeingPurchased;
-        private TextBox TextBox;
-        private TextBoxEvent TextBoxEvent;
+        private readonly TextBox TextBox;
+        private readonly TextBoxEvent TextBoxEvent;
         private Building NewAnimalHome;
         private int PriceOfAnimal;
-        private Action ShowMainMenu;
+        private readonly Action ShowMainMenu;
 
 
         /*********
@@ -60,13 +60,13 @@ namespace PelicanFiber.Framework
             }
             this.OkButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47), 1f);
             this.RandomButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize * 4 / 5 + Game1.tileSize, Game1.viewport.Height / 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), Game1.pixelZoom);
-            BuyAnimalMenu.MenuHeight = Game1.tileSize * 5;
-            BuyAnimalMenu.MenuWidth = Game1.tileSize * 7;
-            this.TextBox = new TextBox(null, null, Game1.dialogueFont, Game1.textColor);
-            this.TextBox.X = Game1.viewport.Width / 2 - Game1.tileSize * 3;
-            this.TextBox.Y = Game1.viewport.Height / 2;
-            this.TextBox.Width = Game1.tileSize * 4;
-            this.TextBox.Height = Game1.tileSize * 3;
+            this.TextBox = new TextBox(null, null, Game1.dialogueFont, Game1.textColor)
+            {
+                X = Game1.viewport.Width / 2 - Game1.tileSize * 3,
+                Y = Game1.viewport.Height / 2,
+                Width = Game1.tileSize * 4,
+                Height = Game1.tileSize * 3
+            };
             this.TextBoxEvent = this.TextBoxEnter;
             this.RandomButton = new ClickableTextureComponent(new Rectangle(this.TextBox.X + this.TextBox.Width + Game1.tileSize + Game1.tileSize * 3 / 4 - Game1.pixelZoom * 2, Game1.viewport.Height / 2 + Game1.pixelZoom, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), Game1.pixelZoom);
             this.DoneNamingButton = new ClickableTextureComponent(new Rectangle(this.TextBox.X + this.TextBox.Width + Game1.tileSize / 2 + Game1.pixelZoom, Game1.viewport.Height / 2 - Game1.pixelZoom * 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f);
@@ -99,7 +99,7 @@ namespace PelicanFiber.Framework
             }
             if (this.OnFarm)
             {
-                Building buildingAt = (Game1.getLocationFromName("Farm") as Farm).getBuildingAt(new Vector2((x + Game1.viewport.X) / Game1.tileSize, (y + Game1.viewport.Y) / Game1.tileSize));
+                Building buildingAt = ((Farm)Game1.getLocationFromName("Farm")).getBuildingAt(new Vector2((x + Game1.viewport.X) / Game1.tileSize, (y + Game1.viewport.Y) / Game1.tileSize));
                 if (buildingAt != null && !this.NamingAnimal)
                 {
                     if (buildingAt.buildingType.Contains(this.AnimalBeingPurchased.buildingTypeILiveIn))
@@ -145,7 +145,7 @@ namespace PelicanFiber.Framework
                             Game1.dayTimeMoneyBox.moneyShakeTimer = 1000;
                     }
                     else
-                        Game1.showRedMessage(this.AnimalBeingPurchased.type.Split(' ').Last<string>() + "s Can't Live There.");
+                        Game1.showRedMessage(this.AnimalBeingPurchased.type.Split(' ').Last() + "s Can't Live There.");
                 }
                 if (this.NamingAnimal && this.DoneNamingButton.containsPoint(x, y))
                 {
@@ -249,10 +249,9 @@ namespace PelicanFiber.Framework
                 return;
             if (this.OkButton != null)
             {
-                if (this.OkButton.containsPoint(x, y))
-                    this.OkButton.scale = Math.Min(1.1f, this.OkButton.scale + 0.05f);
-                else
-                    this.OkButton.scale = Math.Max(1f, this.OkButton.scale - 0.05f);
+                this.OkButton.scale = this.OkButton.containsPoint(x, y)
+                    ? Math.Min(1.1f, this.OkButton.scale + 0.05f)
+                    : Math.Max(1f, this.OkButton.scale - 0.05f);
             }
             if (this.OnFarm)
             {
@@ -265,10 +264,9 @@ namespace PelicanFiber.Framework
                     buildingAt.color = !buildingAt.buildingType.Contains(this.AnimalBeingPurchased.buildingTypeILiveIn) || (buildingAt.indoors as AnimalHouse).isFull() ? Color.Red * 0.8f : Color.LightGreen * 0.8f;
                 if (this.DoneNamingButton != null)
                 {
-                    if (this.DoneNamingButton.containsPoint(x, y))
-                        this.DoneNamingButton.scale = Math.Min(1.1f, this.DoneNamingButton.scale + 0.05f);
-                    else
-                        this.DoneNamingButton.scale = Math.Max(1f, this.DoneNamingButton.scale - 0.05f);
+                    this.DoneNamingButton.scale = this.DoneNamingButton.containsPoint(x, y)
+                        ? Math.Min(1.1f, this.DoneNamingButton.scale + 0.05f)
+                        : Math.Max(1f, this.DoneNamingButton.scale - 0.05f);
                 }
                 this.RandomButton.tryHover(x, y, 0.5f);
             }
@@ -302,7 +300,7 @@ namespace PelicanFiber.Framework
             }
             else if (!Game1.globalFade && this.OnFarm)
             {
-                string s = "Choose a " + this.AnimalBeingPurchased.buildingTypeILiveIn + " for your new " + this.AnimalBeingPurchased.type.Split(' ').Last<string>();
+                string s = "Choose a " + this.AnimalBeingPurchased.buildingTypeILiveIn + " for your new " + this.AnimalBeingPurchased.type.Split(' ').Last();
                 SpriteText.drawStringWithScrollBackground(b, s, Game1.viewport.Width / 2 - SpriteText.getWidthOfString(s) / 2, Game1.tileSize / 4);
                 if (this.NamingAnimal)
                 {
@@ -314,8 +312,8 @@ namespace PelicanFiber.Framework
                     this.RandomButton.draw(b);
                 }
             }
-            if (!Game1.globalFade && this.OkButton != null)
-                this.OkButton.draw(b);
+            if (!Game1.globalFade)
+                OkButton?.draw(b);
             if (this.Hovered != null)
             {
                 if ((this.Hovered.item as Object).type != null)
@@ -359,8 +357,8 @@ namespace PelicanFiber.Framework
                     this.AnimalBeingPurchased.home = this.NewAnimalHome;
                     this.AnimalBeingPurchased.homeLocation = new Vector2(this.NewAnimalHome.tileX, this.NewAnimalHome.tileY);
                     this.AnimalBeingPurchased.setRandomPosition(this.AnimalBeingPurchased.home.indoors);
-                    (this.NewAnimalHome.indoors as AnimalHouse).animals.Add(this.AnimalBeingPurchased.myID, this.AnimalBeingPurchased);
-                    (this.NewAnimalHome.indoors as AnimalHouse).animalsThatLiveHere.Add(this.AnimalBeingPurchased.myID);
+                    ((AnimalHouse)this.NewAnimalHome.indoors).animals.Add(this.AnimalBeingPurchased.myID, this.AnimalBeingPurchased);
+                    ((AnimalHouse)this.NewAnimalHome.indoors).animalsThatLiveHere.Add(this.AnimalBeingPurchased.myID);
                     this.NewAnimalHome = null;
                     this.NamingAnimal = false;
                     Game1.player.money -= this.PriceOfAnimal;
@@ -372,7 +370,6 @@ namespace PelicanFiber.Framework
         private void SetUpForReturnAfterPurchasingAnimal()
         {
             Game1.currentLocation.cleanupBeforePlayerExit();
-            //Game1.currentLocation = Game1.getLocationFromName("AnimalShop");
             Game1.currentLocation = Game1.getLocationFromName(this.WhereToGo);
             Game1.currentLocation.resetForPlayerEntry();
             Game1.globalFadeToClear();
@@ -386,15 +383,6 @@ namespace PelicanFiber.Framework
             Game1.viewportFreeze = false;
             Game1.globalFadeToClear(this.MarnieAnimalPurchaseMessage);
         }
-
-        //public void marnieAnimalPurchaseMessage()
-        //{
-        //    this.exitThisMenu(true);
-        //    //Game1.player.position = this.whereAt;
-        //    Game1.player.forceCanMove();
-        //    this.freeze = false;
-        //    //Game1.drawDialogue(Game1.getCharacterFromName("Marnie"), "Great! I'll send little " + this.animalBeingPurchased.name + " to " + (this.animalBeingPurchased.isMale() ? "his" : "her") + " new home right away.");
-        //}
 
         private void MarnieAnimalPurchaseMessage()
         {

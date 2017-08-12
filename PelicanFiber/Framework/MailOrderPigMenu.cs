@@ -17,25 +17,23 @@ namespace PelicanFiber.Framework
         /*********
         ** Properties
         *********/
-        private static int MenuHeight = Game1.tileSize * 5;
-        private static int MenuWidth = Game1.tileSize * 7;
-        private List<ClickableTextureComponent> AnimalsToPurchase = new List<ClickableTextureComponent>();
-        private ClickableTextureComponent OkButton;
-        private ClickableTextureComponent DoneNamingButton;
-        private ClickableTextureComponent RandomButton;
+        private static readonly int MenuHeight = Game1.tileSize * 5;
+        private static readonly int MenuWidth = Game1.tileSize * 7;
+        private readonly List<ClickableTextureComponent> AnimalsToPurchase = new List<ClickableTextureComponent>();
+        private readonly ClickableTextureComponent OkButton;
+        private readonly ClickableTextureComponent DoneNamingButton;
+        private readonly ClickableTextureComponent RandomButton;
         private ClickableTextureComponent Hovered;
-        private ClickableTextureComponent BackButton;
-        //private bool onFarm;
+        private readonly ClickableTextureComponent BackButton;
         private bool NamingAnimal;
         private bool Freeze;
         private FarmAnimal AnimalBeingPurchased;
-        private TextBox TextBox;
-        private TextBoxEvent TextBoxEvent;
+        private readonly TextBox TextBox;
+        private readonly TextBoxEvent TextBoxEvent;
         private Building NewAnimalHome;
         private int PriceOfAnimal;
-        private bool Condition = false;
-        private ItemUtils ItemUtils;
-        private Action ShowMainMenu;
+        private readonly ItemUtils ItemUtils;
+        private readonly Action ShowMainMenu;
 
 
         /*********
@@ -58,13 +56,13 @@ namespace PelicanFiber.Framework
             }
             this.OkButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47), 1f);
             this.RandomButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize * 4 / 5 + Game1.tileSize, Game1.viewport.Height / 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), Game1.pixelZoom);
-            MailOrderPigMenu.MenuHeight = Game1.tileSize * 5;
-            MailOrderPigMenu.MenuWidth = Game1.tileSize * 7;
-            this.TextBox = new TextBox(null, null, Game1.dialogueFont, Game1.textColor);
-            this.TextBox.X = Game1.viewport.Width / 2 - Game1.tileSize * 3;
-            this.TextBox.Y = Game1.viewport.Height / 2;
-            this.TextBox.Width = Game1.tileSize * 4;
-            this.TextBox.Height = Game1.tileSize * 3;
+            this.TextBox = new TextBox(null, null, Game1.dialogueFont, Game1.textColor)
+            {
+                X = Game1.viewport.Width / 2 - Game1.tileSize * 3,
+                Y = Game1.viewport.Height / 2,
+                Width = Game1.tileSize * 4,
+                Height = Game1.tileSize * 3
+            };
             this.TextBoxEvent = this.TextBoxEnter;
             this.RandomButton = new ClickableTextureComponent(new Rectangle(this.TextBox.X + this.TextBox.Width + Game1.tileSize + Game1.tileSize * 3 / 4 - Game1.pixelZoom * 2, Game1.viewport.Height / 2 + Game1.pixelZoom, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), Game1.pixelZoom);
             this.DoneNamingButton = new ClickableTextureComponent(new Rectangle(this.TextBox.X + this.TextBox.Width + Game1.tileSize / 2 + Game1.pixelZoom, Game1.viewport.Height / 2 - Game1.pixelZoom * 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f);
@@ -153,7 +151,6 @@ namespace PelicanFiber.Framework
                         Game1.addHUDMessage(new HUDMessage("Not Enough Money", Color.Red, 3500f));
                 }
             }
-
         }
 
         public override void receiveKeyPress(Keys key)
@@ -172,26 +169,6 @@ namespace PelicanFiber.Framework
             Game1.playSound("bigDeSelect");
         }
 
-        public override void update(GameTime time)
-        {
-            base.update(time);
-            if (this.NamingAnimal)
-                return;
-
-            //int num1 = Game1.getOldMouseX() + Game1.viewport.X;
-            //int num2 = Game1.getOldMouseY() + Game1.viewport.Y;
-            //if (num1 - Game1.viewport.X < Game1.tileSize)
-            //    Game1.panScreen(-8, 0);
-            //else if (num1 - (Game1.viewport.X + Game1.viewport.Width) >= -Game1.tileSize)
-            //    Game1.panScreen(8, 0);
-            //if (num2 - Game1.viewport.Y < Game1.tileSize)
-            //    Game1.panScreen(0, -8);
-            //else if (num2 - (Game1.viewport.Y + Game1.viewport.Height) >= -Game1.tileSize)
-            //    Game1.panScreen(0, 8);
-            //foreach (Keys pressedKey in Game1.oldKBState.GetPressedKeys())
-            //    this.receiveKeyPress(pressedKey);
-        }
-
         public override void receiveRightClick(int x, int y, bool playSound = true)
         {
         }
@@ -203,20 +180,18 @@ namespace PelicanFiber.Framework
                 return;
             if (this.OkButton != null)
             {
-                if (this.OkButton.containsPoint(x, y))
-                    this.OkButton.scale = Math.Min(1.1f, this.OkButton.scale + 0.05f);
-                else
-                    this.OkButton.scale = Math.Max(1f, this.OkButton.scale - 0.05f);
+                this.OkButton.scale = this.OkButton.containsPoint(x, y)
+                    ? Math.Min(1.1f, this.OkButton.scale + 0.05f)
+                    : Math.Max(1f, this.OkButton.scale - 0.05f);
             }
 
             if (this.NamingAnimal)
             {
                 if (this.DoneNamingButton != null)
                 {
-                    if (this.DoneNamingButton.containsPoint(x, y))
-                        this.DoneNamingButton.scale = Math.Min(1.1f, this.DoneNamingButton.scale + 0.05f);
-                    else
-                        this.DoneNamingButton.scale = Math.Max(1f, this.DoneNamingButton.scale - 0.05f);
+                    this.DoneNamingButton.scale = this.DoneNamingButton.containsPoint(x, y)
+                        ? Math.Min(1.1f, this.DoneNamingButton.scale + 0.05f)
+                        : Math.Max(1f, this.DoneNamingButton.scale - 0.05f);
                 }
                 this.RandomButton.tryHover(x, y, 0.5f);
             }
@@ -248,8 +223,8 @@ namespace PelicanFiber.Framework
 
                 this.BackButton.draw(b);
             }
-            if (!Game1.globalFade && this.OkButton != null)
-                this.OkButton.draw(b);
+            if (!Game1.globalFade)
+                OkButton?.draw(b);
 
             if (this.NamingAnimal)
             {
@@ -336,19 +311,6 @@ namespace PelicanFiber.Framework
             this.NamingAnimal = false;
             this.TextBox.OnEnterPressed -= this.TextBoxEvent;
             this.TextBox.Selected = false;
-        }
-
-        private void SetUpForReturnAfterPurchasingAnimal()
-        {
-            Game1.globalFadeToClear();
-            this.OkButton.bounds.X = this.xPositionOnScreen + this.width + 4;
-            Game1.displayHUD = true;
-            Game1.displayFarmer = true;
-            this.Freeze = false;
-            this.TextBox.OnEnterPressed -= this.TextBoxEvent;
-            this.TextBox.Selected = false;
-            Game1.viewportFreeze = false;
-            Game1.globalFadeToClear(this.MarnieAnimalPurchaseMessage);
         }
 
         private void MarnieAnimalPurchaseMessage()

@@ -23,17 +23,8 @@ namespace Replanter
         // The hot key which activates this mod.
         private Keys ActionKey;
 
-        // A dictionary that allows seeds to be looked up by the crop's id.
-        private Dictionary<int, int> CropToSeed;
-
         // A dictionary that allows the seed price to be looked up by the seed's id.
         private Dictionary<int, int> SeedToPrice;
-
-        // A dictionary that allows chests to be looked up per item id, in case you've got somewhere else for that stuff to go.
-        private Dictionary<int, Vector2> ChestLookup;
-
-        // A dictionary that allows the crop price to be looked up by the crop's id.
-        // private Dictionary<int, int> cropToPrice = null;
 
         // A list of crops that are never to be harvested.
         private HashSet<int> IgnoreLookup;
@@ -103,12 +94,6 @@ namespace Replanter
         // An indexed list of greetings.
         private Dictionary<int, string> Greetings;
 
-        // An indexed list of all dialog entries relating to "unfinished money"
-        //private Dictionary<int, string> unfinishedMessages = null;
-
-        // An indexed list of all dialog entries related to "freebies"
-        private Dictionary<int, string> FreebieMessages;
-
         // An indexed list of all dialog entries related to "inventory full"
         private Dictionary<int, string> InventoryMessages;
 
@@ -116,12 +101,9 @@ namespace Replanter
         private Dictionary<int, string> Smalltalk;
 
         // Random number generator, used primarily for selecting dialog messages.
-        private Random Random = new Random();
+        private readonly Random Random = new Random();
 
         #endregion
-
-        // A flag for when an item could not be deposited into either the inventory or the chest.
-        private bool InventoryAndChestFull;
 
         private DialogueManager DialogueManager;
 
@@ -235,17 +217,15 @@ namespace Replanter
 
             foreach (GameLocation location in Game1.locations)
             {
-                bool itemHarvested = true;
-
                 if (!location.isFarm && !location.name.Contains("Greenhouse")) continue;
 
                 foreach (KeyValuePair<Vector2, TerrainFeature> feature in location.terrainFeatures)
                 {
                     if (feature.Value == null) continue;
 
+                    var itemHarvested = true;
                     if (feature.Value is HoeDirt)
                     {
-
                         HoeDirt dirt = (HoeDirt)feature.Value;
 
                         if (dirt.crop != null)
@@ -268,9 +248,7 @@ namespace Replanter
                             }
 
                             if (this.Ignore(crop.indexOfHarvest))
-                            {
                                 continue;
-                            }
 
                             if (crop.currentPhase >= crop.phaseDays.Count - 1 && (!crop.fullyGrown || crop.dayOfCurrentPhase <= 0))
                             {
@@ -280,45 +258,32 @@ namespace Replanter
                                 StardewValley.Object item = this.GetHarvestedCrop(dirt, crop, (int)feature.Key.X, (int)feature.Key.Y);
 
                                 if (!this.Free)
-                                {
                                     seedCost = (int)(this.CostOfSeed(crop.indexOfHarvest) * ((100f - this.SeedDiscount) / 100f));
-                                }
+
                                 if (this.SellAfterHarvest)
                                 {
                                     if (this.SellCrops(farmer, item, stats))
                                     {
                                         if (crop.indexOfHarvest == 431)
                                             this.HandleSunflower(farmer, stats, item.quality);
-
                                         itemHarvested = true;
                                     }
                                     else
-                                    {
                                         itemHarvested = false;
-                                    }
-
-
                                 }
                                 else
                                 {
                                     if (this.AddItemToInventory(item, farmer, farm, stats))
                                     {
                                         itemHarvested = true;
-
                                         if (crop.indexOfHarvest == 431)
-                                        {
                                             this.HandleSunflower(farmer, stats, item.quality, (int)feature.Key.X, (int)feature.Key.Y);
-                                        }
                                     }
                                     else
-                                    {
                                         itemHarvested = false;
-                                    }
-
                                 }
 
                                 // Replanting
-
                                 if (itemHarvested)
                                 {
                                     stats.CropsHarvested++;
@@ -326,9 +291,7 @@ namespace Replanter
                                     if (this.ReplantCrop(crop, location))
                                     {
                                         if (crop.regrowAfterHarvest == -1)
-                                        {
                                             stats.RunningSeedCost += seedCost;
-                                        }
                                     }
                                     else
                                     {
@@ -339,7 +302,6 @@ namespace Replanter
                                             stats.PlantsCleared++;
                                         }
                                     }
-
 
                                     // Add experience
                                     float experience = (float)(16.0 * Math.Log(0.018 * Convert.ToInt32(Game1.objectInformation[crop.indexOfHarvest].Split('/')[1]) + 1.0, Math.E));
@@ -743,8 +705,7 @@ namespace Replanter
                 else if (chestInfo.Length == 4)
                 {
                     // A farm house chest
-                    ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]));
-                    cd.Location = "house";
+                    ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2])) { Location = "house" };
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
                 }
             }
@@ -758,8 +719,6 @@ namespace Replanter
             Dictionary<int, string> dictionary = this.Helper.Content.Load<Dictionary<int, string>>("Data\\Crops", ContentSource.GameContent);
             Dictionary<int, string> objects = this.Helper.Content.Load<Dictionary<int, string>>("Data\\ObjectInformation", ContentSource.GameContent);
 
-            this.CropToSeed = new Dictionary<int, int>();
-            //cropToPrice = new Dictionary<int, int>();
             this.SeedToPrice = new Dictionary<int, int>();
 
             foreach (KeyValuePair<int, string> crop in dictionary)
@@ -769,11 +728,6 @@ namespace Replanter
                 int seedId = crop.Key;
                 int harvestId = Convert.ToInt32(cropString[3]);
 
-                if (seedId != 770)
-                {
-                    this.CropToSeed.Add(harvestId, seedId);
-                }
-
                 // Both of these are indexed by the harvest ID.
                 string[] seedData = objects[seedId]?.Split('/');
 
@@ -781,14 +735,7 @@ namespace Replanter
                 {
                     int seedCost = Convert.ToInt32(seedData[1]) * 2;
 
-                    if (harvestId == 421)
-                    {
-                        this.SeedToPrice.Add(431, seedCost);
-                    }
-                    else
-                    {
-                        this.SeedToPrice.Add(harvestId, seedCost);
-                    }
+                    this.SeedToPrice.Add(harvestId == 421 ? 431 : harvestId, seedCost);
 
                     this.Monitor.Log($"Adding ID to seed price index: {harvestId} / {seedCost}", LogLevel.Trace);
                 }
@@ -805,11 +752,9 @@ namespace Replanter
             if (!this.SeedToPrice.ContainsKey(id))
             {
                 this.Monitor.Log($"[Replanter] Couldn\'t find seed for harvest ID: {id}", LogLevel.Error);
-
                 return 20;
             }
-            else
-                return this.SeedToPrice[id];
+            return this.SeedToPrice[id];
         }
 
         /**
@@ -818,9 +763,7 @@ namespace Replanter
         private bool SellCrops(SFarmer farmer, StardewValley.Object obj, ReplanterStats stats)
         {
             if (this.NeverSell(obj.parentSheetIndex))
-            {
                 return (this.AddItemToInventory(obj, farmer, Game1.getFarm(), stats));
-            }
 
             stats.RunningSellPrice += obj.sellToStorePrice();
             return true;
@@ -841,10 +784,7 @@ namespace Replanter
          */
         private bool NeverSell(int cropId)
         {
-            if (this.AlwaysSellLookup.Contains(cropId))
-                return false;
-            else
-                return this.NeverSellLookup.Contains(cropId);
+            return !this.AlwaysSellLookup.Contains(cropId) && this.NeverSellLookup.Contains(cropId);
         }
 
         /**
@@ -861,9 +801,7 @@ namespace Replanter
         private bool AddItemToInventory(StardewValley.Object obj, SFarmer farmer, Farm farm, ReplanterStats stats)
         {
             if (this.AlwaysSell(obj.parentSheetIndex))
-            {
                 return this.SellCrops(farmer, obj, stats);
-            }
 
             bool wasAdded = false;
 
@@ -872,13 +810,13 @@ namespace Replanter
                 farmer.addItemToInventory(obj);
                 wasAdded = true;
 
-                this.Monitor.Log("[Replanter] Was able to add item to inventory.", LogLevel.Trace);
+                this.Monitor.Log("Was able to add item to inventory.", LogLevel.Trace);
             }
             else
             {
-                StardewValley.Object chest = null;
+                StardewValley.Object chest;
 
-                ChestDef preferred = null;
+                ChestDef preferred;
                 this.Chests.TryGetValue(obj.ParentSheetIndex, out preferred);
 
                 if (preferred != null)
@@ -893,7 +831,7 @@ namespace Replanter
                         farm.objects.TryGetValue(preferred.Tile, out chest);
                     }
 
-                    if (chest == null || !(chest is Chest))
+                    if (!(chest is Chest))
                     {
                         // Try getting the default chest.
                         farm.objects.TryGetValue(this.ChestCoords, out chest);
@@ -904,7 +842,7 @@ namespace Replanter
                     farm.objects.TryGetValue(this.ChestCoords, out chest);
                 }
 
-                if (chest != null && chest is Chest)
+                if (chest is Chest)
                 {
                     Item i = ((Chest)chest).addItem(obj);
                     if (i == null)
@@ -920,11 +858,7 @@ namespace Replanter
                             wasAdded = true;
                         }
                         else
-                        {
-                            this.InventoryAndChestFull = true;
-
                             this.Monitor.Log("Was NOT able to add items to chest.", LogLevel.Trace);
-                        }
                     }
 
                 }
@@ -943,18 +877,10 @@ namespace Replanter
                             wasAdded = true;
                         }
                         else
-                        {
-                            this.InventoryAndChestFull = true;
-
                             this.Monitor.Log("Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'true')", LogLevel.Trace);
-                        }
                     }
                     else
-                    {
-                        this.InventoryAndChestFull = true;
-
                         this.Monitor.Log("Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'false')", LogLevel.Trace);
-                    }
                 }
             }
 
@@ -982,15 +908,12 @@ namespace Replanter
          */
         private void ReadInMessages()
         {
-            //Dictionary<int, string> objects = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
             try
             {
                 this.AllMessages = this.Helper.Content.Load<Dictionary<string, string>>("assets/dialog");
 
                 this.Dialogue = this.DialogueManager.GetDialog("Xdialog", this.AllMessages);
                 this.Greetings = this.DialogueManager.GetDialog("greeting", this.AllMessages);
-                //unfinishedMessages = this.DialogueManager.GetDialog("unfinishedmoney", allmessages);
-                this.FreebieMessages = this.DialogueManager.GetDialog("freebies", this.AllMessages);
                 this.InventoryMessages = this.DialogueManager.GetDialog("unfinishedinventory", this.AllMessages);
                 this.Smalltalk = this.DialogueManager.GetDialog("smalltalk", this.AllMessages);
 

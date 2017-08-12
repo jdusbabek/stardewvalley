@@ -59,13 +59,7 @@ namespace AnimalSitter
         private bool BypassInventory;
 
         // A string defining the locations of specific chests.
-        private String ChestDefs = "";
-
-        // Whether both inventory and chests are full.
-        private bool InventoryAndChestFull;
-
-        // How many days the farmer has not been able to afford to pay the laborer.
-        private int ShortDays;
+        private string ChestDefs = "";
 
         private ModConfig Config;
 
@@ -169,7 +163,6 @@ namespace AnimalSitter
         private void IterateOverAnimals()
         {
             SFarmer farmer = Game1.player;
-            Farm farm = Game1.getFarm();
             AnimalTasks stats = new AnimalTasks();
 
             foreach (FarmAnimal animal in this.GetAnimals())
@@ -226,9 +219,8 @@ namespace AnimalSitter
                         {
                             if (this.TakeTrufflesFromPigs)
                             {
-                                //Game1.player.addItemToInventoryBool((Item)new StardewValley.Object(animal.currentProduce, 1, false, -1, animal.produceQuality), false);
                                 Object toAdd = new Object(animal.currentProduce, 1, false, -1, animal.produceQuality);
-                                this.AddItemToInventory(toAdd, farmer, farm, stats);
+                                this.AddItemToInventory(toAdd, farmer);
 
                                 animal.currentProduce = 0;
                                 stats.TrufflesHarvested++;
@@ -237,7 +229,7 @@ namespace AnimalSitter
                         else
                         {
                             Object toAdd = new Object(animal.currentProduce, 1, false, -1, animal.produceQuality);
-                            this.AddItemToInventory(toAdd, farmer, farm, stats);
+                            this.AddItemToInventory(toAdd, farmer);
 
                             animal.currentProduce = 0;
                             stats.ProductsHarvested++;
@@ -310,7 +302,7 @@ namespace AnimalSitter
                         doubleHarvest = true;
                     }
 
-                    if (this.AddItemToInventory(obj, farmer, farm, stats))
+                    if (this.AddItemToInventory(obj, farmer))
                     {
                         itemsToRemove.Add(keyvalue.Key);
                         farmer.gainExperience(2, 7);
@@ -358,7 +350,7 @@ namespace AnimalSitter
 
                         if (obj.isAnimalProduct() || obj.parentSheetIndex == 107)
                         {
-                            if (this.AddItemToInventory(obj, farmer, farm, stats))
+                            if (this.AddItemToInventory(obj, farmer))
                             {
                                 itemsToRemove.Add(keyvalue.Key);
                                 stats.ProductsHarvested++;
@@ -380,10 +372,8 @@ namespace AnimalSitter
             }
         }
 
-        private bool AddItemToInventory(Object obj, SFarmer farmer, Farm farm, AnimalTasks stats)
+        private bool AddItemToInventory(Object obj, SFarmer farmer)
         {
-            bool wasAdded = false;
-
             if (!this.BypassInventory)
             {
                 if (farmer.couldInventoryAcceptThisItem(obj))
@@ -396,7 +386,7 @@ namespace AnimalSitter
             // Get the preferred chest (could be default)
             Object chest = this.ChestManager.GetChest(obj.parentSheetIndex);
 
-            if (chest != null && (chest is Chest))
+            if (chest is Chest)
             {
                 Item i = ((Chest)chest).addItem(obj);
                 if (i == null)
@@ -406,7 +396,7 @@ namespace AnimalSitter
             // We haven't returned, get the default chest.
             chest = this.ChestManager.GetDefaultChest();
 
-            if (chest != null && (chest is Chest))
+            if (chest is Chest)
             {
                 Item i = ((Chest)chest).addItem(obj);
                 if (i == null)
@@ -420,27 +410,8 @@ namespace AnimalSitter
                 return true;
             }
 
-            this.InventoryAndChestFull = true;
-            return wasAdded;
+            return false;
         }
-
-
-        private String GetGathererName()
-        {
-            if (this.Checker.ToLower() == "spouse")
-            {
-                if (Game1.player.isMarried())
-                    return Game1.player.getSpouse().getName();
-                else
-                    return "The animal sitter";
-            }
-            else
-            {
-                return this.Checker;
-            }
-
-        }
-
 
         private void ShowMessage(int numActions, int totalCost, bool doesPlayerHaveEnoughCash, bool gatheringOnly, AnimalTasks stats)
         {
@@ -515,12 +486,6 @@ namespace AnimalSitter
                             portrait = "$8";
                         }
 
-                        string spouseName = null;
-                        if (Game1.player.isMarried())
-                        {
-                            spouseName = Game1.player.getSpouse().getName();
-                        }
-
                         message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetRandomMessage("greeting"), stats, this.Config);
                         message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetMessageAt(5, "Xdialog"), stats, this.Config);
 
@@ -529,7 +494,6 @@ namespace AnimalSitter
                             if (doesPlayerHaveEnoughCash)
                             {
                                 message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetMessageAt(6, "Xdialog"), stats, this.Config);
-                                this.ShortDays = 0;
                             }
                             else
                             {

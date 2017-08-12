@@ -9,8 +9,8 @@ internal class ModSickle : MeleeWeapon
     /*********
     ** Properties
     *********/
-    private int Radius = 4;
-    private Vector2 Vector;
+    private readonly int Radius = 4;
+    private readonly Vector2 Vector;
 
 
     /*********
@@ -56,25 +56,20 @@ internal class ModSickle : MeleeWeapon
                 if (location.performToolAction(this, (int)key.X, (int)key.Y))
                     break;
             }
-            catch (System.Exception exception)
+            catch
             {
-
                 //StardewModdingAPI.Log.Info((object)("[Point-and-Plant] Exception: " + exception.Message));
                 //StardewModdingAPI.Log.Info((object)("[Point-and-Plant] Stack Trace: " + exception.StackTrace));
             }
 
         }
         if (!sound.Equals(""))
-        {
             Game1.playSound(sound);
-        }
 
         this.CurrentParentTileIndex = this.indexOfMenuItemView;
 
         if (who == null || !who.isRidingHorse())
-        {
             return;
-        }
 
         who.completelyStopAnimatingOrDoingAction();
     }

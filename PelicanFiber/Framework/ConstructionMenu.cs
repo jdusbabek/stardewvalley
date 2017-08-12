@@ -18,14 +18,14 @@ namespace PelicanFiber.Framework
         /*********
         ** Properties
         *********/
-        private string WhereToGo = "";
-        private int MaxWidthOfBuildingViewer = 7 * Game1.tileSize;
-        private int MaxHeightOfBuildingViewer = 8 * Game1.tileSize;
-        private int MaxWidthOfDescription = 6 * Game1.tileSize;
-        private List<Item> Ingredients = new List<Item>();
+        private readonly string WhereToGo;
+        private readonly int MaxWidthOfBuildingViewer = 7 * Game1.tileSize;
+        private readonly int MaxHeightOfBuildingViewer = 8 * Game1.tileSize;
+        private readonly int MaxWidthOfDescription = 6 * Game1.tileSize;
+        private readonly List<Item> Ingredients = new List<Item>();
         private bool DrawBG = true;
         private string HoverText = "";
-        private List<BluePrint> Blueprints;
+        private readonly List<BluePrint> Blueprints;
         private int CurrentBlueprintIndex;
         private ClickableTextureComponent OkButton;
         private ClickableTextureComponent CancelButton;
@@ -45,8 +45,8 @@ namespace PelicanFiber.Framework
         private bool Upgrading;
         private bool Demolishing;
         private bool Moving;
-        private bool MagicalConstruction;
-        private Action ShowMainMenu;
+        private readonly bool MagicalConstruction;
+        private readonly Action ShowMainMenu;
 
         private BluePrint CurrentBlueprint
         {
@@ -287,7 +287,7 @@ namespace PelicanFiber.Framework
                 Building buildingAt = ((BuildableGameLocation)Game1.getLocationFromName("Farm")).getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY()) / Game1.tileSize));
                 if (buildingAt != null && (buildingAt.daysOfConstructionLeft > 0 || buildingAt.daysUntilUpgrade > 0))
                     Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_DuringConstruction"), Color.Red, 3500f));
-                else if (buildingAt != null && buildingAt.indoors != null && (buildingAt.indoors is AnimalHouse && (buildingAt.indoors as AnimalHouse).animalsThatLiveHere.Count > 0))
+                else if (buildingAt?.indoors is AnimalHouse && ((AnimalHouse)buildingAt.indoors).animalsThatLiveHere.Count > 0)
                 {
                     Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_AnimalsHere"), Color.Red, 3500f));
                 }
@@ -295,8 +295,6 @@ namespace PelicanFiber.Framework
                 {
                     if (buildingAt == null || !((BuildableGameLocation)Game1.getLocationFromName("Farm")).destroyStructure(buildingAt))
                         return;
-                    int tileY = buildingAt.tileY;
-                    int tilesHigh = buildingAt.tilesHigh;
                     Game1.flashAlpha = 1f;
                     buildingAt.showDestroyedAnimation(Game1.getFarm());
                     Game1.playSound("explosion");
@@ -430,7 +428,7 @@ namespace PelicanFiber.Framework
                             Vector2 vector2_2 = new Vector2(vector2_1.X + x, vector2_1.Y + y);
                             if (Game1.player.getTileLocation().Equals(vector2_2) || Game1.currentLocation.isTileOccupied(vector2_2) || (!Game1.currentLocation.isTilePassable(new Location((int)vector2_2.X, (int)vector2_2.Y), Game1.viewport) || Game1.currentLocation.doesTileHaveProperty((int)vector2_2.X, (int)vector2_2.Y, "Diggable", "Back") == null))
                                 ++structurePlacementTile;
-                            b.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, vector2_2 * Game1.tileSize), new Microsoft.Xna.Framework.Rectangle?(new Microsoft.Xna.Framework.Rectangle(194 + structurePlacementTile * 16, 388, 16, 16)), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.999f);
+                            b.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, vector2_2 * Game1.tileSize), new Microsoft.Xna.Framework.Rectangle(194 + structurePlacementTile * 16, 388, 16, 16), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.999f);
                         }
                     }
                 }
@@ -445,7 +443,7 @@ namespace PelicanFiber.Framework
                             Vector2 vector2_2 = new Vector2(vector2_1.X + x, vector2_1.Y + y);
                             if (Game1.player.getTileLocation().Equals(vector2_2) || Game1.currentLocation.isTileOccupied(vector2_2) || (!Game1.currentLocation.isTilePassable(new Location((int)vector2_2.X, (int)vector2_2.Y), Game1.viewport) || Game1.currentLocation.doesTileHaveProperty((int)vector2_2.X, (int)vector2_2.Y, "Diggable", "Back") == null))
                                 ++structurePlacementTile;
-                            b.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, vector2_2 * Game1.tileSize), new Microsoft.Xna.Framework.Rectangle?(new Microsoft.Xna.Framework.Rectangle(194 + structurePlacementTile * 16, 388, 16, 16)), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.999f);
+                            b.Draw(Game1.mouseCursors, Game1.GlobalToLocal(Game1.viewport, vector2_2 * Game1.tileSize), new Microsoft.Xna.Framework.Rectangle(194 + structurePlacementTile * 16, 388, 16, 16), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.999f);
                         }
                     }
                 }

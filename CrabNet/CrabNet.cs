@@ -78,7 +78,7 @@ namespace CrabNet
         private Dictionary<int, string> Smalltalk;
 
         // Random number generator, used primarily for selecting dialog messages.
-        private Random Random = new Random();
+        private readonly Random Random = new Random();
 
         // A flag for when an item could not be deposited into either the inventory or the chest.
         private bool InventoryAndChestFull;
@@ -148,7 +148,6 @@ namespace CrabNet
                 || Game1.CurrentEvent != null))
                 || Game1.gameMode != 3)
             {
-
                 return;
             }
 
@@ -171,8 +170,6 @@ namespace CrabNet
             // reset this each time invoked, it is a flag to determine if uncompleted work is due to inventory or money.
             this.InventoryAndChestFull = false;
             CrabNetStats stats = new CrabNetStats();
-
-            bool doesPlayerHaveEnoughCash = true;
 
             foreach (GameLocation location in Game1.locations)
             {
@@ -218,7 +215,7 @@ namespace CrabNet
 
                             if (pot.bait == null && pot.heldObject == null && !Game1.player.professions.Contains(11))
                             {
-                                StardewValley.Object b = new StardewValley.Object(this.BaitChoice, 1, false, -1, 0);
+                                StardewValley.Object b = new StardewValley.Object(this.BaitChoice, 1);
 
                                 if (!this.Free && !this.CanAfford(Game1.player, this.BaitCost, stats) && !this.AllowFreebies && this.ChargeForBait)
                                 {
@@ -262,14 +259,12 @@ namespace CrabNet
                     this.Monitor.Log($"Total cost was {totalCost}g. Checks: {stats.NumChecked * this.CostPerCheck}, Emptied: {stats.NumEmptied * this.CostPerEmpty}, Bait: {stats.NumBaited * this.BaitCost}", LogLevel.Trace);
             }
 
-            doesPlayerHaveEnoughCash = (Game1.player.Money >= totalCost);
-
             if (!this.Free)
                 Game1.player.Money = Math.Max(0, Game1.player.Money + (-1 * totalCost));
 
             if (this.EnableMessages)
             {
-                this.ShowMessage(stats, totalCost, doesPlayerHaveEnoughCash);
+                this.ShowMessage(stats, totalCost);
             }
         }
 
@@ -328,10 +323,10 @@ namespace CrabNet
             }
             else
             {
-                StardewValley.Object chest = null;
+                StardewValley.Object chest;
                 farm.objects.TryGetValue(this.ChestCoords, out chest);
 
-                if (chest != null && chest is Chest)
+                if (chest is Chest)
                 {
                     if (this.LoggingEnabled)
                         this.Monitor.Log($"Found a chest at {(int)this.ChestCoords.X},{(int)this.ChestCoords.Y}", LogLevel.Trace);
@@ -393,21 +388,6 @@ namespace CrabNet
             return wasAdded;
         }
 
-        private String GetGathererName()
-        {
-            if (this.Checker.ToLower() == "spouse")
-            {
-                if (Game1.player.isMarried())
-                    return Game1.player.getSpouse().getName();
-                else
-                    return "The crab pot checker";
-            }
-            else
-            {
-                return this.Checker;
-            }
-        }
-
         private bool CanAfford(SFarmer farmer, int amount, CrabNetStats stats)
         {
             // Calculate the running cost (need config passed for that) and determine if additional puts you over.
@@ -415,28 +395,19 @@ namespace CrabNet
         }
 
 
-        private void ShowMessage(CrabNetStats stats, int totalCost, bool doesPlayerHaveEnoughCash)
+        private void ShowMessage(CrabNetStats stats, int totalCost)
         {
             string message = "";
 
             if (this.Checker.ToLower() == "spouse")
             {
                 if (Game1.player.isMarried())
-                {
                     message += this.DialogueManager.PerformReplacement(this.Dialog[1], stats, this.Config);
-                    //message += Game1.player.getSpouse().getName() + " has emptied and baited " + stats.numChecked + " crab pots.";
-                }
                 else
-                {
                     message += this.DialogueManager.PerformReplacement(this.Dialog[2], stats, this.Config);
-                    //message += "Your fishing assistant emptied and baited " + stats.numChecked + " crab pots. ";
-                }
 
                 if (totalCost > 0 && !this.Free)
-                {
                     message += this.DialogueManager.PerformReplacement(this.Dialog[3], stats, this.Config);
-                    //message += "Cost was " + totalCost + "g.";
-                }
 
                 HUDMessage msg = new HUDMessage(message);
                 Game1.addHUDMessage(msg);
@@ -446,15 +417,11 @@ namespace CrabNet
                 NPC character = Game1.getCharacterFromName(this.Checker);
                 if (character != null)
                 {
-                    //this.isCheckerCharacter = true;
-
                     message += this.DialogueManager.PerformReplacement(this.GetRandomMessage(this.Greetings), stats, this.Config);
                     message += " " + this.DialogueManager.PerformReplacement(this.Dialog[4], stats, this.Config);
-                    //message += "Hi @. I serviced " + stats.numChecked + " crab pots.";
 
                     if (!this.Free)
                     {
-                        //message += " The charge is " + totalCost + "g.";
                         this.DialogueManager.PerformReplacement(this.Dialog[5], stats, this.Config);
 
                         if (stats.HasUnfinishedBusiness())
@@ -476,15 +443,6 @@ namespace CrabNet
                             }
                         }
 
-                        //if (allowFreebies && stats.hasUnfinishedBusiness() )
-                        //{
-                        //    message += getRandomMessage(freebieMessages);
-                        //}
-                        //else if (!allowFreebies && stats.hasUnfinishedBusiness())
-                        //{
-                        //    message += " " + getRandomMessage(unfinishedMessages);
-                        //}
-
                         message += this.DialogueManager.PerformReplacement(this.GetRandomMessage(this.Smalltalk), stats, this.Config);
                         message += "#$e#";
                     }
@@ -504,22 +462,7 @@ namespace CrabNet
                     Game1.addHUDMessage(msg);
                 }
             }
-
         }
-
-
-        //public string getRandomUnfinishedMessage()
-        //{
-        //    int rand = random.Next(1, unfinishedMessages.Count + 1);
-
-        //    string value = "You're broke, so I'm done for the day.$h#$e#";
-
-        //    unfinishedMessages.TryGetValue(rand, out value);
-
-        //    this.Monitor.Log((object)("[CrabNet] condition met to return random unfinished message, returning:" + value));
-
-        //    return value;
-        //}
 
         private string GetRandomMessage(Dictionary<int, string> messageStore)
         {
@@ -538,7 +481,6 @@ namespace CrabNet
 
         private void ReadInMessages()
         {
-            //Dictionary<int, string> objects = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
             try
             {
                 this.AllMessages = this.Helper.Content.Load<Dictionary<string, string>>("assets/dialog");
@@ -561,15 +503,6 @@ namespace CrabNet
                         index++;
                     }
                 }
-
-                //foreach (KeyValuePair<int, string> msg in (Dictionary<int, string>)unfinishedMessages)
-                //{
-                //   this.Monitor.Log((object)("[CrabNet] unfinished:" + msg.Key + ": " + msg.Value));
-                //}
-                //foreach (KeyValuePair<int, string> msg in (Dictionary<int, string>)smalltalk)
-                //{
-                //   this.Monitor.Log((object)("[CrabNet] smalltalk:" + msg.Key + ": " + msg.Value));
-                //}
             }
             catch (Exception ex)
             {

@@ -85,7 +85,6 @@ namespace PelicanFiber
                 {
                     this.Monitor.Log($"500 Internal Error: {ex}", LogLevel.Error);
                 }
-
             }
         }
 

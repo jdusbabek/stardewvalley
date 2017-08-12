@@ -16,22 +16,20 @@ namespace MailOrderPigs.Framework
         /*********
         ** Properties
         *********/
-        private static int MenuHeight = Game1.tileSize * 5;
-        private static int MenuWidth = Game1.tileSize * 7;
-        private List<ClickableTextureComponent> AnimalsToPurchase = new List<ClickableTextureComponent>();
-        private ClickableTextureComponent OkButton;
-        private ClickableTextureComponent DoneNamingButton;
-        private ClickableTextureComponent RandomButton;
+        private static readonly int MenuHeight = Game1.tileSize * 5;
+        private static readonly int MenuWidth = Game1.tileSize * 7;
+        private readonly List<ClickableTextureComponent> AnimalsToPurchase = new List<ClickableTextureComponent>();
+        private readonly ClickableTextureComponent OkButton;
+        private readonly ClickableTextureComponent DoneNamingButton;
+        private readonly ClickableTextureComponent RandomButton;
         private ClickableTextureComponent Hovered;
-        //private bool onFarm;
         private bool NamingAnimal;
         private bool Freeze;
         private FarmAnimal AnimalBeingPurchased;
-        private TextBox TextBox;
-        private TextBoxEvent TextBoxEvent;
+        private readonly TextBox TextBox;
+        private readonly TextBoxEvent TextBoxEvent;
         private Building NewAnimalHome;
         private int PriceOfAnimal;
-        private bool Condition = false;
 
 
         /*********
@@ -44,20 +42,20 @@ namespace MailOrderPigs.Framework
             for (int index = 0; index < stock.Count; ++index)
             {
                 List<ClickableTextureComponent> animalsToPurchase = this.AnimalsToPurchase;
-                ClickableTextureComponent textureComponent1 = new ClickableTextureComponent(string.Concat((object)stock[index].salePrice()), new Rectangle(this.xPositionOnScreen + IClickableMenu.borderWidth + index % 3 * Game1.tileSize * 2, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth / 2 + index / 3 * (Game1.tileSize + Game1.tileSize / 3), Game1.tileSize * 2, Game1.tileSize), (string)null, stock[index].Name, Game1.mouseCursors, new Rectangle(index % 3 * 16 * 2, 448 + index / 3 * 16, 32, 16), 4f, stock[index].type == null);
-                textureComponent1.item = (Item)stock[index];
+                ClickableTextureComponent textureComponent1 = new ClickableTextureComponent(string.Concat(stock[index].salePrice()), new Rectangle(this.xPositionOnScreen + IClickableMenu.borderWidth + index % 3 * Game1.tileSize * 2, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth / 2 + index / 3 * (Game1.tileSize + Game1.tileSize / 3), Game1.tileSize * 2, Game1.tileSize), null, stock[index].Name, Game1.mouseCursors, new Rectangle(index % 3 * 16 * 2, 448 + index / 3 * 16, 32, 16), 4f, stock[index].type == null);
+                textureComponent1.item = stock[index];
                 ClickableTextureComponent textureComponent2 = textureComponent1;
                 animalsToPurchase.Add(textureComponent2);
             }
             this.OkButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + 4, this.yPositionOnScreen + this.height - Game1.tileSize - IClickableMenu.borderWidth, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47), 1f);
-            this.RandomButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize * 4 / 5 + Game1.tileSize, Game1.viewport.Height / 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), (float)Game1.pixelZoom);
-            this.TextBox = new TextBox((Texture2D)null, (Texture2D)null, Game1.dialogueFont, Game1.textColor);
+            this.RandomButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize * 4 / 5 + Game1.tileSize, Game1.viewport.Height / 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), Game1.pixelZoom);
+            this.TextBox = new TextBox(null, null, Game1.dialogueFont, Game1.textColor);
             this.TextBox.X = Game1.viewport.Width / 2 - Game1.tileSize * 3;
             this.TextBox.Y = Game1.viewport.Height / 2;
             this.TextBox.Width = Game1.tileSize * 4;
             this.TextBox.Height = Game1.tileSize * 3;
             this.TextBoxEvent = this.TextBoxEnter;
-            this.RandomButton = new ClickableTextureComponent(new Rectangle(this.TextBox.X + this.TextBox.Width + Game1.tileSize + Game1.tileSize * 3 / 4 - Game1.pixelZoom * 2, Game1.viewport.Height / 2 + Game1.pixelZoom, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), (float)Game1.pixelZoom);
+            this.RandomButton = new ClickableTextureComponent(new Rectangle(this.TextBox.X + this.TextBox.Width + Game1.tileSize + Game1.tileSize * 3 / 4 - Game1.pixelZoom * 2, Game1.viewport.Height / 2 + Game1.pixelZoom, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, new Rectangle(381, 361, 10, 10), Game1.pixelZoom);
             this.DoneNamingButton = new ClickableTextureComponent(new Rectangle(this.TextBox.X + this.TextBox.Width + Game1.tileSize / 2 + Game1.pixelZoom, Game1.viewport.Height / 2 - Game1.pixelZoom * 2, Game1.tileSize, Game1.tileSize), Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46), 1f);
         }
 
@@ -83,7 +81,7 @@ namespace MailOrderPigs.Framework
             if (this.NamingAnimal)
             {
                 this.TextBox.OnEnterPressed += this.TextBoxEvent;
-                Game1.keyboardDispatcher.Subscriber = (IKeyboardSubscriber)this.TextBox;
+                Game1.keyboardDispatcher.Subscriber = this.TextBox;
                 //this.textBox.Text = this.animalBeingPurchased.name;
                 this.TextBox.Selected = true;
 
@@ -107,7 +105,7 @@ namespace MailOrderPigs.Framework
 
             foreach (ClickableTextureComponent textureComponent in this.AnimalsToPurchase)
             {
-                if (textureComponent.containsPoint(x, y) && (textureComponent.item as Object).type == null)
+                if (textureComponent.containsPoint(x, y) && ((Object)textureComponent.item).type == null)
                 {
                     int int32 = Convert.ToInt32(textureComponent.name);
                     if (Game1.player.money >= int32)
@@ -156,33 +154,13 @@ namespace MailOrderPigs.Framework
             Game1.playSound("bigDeSelect");
         }
 
-        public override void update(GameTime time)
-        {
-            base.update(time);
-            if (this.NamingAnimal)
-                return;
-
-            //int num1 = Game1.getOldMouseX() + Game1.viewport.X;
-            //int num2 = Game1.getOldMouseY() + Game1.viewport.Y;
-            //if (num1 - Game1.viewport.X < Game1.tileSize)
-            //    Game1.panScreen(-8, 0);
-            //else if (num1 - (Game1.viewport.X + Game1.viewport.Width) >= -Game1.tileSize)
-            //    Game1.panScreen(8, 0);
-            //if (num2 - Game1.viewport.Y < Game1.tileSize)
-            //    Game1.panScreen(0, -8);
-            //else if (num2 - (Game1.viewport.Y + Game1.viewport.Height) >= -Game1.tileSize)
-            //    Game1.panScreen(0, 8);
-            //foreach (Keys pressedKey in Game1.oldKBState.GetPressedKeys())
-            //    this.receiveKeyPress(pressedKey);
-        }
-
         public override void receiveRightClick(int x, int y, bool playSound = true)
         {
         }
 
         public override void performHoverAction(int x, int y)
         {
-            this.Hovered = (ClickableTextureComponent)null;
+            this.Hovered = null;
             if (Game1.globalFade || this.Freeze)
                 return;
             if (this.OkButton != null)
@@ -228,16 +206,16 @@ namespace MailOrderPigs.Framework
                 Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true);
                 Game1.dayTimeMoneyBox.drawMoneyBox(b);
                 foreach (ClickableTextureComponent textureComponent in this.AnimalsToPurchase)
-                    textureComponent.draw(b, (textureComponent.item as Object).type != null ? Color.Black * 0.4f : Color.White, 0.87f);
+                    textureComponent.draw(b, ((Object)textureComponent.item).type != null ? Color.Black * 0.4f : Color.White, 0.87f);
             }
-            if (!Game1.globalFade && this.OkButton != null)
-                this.OkButton.draw(b);
+            if (!Game1.globalFade)
+                OkButton?.draw(b);
 
             if (this.NamingAnimal)
             {
                 b.Draw(Game1.fadeToBlackRect, Game1.graphics.GraphicsDevice.Viewport.Bounds, Color.Black * 0.75f);
                 Game1.drawDialogueBox(Game1.viewport.Width / 2 - Game1.tileSize * 4, Game1.viewport.Height / 2 - Game1.tileSize * 3 - Game1.tileSize / 2, Game1.tileSize * 8, Game1.tileSize * 3, false, true);
-                Utility.drawTextWithShadow(b, "Name your new animal: ", Game1.dialogueFont, new Vector2((float)(Game1.viewport.Width / 2 - Game1.tileSize * 4 + Game1.tileSize / 2 + 8), (float)(Game1.viewport.Height / 2 - Game1.tileSize * 2 + 8)), Game1.textColor);
+                Utility.drawTextWithShadow(b, "Name your new animal: ", Game1.dialogueFont, new Vector2(Game1.viewport.Width / 2 - Game1.tileSize * 4 + Game1.tileSize / 2 + 8, Game1.viewport.Height / 2 - Game1.tileSize * 2 + 8), Game1.textColor);
                 this.TextBox.Draw(b);
                 this.DoneNamingButton.draw(b);
                 this.RandomButton.draw(b);
@@ -245,9 +223,9 @@ namespace MailOrderPigs.Framework
 
             if (this.Hovered != null)
             {
-                if ((this.Hovered.item as Object).type != null)
+                if (((Object)this.Hovered.item).type != null)
                 {
-                    IClickableMenu.drawHoverText(b, Game1.parseText((this.Hovered.item as Object).type, Game1.dialogueFont, Game1.tileSize * 5), Game1.dialogueFont);
+                    IClickableMenu.drawHoverText(b, Game1.parseText(((Object)this.Hovered.item).type, Game1.dialogueFont, Game1.tileSize * 5), Game1.dialogueFont);
                 }
                 else
                 {
@@ -286,11 +264,11 @@ namespace MailOrderPigs.Framework
                     this.AnimalBeingPurchased.name = sender.Text;
                     //StardewLib.Log.ERROR("Named Animal: " + sender.Text);
                     this.AnimalBeingPurchased.home = ((AnimalHouse)Game1.player.currentLocation).getBuilding();
-                    this.AnimalBeingPurchased.homeLocation = new Vector2((float)this.NewAnimalHome.tileX, (float)this.NewAnimalHome.tileY);
+                    this.AnimalBeingPurchased.homeLocation = new Vector2(this.NewAnimalHome.tileX, this.NewAnimalHome.tileY);
                     this.AnimalBeingPurchased.setRandomPosition(this.AnimalBeingPurchased.home.indoors);
-                    (this.NewAnimalHome.indoors as AnimalHouse).animals.Add(this.AnimalBeingPurchased.myID, this.AnimalBeingPurchased);
-                    (this.NewAnimalHome.indoors as AnimalHouse).animalsThatLiveHere.Add(this.AnimalBeingPurchased.myID);
-                    this.NewAnimalHome = (Building)null;
+                    ((AnimalHouse)this.NewAnimalHome.indoors).animals.Add(this.AnimalBeingPurchased.myID, this.AnimalBeingPurchased);
+                    ((AnimalHouse)this.NewAnimalHome.indoors).animalsThatLiveHere.Add(this.AnimalBeingPurchased.myID);
+                    this.NewAnimalHome = null;
                     Game1.player.money -= this.PriceOfAnimal;
                     this.NamingAnimal = false;
 
@@ -318,19 +296,6 @@ namespace MailOrderPigs.Framework
             this.NamingAnimal = false;
             this.TextBox.OnEnterPressed -= this.TextBoxEvent;
             this.TextBox.Selected = false;
-        }
-
-        private void SetUpForReturnAfterPurchasingAnimal()
-        {
-            Game1.globalFadeToClear();
-            this.OkButton.bounds.X = this.xPositionOnScreen + this.width + 4;
-            Game1.displayHUD = true;
-            Game1.displayFarmer = true;
-            this.Freeze = false;
-            this.TextBox.OnEnterPressed -= this.TextBoxEvent;
-            this.TextBox.Selected = false;
-            Game1.viewportFreeze = false;
-            Game1.globalFadeToClear(this.MarnieAnimalPurchaseMessage);
         }
 
         private void MarnieAnimalPurchaseMessage()

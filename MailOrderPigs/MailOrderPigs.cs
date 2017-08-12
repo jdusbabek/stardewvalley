@@ -16,8 +16,7 @@ namespace MailOrderPigs
         *********/
         private Keys MenuKey = Keys.PageUp;
         private ModConfig Config;
-        private bool AllowOvercrowding = false;
-        private bool EnableLogging = false;
+        private bool AllowOvercrowding;
 
 
         /*********
@@ -48,7 +47,6 @@ namespace MailOrderPigs
                 }
 
                 this.AllowOvercrowding = this.Config.AllowOvercrowding;
-                this.EnableLogging = this.Config.EnableLogging;
 
                 this.Monitor.Log("Mod loaded successfully.", LogLevel.Trace);
             }
@@ -105,7 +103,6 @@ namespace MailOrderPigs
 
         private List<Object> GetPurchaseAnimalStock()
         {
-            //string locationName = ((AnimalHouse)Game1.currentLocation).Name;
             string locationName = ((AnimalHouse)Game1.currentLocation).getBuilding().buildingType;
             this.Monitor.Log($"Returning stock for building: {locationName}", LogLevel.Trace);
 

@@ -17,42 +17,32 @@ namespace PelicanFiber.Framework
         /*********
         ** Properties
         *********/
-        private string DescriptionText = "";
         private string HoverText = "";
         private string BoldTitleText = "";
-        private List<Item> ForSale = new List<Item>();
-        private List<ClickableComponent> ForSaleButtons = new List<ClickableComponent>();
-        private List<int> CategoriesToSellHere = new List<int>();
-        private Dictionary<Item, int[]> ItemPriceAndStock = new Dictionary<Item, int[]>();
+        private readonly List<Item> ForSale = new List<Item>();
+        private readonly List<ClickableComponent> ForSaleButtons = new List<ClickableComponent>();
+        private readonly List<int> CategoriesToSellHere = new List<int>();
+        private readonly Dictionary<Item, int[]> ItemPriceAndStock = new Dictionary<Item, int[]>();
         private float SellPercentage = 1f;
-        private List<TemporaryAnimatedSprite> Animations = new List<TemporaryAnimatedSprite>();
+        private readonly List<TemporaryAnimatedSprite> Animations = new List<TemporaryAnimatedSprite>();
         private int HoverPrice = -1;
-        private const int HowManyRecipesFitOnPage = 28;
-        private const int InfiniteStock = 2147483647;
-        private const int SalePriceIndex = 0;
-        private const int StockIndex = 1;
-        private const int ExtraTradeItemIndex = 2;
         private const int ItemsPerPage = 4;
-        private const int NumberRequiredForExtraItemTrade = 5;
         private InventoryMenu Inventory;
         private Item HeldItem;
         private Item HoveredItem;
-        private Texture2D Wallpapers;
-        private Texture2D Floors;
-        private int LastWallpaperFloorPrice;
         private TemporaryAnimatedSprite Poof;
         private Rectangle ScrollBarRunner;
-        private int Currency;
+        private readonly int Currency;
         private int CurrentItemIndex;
         private ClickableTextureComponent UpArrow;
         private ClickableTextureComponent DownArrow;
         private ClickableTextureComponent ScrollBar;
-        private ClickableTextureComponent BackButton;
+        private readonly ClickableTextureComponent BackButton;
 
         private NPC PortraitPerson;
         private string PortraitPersonDialogue;
         private bool Scrolling;
-        private String LocationName;
+        private readonly string LocationName;
 
         private readonly Action ShowMainMenu;
         private readonly ItemUtils ItemUtils;
@@ -61,7 +51,7 @@ namespace PelicanFiber.Framework
         /*********
         ** Public methods
         *********/
-        public ShopMenu2(Action showMainMenu, ItemUtils itemUtils, bool giveAchievements, Dictionary<Item, int[]> itemPriceAndStock, int currency = 0, string who = null, String locationName = "")
+        public ShopMenu2(Action showMainMenu, ItemUtils itemUtils, bool giveAchievements, Dictionary<Item, int[]> itemPriceAndStock, int currency = 0, string who = null, string locationName = "")
           : this(showMainMenu, itemUtils, giveAchievements, itemPriceAndStock.Keys.ToList(), currency, who, locationName)
         {
             this.LocationName = locationName;
@@ -90,18 +80,12 @@ namespace PelicanFiber.Framework
             };
             this.Inventory.movePosition(-this.Inventory.width - Game1.tileSize / 2, 0);
             this.Currency = currency;
-            int positionOnScreen1 = this.xPositionOnScreen;
-            int borderWidth1 = IClickableMenu.borderWidth;
-            int toClearSideBorder = IClickableMenu.spaceToClearSideBorder;
-            int positionOnScreen2 = this.yPositionOnScreen;
-            int borderWidth2 = IClickableMenu.borderWidth;
-            int toClearTopBorder = IClickableMenu.spaceToClearTopBorder;
             this.UpArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), Game1.pixelZoom);
             this.DownArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + this.height - Game1.tileSize, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), Game1.pixelZoom);
             this.ScrollBar = new ClickableTextureComponent(new Rectangle(this.UpArrow.bounds.X + Game1.pixelZoom * 3, this.UpArrow.bounds.Y + this.UpArrow.bounds.Height + Game1.pixelZoom, 6 * Game1.pixelZoom, 10 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), Game1.pixelZoom);
             this.BackButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen, this.yPositionOnScreen - Game1.tileSize, 12 * Game1.pixelZoom, 11 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(352, 495, 12, 11), Game1.pixelZoom);
             this.ScrollBarRunner = new Rectangle(this.ScrollBar.bounds.X, this.UpArrow.bounds.Y + this.UpArrow.bounds.Height + Game1.pixelZoom, this.ScrollBar.bounds.Width, this.height - Game1.tileSize - this.UpArrow.bounds.Height - Game1.pixelZoom * 7);
-            for (int index = 0; index < 4; ++index)
+            for (int index = 0; index < ShopMenu2.ItemsPerPage; ++index)
                 this.ForSaleButtons.Add(new ClickableComponent(new Rectangle(this.xPositionOnScreen + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4 + index * ((this.height - Game1.tileSize * 4) / 4), this.width - Game1.tileSize / 2, (this.height - Game1.tileSize * 4) / 4 + Game1.pixelZoom), string.Concat(index)));
             foreach (Item key in itemsForSale)
             {
@@ -122,7 +106,6 @@ namespace PelicanFiber.Framework
             }
             if (this.ItemPriceAndStock.Count >= 2)
                 this.SetUpShopOwner(who);
-            //switch (Game1.currentLocation.name)
             switch (this.LocationName)
             {
                 case "SeedShop":
@@ -172,7 +155,6 @@ namespace PelicanFiber.Framework
                     });
                     break;
             }
-            Game1.currentLocation.Name.Equals("SeedShop");
         }
 
         public override void leftClickHeld(int x, int y)
@@ -182,7 +164,7 @@ namespace PelicanFiber.Framework
                 return;
             int y1 = this.ScrollBar.bounds.Y;
             this.ScrollBar.bounds.Y = Math.Min(this.yPositionOnScreen + this.height - Game1.tileSize - Game1.pixelZoom * 3 - this.ScrollBar.bounds.Height, Math.Max(y, this.yPositionOnScreen + this.UpArrow.bounds.Height + Game1.pixelZoom * 5));
-            this.CurrentItemIndex = Math.Min(this.ForSale.Count - 4, Math.Max(0, (int)(this.ForSale.Count * (double)((y - this.ScrollBarRunner.Y) / (float)this.ScrollBarRunner.Height))));
+            this.CurrentItemIndex = Math.Min(this.ForSale.Count - ShopMenu2.ItemsPerPage, Math.Max(0, (int)(this.ForSale.Count * (double)((y - this.ScrollBarRunner.Y) / (float)this.ScrollBarRunner.Height))));
             this.SetScrollBarToCurrentIndex();
             if (y1 == this.ScrollBar.bounds.Y)
                 return;
@@ -205,7 +187,7 @@ namespace PelicanFiber.Framework
             }
             else
             {
-                if (direction >= 0 || this.CurrentItemIndex >= Math.Max(0, this.ForSale.Count - 4))
+                if (direction >= 0 || this.CurrentItemIndex >= Math.Max(0, this.ForSale.Count - ShopMenu2.ItemsPerPage))
                     return;
                 this.DownArrowPressed();
                 Game1.playSound("shiny4");
@@ -223,7 +205,7 @@ namespace PelicanFiber.Framework
                 this.BackButton.scale = this.BackButton.baseScale;
                 this.BackButtonPressed();
             }
-            else if (this.DownArrow.containsPoint(x, y) && this.CurrentItemIndex < Math.Max(0, this.ForSale.Count - 4))
+            else if (this.DownArrow.containsPoint(x, y) && this.CurrentItemIndex < Math.Max(0, this.ForSale.Count - ShopMenu2.ItemsPerPage))
             {
                 this.DownArrowPressed();
                 Game1.playSound("shwip");
@@ -241,7 +223,7 @@ namespace PelicanFiber.Framework
                 this.leftClickHeld(x, y);
                 this.releaseLeftClick(x, y);
             }
-            this.CurrentItemIndex = Math.Max(0, Math.Min(this.ForSale.Count - 4, this.CurrentItemIndex));
+            this.CurrentItemIndex = Math.Max(0, Math.Min(this.ForSale.Count - ShopMenu2.ItemsPerPage, this.CurrentItemIndex));
             if (this.HeldItem == null)
             {
                 Item obj = this.Inventory.leftClick(x, y, null, false);
@@ -309,7 +291,7 @@ namespace PelicanFiber.Framework
                             Game1.playSound("cancel");
                         }
                     }
-                    this.CurrentItemIndex = Math.Max(0, Math.Min(this.ForSale.Count - 4, this.CurrentItemIndex));
+                    this.CurrentItemIndex = Math.Max(0, Math.Min(this.ForSale.Count - ShopMenu2.ItemsPerPage, this.CurrentItemIndex));
                     return;
                 }
             }
@@ -344,10 +326,7 @@ namespace PelicanFiber.Framework
                 {
                     this.ChargePlayer(Game1.player, this.Currency, -((obj1 is Object ? (int)((obj1 as Object).sellToStorePrice() * (double)this.SellPercentage) : (int)(obj1.salePrice() / 2 * (double)this.SellPercentage)) * obj1.Stack));
                     Item obj2 = null;
-                    if (Game1.mouseClickPolling > 300)
-                        Game1.playSound("purchaseRepeat");
-                    else
-                        Game1.playSound("purchaseClick");
+                    Game1.playSound(Game1.mouseClickPolling > 300 ? "purchaseRepeat" : "purchaseClick");
                     this.Animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * Game1.tileSize, 256, Game1.tileSize, Game1.tileSize), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
                     {
                         alphaFade = 0.025f,
@@ -391,7 +370,6 @@ namespace PelicanFiber.Framework
             this.BackButton.tryHover(x, y, 1f);
 
             base.performHoverAction(x, y);
-            this.DescriptionText = "";
             this.HoverText = "";
             this.HoveredItem = null;
             this.HoverPrice = -1;
@@ -407,10 +385,7 @@ namespace PelicanFiber.Framework
                 {
                     Item key = this.ForSale[this.CurrentItemIndex + index];
                     this.HoverText = key.getDescription();
-                    if (key.category == -425)
-                        this.BoldTitleText = ((Object)key).name;
-                    else
-                        this.BoldTitleText = key.Name;
+                    this.BoldTitleText = key.category == -425 ? ((Object)key).name : key.Name;
                     this.HoverPrice = this.ItemPriceAndStock == null || !this.ItemPriceAndStock.ContainsKey(key) ? key.salePrice() : this.ItemPriceAndStock[key][0];
                     this.HoveredItem = key;
                     this.ForSaleButtons[index].scale = Math.Min(this.ForSaleButtons[index].scale + 0.03f, 1.1f);
@@ -460,12 +435,6 @@ namespace PelicanFiber.Framework
                 showGrayedOutSlots = true
             };
             this.Inventory.movePosition(-this.Inventory.width - Game1.tileSize / 2, 0);
-            int positionOnScreen1 = this.xPositionOnScreen;
-            int borderWidth1 = IClickableMenu.borderWidth;
-            int toClearSideBorder = IClickableMenu.spaceToClearSideBorder;
-            int positionOnScreen2 = this.yPositionOnScreen;
-            int borderWidth2 = IClickableMenu.borderWidth;
-            int toClearTopBorder = IClickableMenu.spaceToClearTopBorder;
             this.UpArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + Game1.tileSize / 4, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 459, 11, 12), Game1.pixelZoom);
             this.DownArrow = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width + Game1.tileSize / 4, this.yPositionOnScreen + this.height - Game1.tileSize, 11 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(421, 472, 11, 12), Game1.pixelZoom);
             this.ScrollBar = new ClickableTextureComponent(new Rectangle(this.UpArrow.bounds.X + Game1.pixelZoom * 3, this.UpArrow.bounds.Y + this.UpArrow.bounds.Height + Game1.pixelZoom, 6 * Game1.pixelZoom, 10 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(435, 463, 6, 10), Game1.pixelZoom);
@@ -487,14 +456,13 @@ namespace PelicanFiber.Framework
                 if (this.CurrentItemIndex + index < this.ForSale.Count)
                 {
                     IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), this.ForSaleButtons[index].bounds.X, this.ForSaleButtons[index].bounds.Y, this.ForSaleButtons[index].bounds.Width, this.ForSaleButtons[index].bounds.Height, !this.ForSaleButtons[index].containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) || this.Scrolling ? Color.White : Color.Wheat, Game1.pixelZoom, false);
-                    b.Draw(Game1.mouseCursors, new Vector2(this.ForSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 3, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 6 - Game1.pixelZoom), new Rectangle?(new Rectangle(296, 363, 18, 18)), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1f);
+                    b.Draw(Game1.mouseCursors, new Vector2(this.ForSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 3, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 6 - Game1.pixelZoom), new Rectangle(296, 363, 18, 18), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1f);
                     this.ForSale[this.CurrentItemIndex + index].drawInMenu(b, new Vector2(this.ForSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 2, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 6), 1f);
                     if (this.ForSale[this.CurrentItemIndex + index].category == -425)
                         SpriteText.drawString(b, ((Object)this.ForSale[this.CurrentItemIndex + index]).name, this.ForSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 7);
-
                     else
                         SpriteText.drawString(b, this.ForSale[this.CurrentItemIndex + index].Name, this.ForSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 7);
-                    SpriteText.drawString(b, this.ItemPriceAndStock[this.ForSale[this.CurrentItemIndex + index]][0].ToString() + " ", this.ForSaleButtons[index].bounds.Right - SpriteText.getWidthOfString(this.ItemPriceAndStock[this.ForSale[this.CurrentItemIndex + index]][0].ToString() + " ") - Game1.pixelZoom * 8, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 7, 999999, -1, 999999, this.GetPlayerCurrencyAmount(Game1.player, this.Currency) >= this.ItemPriceAndStock[this.ForSale[this.CurrentItemIndex + index]][0] ? 1f : 0.5f);
+                    SpriteText.drawString(b, this.ItemPriceAndStock[this.ForSale[this.CurrentItemIndex + index]][0] + " ", this.ForSaleButtons[index].bounds.Right - SpriteText.getWidthOfString(this.ItemPriceAndStock[this.ForSale[this.CurrentItemIndex + index]][0] + " ") - Game1.pixelZoom * 8, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 7, 999999, -1, 999999, this.GetPlayerCurrencyAmount(Game1.player, this.Currency) >= this.ItemPriceAndStock[this.ForSale[this.CurrentItemIndex + index]][0] ? 1f : 0.5f);
                     Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.ForSaleButtons[index].bounds.Right - Game1.pixelZoom * 13, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 10 - Game1.pixelZoom), new Rectangle(193 + this.Currency * 9, 373, 9, 10), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, false, 1f);
                 }
             }
@@ -508,19 +476,17 @@ namespace PelicanFiber.Framework
                 else
                     this.Animations[index].draw(b, true);
             }
-            if (this.Poof != null)
-                this.Poof.draw(b);
+            this.Poof?.draw(b);
             this.UpArrow.draw(b);
             this.DownArrow.draw(b);
-            if (this.ForSale.Count > 4)
+            if (this.ForSale.Count > ShopMenu2.ItemsPerPage)
             {
                 IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(403, 383, 6, 6), this.ScrollBarRunner.X, this.ScrollBarRunner.Y, this.ScrollBarRunner.Width, this.ScrollBarRunner.Height, Color.White, Game1.pixelZoom);
                 this.ScrollBar.draw(b);
             }
             if (!this.HoverText.Equals(""))
                 IClickableMenu.drawToolTip(b, this.HoverText, this.BoldTitleText, this.HoveredItem, this.HeldItem != null, -1, this.Currency, this.GetHoveredItemExtraItemIndex(), this.GetHoveredItemExtraItemAmount(), null, this.HoverPrice);
-            if (this.HeldItem != null)
-                this.HeldItem.drawInMenu(b, new Vector2(Game1.getOldMouseX() + 8, Game1.getOldMouseY() + 8), 1f);
+            this.HeldItem?.drawInMenu(b, new Vector2(Game1.getOldMouseX() + 8, Game1.getOldMouseY() + 8), 1f);
             base.draw(b);
             if (Game1.viewport.Width > 1800 && Game1.options.showMerchantPortraits)
             {
@@ -528,7 +494,7 @@ namespace PelicanFiber.Framework
                 {
                     Utility.drawWithShadow(b, Game1.mouseCursors, new Vector2(this.xPositionOnScreen - 80 * Game1.pixelZoom, this.yPositionOnScreen), new Rectangle(603, 414, 74, 74), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, false, 0.91f);
                     if (this.PortraitPerson.Portrait != null)
-                        b.Draw(this.PortraitPerson.Portrait, new Vector2(this.xPositionOnScreen - 80 * Game1.pixelZoom + Game1.pixelZoom * 5, this.yPositionOnScreen + Game1.pixelZoom * 5), new Rectangle?(new Rectangle(0, 0, 64, 64)), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.92f);
+                        b.Draw(this.PortraitPerson.Portrait, new Vector2(this.xPositionOnScreen - 80 * Game1.pixelZoom + Game1.pixelZoom * 5, this.yPositionOnScreen + Game1.pixelZoom * 5), new Rectangle(0, 0, 64, 64), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 0.92f);
                 }
                 if (this.PortraitPersonDialogue != null)
                     IClickableMenu.drawHoverText(b, this.PortraitPersonDialogue, Game1.dialogueFont, 0, 0, -1, null, -1, null, null, 0, -1, -1, this.xPositionOnScreen - (int)Game1.dialogueFont.MeasureString(this.PortraitPersonDialogue).X - Game1.tileSize, this.yPositionOnScreen + (this.PortraitPerson != null ? 78 * Game1.pixelZoom : 0));
@@ -610,10 +576,7 @@ namespace PelicanFiber.Framework
                     this.PortraitPerson = Game1.getCharacterFromName("Willy");
                     text = "Need fishing supplies? You've come to the right place.";
                     if (Game1.random.NextDouble() < 0.05)
-                    {
                         text = "Sorry about the smell.";
-                        break;
-                    }
                     break;
                 case "Pierre":
                     this.PortraitPerson = Game1.getCharacterFromName("Pierre");
@@ -643,10 +606,7 @@ namespace PelicanFiber.Framework
                     }
                     text = "Welcome to Pierre's! " + text;
                     if (Game1.dayOfMonth == 28)
-                    {
                         text = "The season's almost over. I'll be changing stock tomorrow.";
-                        break;
-                    }
                     break;
                 case "Dwarf":
                     this.PortraitPerson = Game1.getCharacterFromName("Dwarf");
@@ -683,10 +643,7 @@ namespace PelicanFiber.Framework
                     this.PortraitPerson = Game1.getCharacterFromName("Marnie");
                     text = "Animal supplies for sale!";
                     if (random.NextDouble() < 0.0001)
-                    {
                         text = "*sigh*... When the door opened I thought it might be Lewis.";
-                        break;
-                    }
                     break;
                 case "Gus":
                     this.PortraitPerson = Game1.getCharacterFromName("Gus");
@@ -724,19 +681,13 @@ namespace PelicanFiber.Framework
                             break;
                     }
                     if (random.NextDouble() < 0.001)
-                    {
                         text = "The caves can be dangerous. How do you think I lost this eye?";
-                        break;
-                    }
                     break;
                 case "Sandy":
                     this.PortraitPerson = Game1.getCharacterFromName("Sandy");
                     text = "You won't find these goods anywhere else!";
                     if (random.NextDouble() < 0.0001)
-                    {
                         text = "I've got just what you need.";
-                        break;
-                    }
                     break;
             }
             this.PortraitPersonDialogue = Game1.parseText(text, Game1.dialogueFont, Game1.tileSize * 5 - Game1.pixelZoom * 4);
@@ -766,8 +717,8 @@ namespace PelicanFiber.Framework
         {
             if (this.ForSale.Count <= 0)
                 return;
-            this.ScrollBar.bounds.Y = this.ScrollBarRunner.Height / Math.Max(1, this.ForSale.Count - 4 + 1) * this.CurrentItemIndex + this.UpArrow.bounds.Bottom + Game1.pixelZoom;
-            if (this.CurrentItemIndex != this.ForSale.Count - 4)
+            this.ScrollBar.bounds.Y = this.ScrollBarRunner.Height / Math.Max(1, this.ForSale.Count - ShopMenu2.ItemsPerPage + 1) * this.CurrentItemIndex + this.UpArrow.bounds.Bottom + Game1.pixelZoom;
+            if (this.CurrentItemIndex != this.ForSale.Count - ShopMenu2.ItemsPerPage)
                 return;
             this.ScrollBar.bounds.Y = this.DownArrow.bounds.Y - this.ScrollBar.bounds.Height - Game1.pixelZoom;
         }
@@ -839,13 +790,12 @@ namespace PelicanFiber.Framework
                         Game1.player.removeItemsFromInventory(num, 5);
                     if (item.actionWhenPurchased())
                     {
-                        if (this.HeldItem is Object && (this.HeldItem as Object).isRecipe)
+                        if (this.HeldItem is Object && ((Object)this.HeldItem).isRecipe)
                         {
-                            if ((this.HeldItem as Object).name.Contains("Bundle"))
+                            if (((Object)this.HeldItem).name.Contains("Bundle"))
                             {
-                                this.ItemUtils.AddBundle((this.HeldItem as Object).specialVariable);
+                                this.ItemUtils.AddBundle(((Object)this.HeldItem).specialVariable);
                                 Game1.playSound("newRecipe");
-                                heldItem = null;
                                 this.HeldItem = null;
                             }
                             else
@@ -853,7 +803,7 @@ namespace PelicanFiber.Framework
                                 string key = this.HeldItem.Name.Substring(0, this.HeldItem.Name.IndexOf("Recipe") - 1);
                                 try
                                 {
-                                    if ((this.HeldItem as Object).category == -7)
+                                    if (((Object)this.HeldItem).category == -7)
                                     {
                                         Game1.player.cookingRecipes.Add(key, 0);
 
@@ -867,10 +817,9 @@ namespace PelicanFiber.Framework
                                         Game1.player.craftingRecipes.Add(key, 0);
                                     Game1.playSound("newRecipe");
                                 }
-                                catch (Exception ex)
+                                catch
                                 {
                                 }
-                                heldItem = null;
                                 this.HeldItem = null;
                             }
                         }
@@ -901,10 +850,7 @@ namespace PelicanFiber.Framework
                         if (this.ItemPriceAndStock[item][1] != int.MaxValue)
                             this.ItemPriceAndStock[item][1] -= numberToBuy;
                         this.ChargePlayer(Game1.player, this.Currency, amount);
-                        if (Game1.mouseClickPolling > 300)
-                            Game1.playSound("purchaseRepeat");
-                        else
-                            Game1.playSound("purchaseClick");
+                        Game1.playSound(Game1.mouseClickPolling > 300 ? "purchaseRepeat" : "purchaseClick");
                         if (index != -1)
                             Game1.player.removeItemsFromInventory(index, 5);
                         if (item.actionWhenPurchased())
