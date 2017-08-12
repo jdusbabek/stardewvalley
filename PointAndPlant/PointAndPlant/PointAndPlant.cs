@@ -62,9 +62,11 @@ namespace PointAndPlant
         /*********
         ** Public methods
         *********/
-        public override void Entry(params object[] objects)
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        public override void Entry(IModHelper helper)
         {
-            PlayerEvents.LoadedGame += this.PlayerEvents_LoadedGame;
+            SaveEvents.AfterLoad += this.SaveEvents_AfterLoad;
             ControlEvents.KeyReleased += this.ControlEvents_KeyReleased;
             GraphicsEvents.OnPreRenderHudEvent += this.GraphicsEvents_OnPreRenderHudEvent;
         }
@@ -73,7 +75,7 @@ namespace PointAndPlant
         /*********
         ** Private methods
         *********/
-        private void PlayerEvents_LoadedGame(object sender, EventArgs e)
+        private void SaveEvents_AfterLoad(object sender, EventArgs e)
         {
             this.Config = this.Helper.ReadConfig<PAPConfig>();
 
@@ -159,7 +161,6 @@ namespace PointAndPlant
             {
                 this.HarvestRadius = this.Config.HarvestRadius;
             }
-            
 
             if (!Enum.TryParse(this.Config.PlowKey, true, out this.PlowKey))
             {
@@ -736,7 +737,7 @@ namespace PointAndPlant
             try
             {
                 if (this.BuildingTiles == null)
-                    this.BuildingTiles = Game1.content.Load<Texture2D>("LooseSprites\\buildingPlacementTiles");
+                    this.BuildingTiles = this.Helper.Content.Load<Texture2D>("LooseSprites\\buildingPlacementTiles", ContentSource.GameContent);
 
                 KeyboardState keyboard = Keyboard.GetState();
 

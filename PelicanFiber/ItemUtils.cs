@@ -16,7 +16,7 @@ namespace PelicanFiber
         /*********
         ** Properties
         *********/
-        private readonly LocalizedContentManager ContentManager;
+        private readonly IContentHelper Content;
         private readonly IMonitor Monitor;
         private Dictionary<int, int> BundleToAreaDictionary;
 
@@ -24,9 +24,9 @@ namespace PelicanFiber
         /*********
         ** Public methods
         *********/
-        public ItemUtils(LocalizedContentManager contentManager, IMonitor monitor)
+        public ItemUtils(IContentHelper content, IMonitor monitor)
         {
-            this.ContentManager = contentManager;
+            this.Content = content;
             this.Monitor = monitor;
         }
 
@@ -320,7 +320,7 @@ namespace PelicanFiber
         {
             List<Item> list = new List<Item>();
 
-            foreach (KeyValuePair<int, string> keyValuePair in Game1.content.Load<Dictionary<int, string>>("Data\\Furniture"))
+            foreach (KeyValuePair<int, string> keyValuePair in this.Content.Load<Dictionary<int, string>>("Data\\Furniture", ContentSource.GameContent))
             {
                 if (!this.IsFurnitureOffLimitsForSale(keyValuePair.Key))
                     list.Add(new Furniture(keyValuePair.Key, Vector2.Zero));
@@ -332,7 +332,7 @@ namespace PelicanFiber
         private Dictionary<Item, int[]> GetAllFurnituresForFree()
         {
             Dictionary<Item, int[]> dictionary = new Dictionary<Item, int[]>();
-            foreach (KeyValuePair<int, string> keyValuePair in Game1.content.Load<Dictionary<int, string>>("Data\\Furniture"))
+            foreach (KeyValuePair<int, string> keyValuePair in this.Content.Load<Dictionary<int, string>>("Data\\Furniture", ContentSource.GameContent))
             {
                 if (!this.IsFurnitureOffLimitsForSale(keyValuePair.Key))
                     dictionary.Add(new Furniture(keyValuePair.Key, Vector2.Zero), new[] { 0, int.MaxValue });
@@ -347,7 +347,7 @@ namespace PelicanFiber
 
         private Furniture GetRandomFurniture(Random r, List<Item> stock, int lowerIndexBound = 0, int upperIndexBound = 1462)
         {
-            Dictionary<int, string> dictionary = Game1.content.Load<Dictionary<int, string>>("Data\\Furniture");
+            Dictionary<int, string> dictionary = this.Content.Load<Dictionary<int, string>>("Data\\Furniture", ContentSource.GameContent);
             int num;
             do
             {
@@ -667,7 +667,7 @@ namespace PelicanFiber
         public List<Item> GetJunimoStock()
         {
             List<Item> junimoItems = new List<Item>();
-            Dictionary<int, string> junContent = this.ContentManager.Load<Dictionary<int, string>>("bundles");
+            Dictionary<int, string> junContent = this.Content.Load<Dictionary<int, string>>("bundles");
             Dictionary<int, bool[]> bundleInfo = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).bundles;
             this.BundleToAreaDictionary = new Dictionary<int, int>();
 

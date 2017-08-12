@@ -10,7 +10,7 @@ namespace StardewLib
         /*********
         ** Properties
         *********/
-        private readonly LocalizedContentManager Content;
+        private readonly IContentHelper Content;
         private readonly Dictionary<string, Dictionary<int, string>> DialogueLookups = new Dictionary<string, Dictionary<int, string>>();
         private readonly IConfig Config;
         private readonly Random Random = new Random();
@@ -21,10 +21,10 @@ namespace StardewLib
         /*********
         ** Public methods
         *********/
-        public DialogueManager(IConfig config, IServiceProvider provider, string path, IMonitor monitor)
+        public DialogueManager(IConfig config, IContentHelper content, IMonitor monitor)
         {
             this.Config = config;
-            this.Content = new LocalizedContentManager(provider, path);
+            this.Content = content;
             this.Monitor = monitor;
         }
 

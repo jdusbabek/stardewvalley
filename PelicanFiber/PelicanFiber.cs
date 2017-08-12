@@ -14,7 +14,6 @@ namespace PelicanFiber
         ** Properties
         *********/
         private Keys MenuKey = Keys.PageDown;
-        private LocalizedContentManager Content;
         private Texture2D Websites;
         private PelicanFiberConfig Config;
         private bool Unfiltered = true;
@@ -24,7 +23,9 @@ namespace PelicanFiber
         /*********
         ** Public methods
         *********/
-        public override void Entry(params object[] objects)
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        public override void Entry(IModHelper helper)
         {
             // load config
             this.Config = this.Helper.ReadConfig<PelicanFiberConfig>();
@@ -38,8 +39,7 @@ namespace PelicanFiber
             // load textures
             try
             {
-                this.Content = new LocalizedContentManager(Game1.content.ServiceProvider, this.PathOnDisk);
-                this.Websites = this.Content.Load<Texture2D>("websites");
+                this.Websites = helper.Content.Load<Texture2D>("websites");
             }
             catch (Exception ex)
             {
@@ -47,7 +47,7 @@ namespace PelicanFiber
             }
 
             // load utils
-            this.ItemUtils = new ItemUtils(this.Content, this.Monitor);
+            this.ItemUtils = new ItemUtils(helper.Content, this.Monitor);
 
             // hook events
             ControlEvents.KeyReleased += this.ControlEvents_OnKeyReleased;

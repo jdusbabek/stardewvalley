@@ -93,9 +93,6 @@ namespace Replanter
 
         #region Messages and Dialogue
 
-        // Content manager for loading dialogs, etc.
-        private LocalizedContentManager Content;
-
         // An indexed list of all messages from the dialog.xna file
         private Dictionary<string, string> AllMessages;
 
@@ -131,17 +128,19 @@ namespace Replanter
         /*********
         ** Public methods
         *********/
-        public override void Entry(params object[] objects)
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        public override void Entry(IModHelper helper)
         {
             // load config
             this.Config = this.Helper.ReadConfig<ReplanterConfig>();
             this.ImportConfiguration();
 
             // load dialogue manager
-            this.DialogueManager = new DialogueManager(this.Config, Game1.content.ServiceProvider, Game1.content.RootDirectory, this.Monitor);
+            this.DialogueManager = new DialogueManager(this.Config, helper.Content, this.Monitor);
 
             // hook events
-            PlayerEvents.LoadedGame += this.PlayerEvents_LoadedGame;
+            SaveEvents.AfterLoad += this.SaveEvents_AfterLoad;
             ControlEvents.KeyReleased += this.ControlEvents_KeyReleased;
         }
 
@@ -149,7 +148,7 @@ namespace Replanter
         /*********
         ** Private methods
         *********/
-        private void PlayerEvents_LoadedGame(object sender, EventArgs e)
+        private void SaveEvents_AfterLoad(object sender, EventArgs e)
         {
             // Parses the always sell, never sell, and never harvest lists.
             this.GenerateLists();
@@ -160,7 +159,6 @@ namespace Replanter
             this.ParseChestLocations();
 
             // Read in dialogue
-            this.Content = new LocalizedContentManager(Game1.content.ServiceProvider, this.PathOnDisk);
             this.ReadInMessages();
         }
 
@@ -756,8 +754,8 @@ namespace Replanter
          */
         private void GenerateDictionaries()
         {
-            Dictionary<int, string> dictionary = Game1.content.Load<Dictionary<int, string>>("Data\\Crops");
-            Dictionary<int, string> objects = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
+            Dictionary<int, string> dictionary = this.Helper.Content.Load<Dictionary<int, string>>("Data\\Crops", ContentSource.GameContent);
+            Dictionary<int, string> objects = this.Helper.Content.Load<Dictionary<int, string>>("Data\\ObjectInformation", ContentSource.GameContent);
 
             this.CropToSeed = new Dictionary<int, int>();
             //cropToPrice = new Dictionary<int, int>();
@@ -986,7 +984,7 @@ namespace Replanter
             //Dictionary<int, string> objects = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
             try
             {
-                this.AllMessages = this.Content.Load<Dictionary<string, string>>("dialog");
+                this.AllMessages = this.Helper.Content.Load<Dictionary<string, string>>("dialog");
 
                 this.Dialogue = this.DialogueManager.GetDialog("Xdialog", this.AllMessages);
                 this.Greetings = this.DialogueManager.GetDialog("greeting", this.AllMessages);

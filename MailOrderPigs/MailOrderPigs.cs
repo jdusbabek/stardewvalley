@@ -23,9 +23,11 @@ namespace MailOrderPigs
         /*********
         ** Public methods
         *********/
-        public override void Entry(params object[] objects)
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        public override void Entry(IModHelper helper)
         {
-            PlayerEvents.LoadedGame += this.PlayerEvents_LoadedGame;
+            SaveEvents.AfterLoad += this.SaveEvents_AfterLoad;
             ControlEvents.KeyReleased += this.ControlEvents_KeyReleased;
         }
 
@@ -33,7 +35,7 @@ namespace MailOrderPigs
         /*********
         ** Private methods
         *********/
-        private void PlayerEvents_LoadedGame(object sender, EventArgs e)
+        private void SaveEvents_AfterLoad(object sender, EventArgs e)
         {
             try
             {

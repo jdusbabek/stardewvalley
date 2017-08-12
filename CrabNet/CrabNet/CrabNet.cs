@@ -55,9 +55,6 @@ namespace CrabNet
         // The cost per 1 bait, as determined from the user's bait preference
         private int BaitCost;
 
-        // Content manager for loading dialogs, etc.
-        private LocalizedContentManager Content;
-
         // An indexed list of all messages from the dialog.xna file
         private Dictionary<string, string> AllMessages;
 
@@ -94,15 +91,14 @@ namespace CrabNet
         /*********
         ** Public methods
         *********/
-        /**
-         * The SMAPI entry point.
-         */
-        public override void Entry(params object[] objects)
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        public override void Entry(IModHelper helper)
         {
             this.Config = this.Helper.ReadConfig<CrabNetConfig>();
-            this.DialogueManager = new DialogueManager(this.Config, Game1.content.ServiceProvider, Game1.content.RootDirectory, this.Monitor);
+            this.DialogueManager = new DialogueManager(this.Config, helper.Content, this.Monitor);
 
-            PlayerEvents.LoadedGame += this.PlayerEvents_LoadedGame;
+            SaveEvents.AfterLoad += this.SaveEvents_AfterLoad;
             ControlEvents.KeyReleased += this.ControlEvents_KeyReleased;
         }
 
@@ -110,7 +106,7 @@ namespace CrabNet
         /*********
         ** Private methods
         *********/
-        private void PlayerEvents_LoadedGame(object sender, EventArgs e)
+        private void SaveEvents_AfterLoad(object sender, EventArgs e)
         {
             if (!Enum.TryParse(this.Config.KeyBind, true, out this.ActionKey))
             {
@@ -137,7 +133,6 @@ namespace CrabNet
             this.BypassInventory = this.Config.BypassInventory;
             this.AllowFreebies = this.Config.AllowFreebies;
 
-            this.Content = new LocalizedContentManager(Game1.content.ServiceProvider, this.PathOnDisk);
             this.ReadInMessages();
         }
 
@@ -289,7 +284,7 @@ namespace CrabNet
                     Game1.addHUDMessage(new HUDMessage("Inventory Full", Color.Red, 3500f));
                     return false;
                 }
-                Dictionary<int, string> dictionary = Game1.content.Load<Dictionary<int, string>>("Data\\Fish");
+                Dictionary<int, string> dictionary = this.Helper.Content.Load<Dictionary<int, string>>("Data\\Fish", ContentSource.GameContent);
                 if (dictionary.ContainsKey(pot.heldObject.parentSheetIndex))
                 {
                     string[] strArray = dictionary[pot.heldObject.parentSheetIndex].Split('/');
@@ -545,7 +540,7 @@ namespace CrabNet
             //Dictionary<int, string> objects = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
             try
             {
-                this.AllMessages = this.Content.Load<Dictionary<string, string>>("dialog");
+                this.AllMessages = this.Helper.Content.Load<Dictionary<string, string>>("dialog");
 
                 this.Dialog = this.DialogueManager.GetDialog("Xdialog", this.AllMessages);
                 this.Greetings = this.DialogueManager.GetDialog("greeting", this.AllMessages);

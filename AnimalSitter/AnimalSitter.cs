@@ -76,18 +76,20 @@ namespace ExtremePetting
         /*********
         ** Public methods
         *********/
-        public override void Entry(params object[] objects)
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        public override void Entry(IModHelper helper)
         {
             this.Config = this.Helper.ReadConfig<AnimalSitterConfig>();
-            this.DialogueManager = new DialogueManager(this.Config, Game1.content.ServiceProvider, this.PathOnDisk, this.Monitor);
+            this.DialogueManager = new DialogueManager(this.Config, helper.Content, this.Monitor);
             this.ChestManager = new ChestManager(this.Monitor);
 
-            PlayerEvents.LoadedGame += this.PlayerEvents_LoadedGame;
+            SaveEvents.AfterLoad += this.SaveEvents_AfterLoad;
             ControlEvents.KeyReleased += this.ControlEvents_KeyReleased;
         }
 
 
-        private void PlayerEvents_LoadedGame(object sender, EventArgs e)
+        private void SaveEvents_AfterLoad(object sender, EventArgs e)
         {
             this.ImportConfiguration();
 
