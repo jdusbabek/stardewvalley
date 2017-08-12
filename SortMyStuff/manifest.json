@@ -1,0 +1,13 @@
+﻿{
+  "Name": "Sort My Stuff",
+  "Author": "jwdred",
+  "Version": {
+    "MajorVersion": 1,
+    "MinorVersion": 0,
+    "PatchVersion": 0,
+    "Build": null
+  },
+  "Description": "Sorts your items into chests at the press of a button.",
+  "UniqueID": "jwdred.SortMyStuff",
+  "EntryDll": "SortMyStuff.dll"
+}
