@@ -101,7 +101,7 @@ namespace CrabNet
         public override void Entry(params object[] objects)
         {
             this.Config = this.Helper.ReadConfig<CrabNetConfig>();
-            this.DialogueManager = new DialogueManager(this.Config, Game1.content.ServiceProvider, Game1.content.RootDirectory, new StardewLib.Log(false));
+            this.DialogueManager = new DialogueManager(this.Config, Game1.content.ServiceProvider, Game1.content.RootDirectory, this.Monitor);
 
             PlayerEvents.LoadedGame += onLoaded;
             ControlEvents.KeyReleased += onKeyReleased;
@@ -116,7 +116,7 @@ namespace CrabNet
             if (!Enum.TryParse(this.Config.keybind, true, out this.actionKey))
             {
                 this.actionKey = Keys.H;
-                Log.Info("[CrabNet] Error parsing key binding. Defaulted to H");
+                this.Monitor.Log("Error parsing key binding. Defaulted to H");
             }
 
             loggingEnabled = this.Config.enableLogging;
@@ -165,11 +165,7 @@ namespace CrabNet
                 }
                 catch (Exception ex)
                 {
-                    if (loggingEnabled)
-                    {
-                        Log.Info("[CrabNet] Exception onKeyReleased: " + ex.Message);
-                        Log.Error("[CrabNet] Stacktrace: " + ex.ToString());
-                    }
+                    this.Monitor.Log($"Exception onKeyReleased: {ex}", LogLevel.Error);
                 }
 
             }
@@ -195,7 +191,7 @@ namespace CrabNet
 
                             if (!free && !canAfford(Game1.player, this.costPerCheck, stats) && !allowFreebies)
                             {
-                                Log.Info("[CrabNet] Couldn't afford to check.");
+                                this.Monitor.Log("Couldn't afford to check.", LogLevel.Trace);
                                 stats.notChecked++;
                                 continue;
                             }
@@ -209,7 +205,7 @@ namespace CrabNet
                             {
                                 if (!free && !canAfford(Game1.player, this.costPerEmpty, stats) && !allowFreebies)
                                 {
-                                    Log.Info("[CrabNet] Couldn't afford to empty.");
+                                    this.Monitor.Log("Couldn't afford to empty.", LogLevel.Trace);
                                     stats.notEmptied++;
                                     continue;
                                 }
@@ -231,7 +227,7 @@ namespace CrabNet
 
                                 if (!free && !canAfford(Game1.player, this.baitCost, stats) && !allowFreebies && chargeForBait)
                                 {
-                                    Log.Info("[CrabNet] Couldn't afford to bait.");
+                                    this.Monitor.Log("Couldn't afford to bait.", LogLevel.Trace);
                                     stats.notBaited++;
                                     continue;
                                 }
@@ -266,11 +262,9 @@ namespace CrabNet
 
             if (loggingEnabled)
             {
-                Log.Info("[CrabNet] CrabNet checked " + stats.numChecked + " pots.");
-                Log.Info("[CrabNet] You used " + stats.numBaited + " bait to reset.");
-
+                this.Monitor.Log($"CrabNet checked {stats.numChecked} pots. You used {stats.numBaited} bait to reset.", LogLevel.Trace);
                 if (!free)
-                    Log.Info("[CrabNet] Total cost was " + totalCost + "g. Checks: " + (stats.numChecked * this.costPerCheck) + ", Emptied: " + (stats.numEmptied * this.costPerEmpty) + ", Bait: " + (stats.numBaited * this.baitCost));
+                    this.Monitor.Log($"Total cost was {totalCost}g. Checks: {stats.numChecked * this.costPerCheck}, Emptied: {stats.numEmptied * this.costPerEmpty}, Bait: {stats.numBaited * this.baitCost}", LogLevel.Trace);
             }
 
             doesPlayerHaveEnoughCash = (Game1.player.Money >= totalCost);
@@ -339,7 +333,7 @@ namespace CrabNet
                 wasAdded = true;
 
                 if (loggingEnabled)
-                    Log.Info("[CrabNet] Was able to add item to inventory.");
+                    this.Monitor.Log("Was able to add item to inventory.", LogLevel.Trace);
             }
             else
             {
@@ -349,7 +343,7 @@ namespace CrabNet
                 if (chest != null && chest is Chest)
                 {
                     if (loggingEnabled)
-                        Log.Info("[CrabNet] Found a chest at " + (int)this.chestCoords.X + "," + (int)this.chestCoords.Y);
+                        this.Monitor.Log($"Found a chest at {(int)this.chestCoords.X},{(int)this.chestCoords.Y}", LogLevel.Trace);
 
                     Item i = ((Chest)chest).addItem(obj);
                     if (i == null)
@@ -357,27 +351,27 @@ namespace CrabNet
                         wasAdded = true;
 
                         if (loggingEnabled)
-                            Log.Info("[CrabNet] Was able to add items to chest.");
+                            this.Monitor.Log("Was able to add items to chest.", LogLevel.Trace);
                     }
                     else
                     {
                         inventoryAndChestFull = true;
 
                         if (loggingEnabled)
-                            Log.Info("[CrabNet] Was NOT able to add items to chest.");
+                            this.Monitor.Log("Was NOT able to add items to chest.", LogLevel.Trace);
                     }
 
                 }
                 else
                 {
                     if (loggingEnabled)
-                        Log.Info("[Animal-Sitter] Did not find a chest at " + (int)this.chestCoords.X + "," + (int)this.chestCoords.Y);
+                        this.Monitor.Log($"Did not find a chest at {(int)this.chestCoords.X},{(int)this.chestCoords.Y}", LogLevel.Trace);
 
                     // If bypassInventory is set to true, but there's no chest: try adding to the farmer's inventory.
                     if (bypassInventory)
                     {
                         if (loggingEnabled)
-                            Log.Info("[Animal-Sitter] No chest at " + (int)this.chestCoords.X + "," + (int)this.chestCoords.Y + ", you should place a chest there, or set bypassInventory to 'false'.");
+                            this.Monitor.Log($"No chest at {(int) this.chestCoords.X},{(int) this.chestCoords.Y}, you should place a chest there, or set bypassInventory to \'false\'.", LogLevel.Trace);
 
                         if (farmer.couldInventoryAcceptThisItem(obj))
                         {
@@ -385,14 +379,14 @@ namespace CrabNet
                             wasAdded = true;
 
                             if (loggingEnabled)
-                                Log.Info("[CrabNet] Was able to add item to inventory. (No chest found, bypassInventory set to 'true')");
+                                this.Monitor.Log("Was able to add item to inventory. (No chest found, bypassInventory set to 'true')", LogLevel.Trace);
                         }
                         else
                         {
                             inventoryAndChestFull = true;
 
                             if (loggingEnabled)
-                                Log.Info("[CrabNet] Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'true')");
+                                this.Monitor.Log("Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'true')", LogLevel.Trace);
                         }
                     }
                     else
@@ -400,7 +394,7 @@ namespace CrabNet
                         inventoryAndChestFull = true;
 
                         if (loggingEnabled)
-                            Log.Info("[CrabNet] Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'false')");
+                            this.Monitor.Log("Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'false')", LogLevel.Trace);
                     }
                 }
             }
@@ -534,7 +528,7 @@ namespace CrabNet
 
         //    unfinishedMessages.TryGetValue(rand, out value);
 
-        //    Log.Info((object)("[CrabNet] condition met to return random unfinished message, returning:" + value));
+        //    this.Monitor.Log((object)("[CrabNet] condition met to return random unfinished message, returning:" + value));
 
         //    return value;
         //}
@@ -548,7 +542,7 @@ namespace CrabNet
             messageStore.TryGetValue(rand, out value);
 
             if (loggingEnabled)
-                Log.Info("[CrabNet] condition met to return random unfinished message, returning:" + value);
+                this.Monitor.Log($"condition met to return random unfinished message, returning:{value}", LogLevel.Trace);
 
             return value;
         }
@@ -582,16 +576,16 @@ namespace CrabNet
 
                 //foreach (KeyValuePair<int, string> msg in (Dictionary<int, string>)unfinishedMessages)
                 //{
-                //    Log.Info((object)("[CrabNet] unfinished:" + msg.Key + ": " + msg.Value));
+                //   this.Monitor.Log((object)("[CrabNet] unfinished:" + msg.Key + ": " + msg.Value));
                 //}
                 //foreach (KeyValuePair<int, string> msg in (Dictionary<int, string>)smalltalk)
                 //{
-                //    Log.Info((object)("[CrabNet] smalltalk:" + msg.Key + ": " + msg.Value));
+                //   this.Monitor.Log((object)("[CrabNet] smalltalk:" + msg.Key + ": " + msg.Value));
                 //}
             }
             catch (Exception ex)
             {
-                Log.Error("[CrabNet] Exception loading content:" + ex.ToString());
+                this.Monitor.Log($"Exception loading content:{ex}", LogLevel.Error);
             }
         }
     }

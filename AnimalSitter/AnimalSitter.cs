@@ -9,7 +9,6 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Objects;
-using Log = StardewLib.Log;
 using Object = StardewValley.Object;
 using SFarmer = StardewValley.Farmer;
 
@@ -49,9 +48,6 @@ namespace ExtremePetting
         // How much to charge per animal.
         private int costPerAnimal;
 
-        // Whether to display debugging log messages.
-        private bool loggingEnabled;
-
         // Whether to snatch hidden truffles from the snout of the pig.
         private bool takeTrufflesFromPigs = true;
 
@@ -69,14 +65,12 @@ namespace ExtremePetting
 
         // How many days the farmer has not been able to afford to pay the laborer.
         private int shortDays;
-        
+
         private AnimalSitterConfig Config;
 
         private DialogueManager DialogueManager;
 
         private ChestManager ChestManager;
-
-        private Log Log;
 
 
         /*********
@@ -85,9 +79,8 @@ namespace ExtremePetting
         public override void Entry(params object[] objects)
         {
             this.Config = this.Helper.ReadConfig<AnimalSitterConfig>();
-            this.Log = new Log(this.Config.verboseLogging);
-            this.DialogueManager = new DialogueManager(this.Config, Game1.content.ServiceProvider, this.PathOnDisk, this.Log);
-            this.ChestManager = new ChestManager(this.Log);
+            this.DialogueManager = new DialogueManager(this.Config, Game1.content.ServiceProvider, this.PathOnDisk, this.Monitor);
+            this.ChestManager = new ChestManager(this.Monitor);
 
             PlayerEvents.LoadedGame += onLoaded;
             ControlEvents.KeyReleased += onKeyReleased;
@@ -105,7 +98,7 @@ namespace ExtremePetting
             // Read in dialogue
             this.DialogueManager.ReadInMessages();
 
-            Log.INFO("[Animal-Sitter] chestCoords:" + this.chestCoords.X + "," + this.chestCoords.Y);
+            this.Monitor.Log($"chestCoords:{this.chestCoords.X},{this.chestCoords.Y}", LogLevel.Trace);
         }
 
 
@@ -114,7 +107,7 @@ namespace ExtremePetting
             if (!Enum.TryParse(this.Config.keybind, true, out this.petKey))
             {
                 this.petKey = Keys.O;
-                Log.force_INFO("[Animal-Sitter] Error parsing key binding. Defaulted to O");
+                this.Monitor.Log("Error parsing key binding. Defaulted to O");
             }
 
             this.pettingEnabled = this.Config.pettingEnabled;
@@ -123,7 +116,6 @@ namespace ExtremePetting
             this.maxFriendshipEnabled = this.Config.maxFriendshipEnabled;
             this.maxFullnessEnabled = this.Config.maxFullnessEnabled;
             this.harvestEnabled = this.Config.harvestEnabled;
-            this.loggingEnabled = this.Config.verboseLogging;
             this.checker = this.Config.WhoChecks;
             this.messagesEnabled = this.Config.enableMessages;
             this.takeTrufflesFromPigs = this.Config.takeTrufflesFromPigs;
@@ -134,8 +126,8 @@ namespace ExtremePetting
 
             if (this.Config.costPerAction < 0)
             {
-                Log.INFO("[Animal-Sitter] I'll do it for free, but I'm not paying YOU to take care of YOUR stinking animals!");
-                Log.force_INFO("[Animal-Sitter] Setting costPerAction to 0.");
+                this.Monitor.Log("I'll do it for free, but I'm not paying YOU to take care of YOUR stinking animals!", LogLevel.Trace);
+                this.Monitor.Log("Setting costPerAction to 0.", LogLevel.Trace);
                 this.costPerAnimal = 0;
             }
             else
@@ -167,15 +159,10 @@ namespace ExtremePetting
                 }
                 catch (Exception ex)
                 {
-                    if (loggingEnabled)
-                    {
-                        Log.force_ERROR("[Animal-Sitter] Exception onKeyReleased: " + ex);
-                    }
+                    this.Monitor.Log($"Exception onKeyReleased: {ex}", LogLevel.Error);
                 }
-
             }
         }
-
 
         private void iterateOverAnimals()
         {
@@ -192,13 +179,13 @@ namespace ExtremePetting
                         animal.pet(Game1.player);
                         stats.animalsPet++;
 
-                        Log.INFO("[Animal-Sitter] Petting animal: " + animal.name);
+                        this.Monitor.Log($"Petting animal: {animal.name}", LogLevel.Trace);
                     }
 
 
                     if (this.growUpEnabled && animal.isBaby())
                     {
-                        Log.INFO("[Animal-Sitter] Aging animal to mature+1 days: " + animal.name);
+                        this.Monitor.Log($"Aging animal to mature+1 days: {animal.name}", LogLevel.Trace);
 
                         animal.age = animal.ageWhenMature + 1;
                         animal.reload();
@@ -207,7 +194,7 @@ namespace ExtremePetting
 
                     if (this.maxFullnessEnabled && animal.fullness < byte.MaxValue)
                     {
-                        Log.INFO("[Animal-Sitter] Feeding animal: " + animal.name);
+                        this.Monitor.Log($"Feeding animal: {animal.name}", LogLevel.Trace);
 
                         animal.fullness = byte.MaxValue;
                         stats.fed++;
@@ -215,7 +202,7 @@ namespace ExtremePetting
 
                     if (this.maxHappinessEnabled && animal.happiness < byte.MaxValue)
                     {
-                        Log.INFO("[Animal-Sitter] Maxing Happiness of animal " + animal.name);
+                        this.Monitor.Log($"Maxing Happiness of animal {animal.name}", LogLevel.Trace);
 
                         animal.happiness = byte.MaxValue;
                         stats.maxHappiness++;
@@ -223,7 +210,7 @@ namespace ExtremePetting
 
                     if (this.maxFriendshipEnabled && animal.friendshipTowardFarmer < 1000)
                     {
-                        Log.INFO("[Animal-Sitter] Maxing Friendship of animal " + animal.name);
+                        this.Monitor.Log($"Maxing Friendship of animal {animal.name}", LogLevel.Trace);
 
                         animal.friendshipTowardFarmer = 1000;
                         stats.maxFriendship++;
@@ -231,7 +218,7 @@ namespace ExtremePetting
 
                     if (animal.currentProduce > 0 && this.harvestEnabled)
                     {
-                        Log.INFO("[Animal-Sitter] Has produce: " + animal.name + " " + animal.currentProduce);
+                        this.Monitor.Log($"Has produce: {animal.name} {animal.currentProduce}", LogLevel.Trace);
 
                         if (animal.type.Equals("Pig"))
                         {
@@ -259,10 +246,7 @@ namespace ExtremePetting
                 }
                 catch (Exception ex)
                 {
-                    if (loggingEnabled)
-                    {
-                        Log.force_ERROR("[Animal-Sitter] Exception onKeyReleased: " + ex);
-                    }
+                    this.Monitor.Log($"Exception onKeyReleased: {ex}", LogLevel.Error);
                 }
             }
 
@@ -281,7 +265,7 @@ namespace ExtremePetting
                 if (messagesEnabled)
                     showMessage(actions, totalCost, doesPlayerHaveEnoughCash, gatheringOnly, stats);
 
-                Log.INFO("[Animal-Sitter] Animal sitter performed " + actions + " actions. Total cost: " + totalCost + "g");
+                this.Monitor.Log($"Animal sitter performed {actions} actions. Total cost: {totalCost}g", LogLevel.Trace);
 
             }
             else if (actions == 0 && this.costPerAnimal > 0)
@@ -292,7 +276,7 @@ namespace ExtremePetting
                     Game1.addHUDMessage(msg);
                 }
 
-                Log.INFO("[Animal-Sitter] There's nothing to do for the animals right now.");
+                this.Monitor.Log("There's nothing to do for the animals right now.", LogLevel.Trace);
             }
         }
 
@@ -340,7 +324,7 @@ namespace ExtremePetting
                     }
                     else
                     {
-                        Log.INFO("[Animal-Sitter] Inventory full, could not add animal product.");
+                        this.Monitor.Log("Inventory full, could not add animal product.", LogLevel.Trace);
                     }
                 }
 
@@ -369,7 +353,7 @@ namespace ExtremePetting
                     {
                         Object obj = keyvalue.Value;
 
-                        Log.INFO("[Animal-Sitter] Found coop object: " + obj.Name + " / " + obj.Category + "/" + obj.isAnimalProduct());
+                        this.Monitor.Log($"Found coop object: {obj.Name} / {obj.Category}/{obj.isAnimalProduct()}", LogLevel.Trace);
 
                         if (obj.isAnimalProduct() || obj.parentSheetIndex == 107)
                         {
@@ -381,7 +365,7 @@ namespace ExtremePetting
                             }
                             else
                             {
-                                Log.INFO("[Animal-Sitter] Inventory full, could not add animal product.");
+                                this.Monitor.Log("Inventory full, could not add animal product.", LogLevel.Trace);
                             }
                         }
                     }
@@ -393,9 +377,7 @@ namespace ExtremePetting
                     }
                 }
             }
-
         }
-
 
         private bool addItemToInventory(Object obj, SFarmer farmer, Farm farm, AnimalTasks stats)
         {

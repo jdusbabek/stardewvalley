@@ -7,8 +7,6 @@ namespace Replanter
     {
         public string keybind { get; set; } = "J";
 
-        public bool enableLogging { get; set; }
-
         public bool free { get; set; }
 
         public int seedDiscount { get; set; }

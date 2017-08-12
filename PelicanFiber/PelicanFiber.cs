@@ -5,7 +5,6 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
-using Log = StardewLib.Log;
 
 namespace PelicanFiber
 {
@@ -20,7 +19,6 @@ namespace PelicanFiber
         private PelicanFiberConfig config;
         private bool unfiltered = true;
         private ItemUtils ItemUtils;
-        private readonly Log Log = new Log(false);
 
 
         /*********
@@ -33,7 +31,7 @@ namespace PelicanFiber
             if (!Enum.TryParse(config.keybind, true, out this.menuKey))
             {
                 this.menuKey = Keys.PageDown;
-                Log.force_ERROR("[PelicanFiber] 404 Not Found: Error parsing key binding. Defaulted to Page Down");
+                this.Monitor.Log("404 Not Found: Error parsing key binding. Defaulted to Page Down");
             }
             this.unfiltered = !config.internetFilter;
 
@@ -45,11 +43,11 @@ namespace PelicanFiber
             }
             catch (Exception ex)
             {
-                Log.force_ERROR("[PelicanFiber] 400 Bad Request: Could not load image content. " + ex);
+                this.Monitor.Log($"400 Bad Request: Could not load image content. {ex}", LogLevel.Error);
             }
 
             // load utils
-            this.ItemUtils = new ItemUtils(this.content, this.Log);
+            this.ItemUtils = new ItemUtils(this.content, this.Monitor);
 
             // hook events
             ControlEvents.KeyReleased += onKeyReleased;
@@ -85,7 +83,7 @@ namespace PelicanFiber
                 }
                 catch (Exception ex)
                 {
-                    Log.force_ERROR("[PelicanFiber] 500 Internal Error: " + ex);
+                    this.Monitor.Log($"500 Internal Error: {ex}", LogLevel.Error);
                 }
 
             }
@@ -103,7 +101,7 @@ namespace PelicanFiber
             }
             catch (Exception ex)
             {
-                Log.force_ERROR("[PelicanFiber] 500 Internal Error: " + ex);
+                this.Monitor.Log($"500 Internal Error: {ex}", LogLevel.Error);
             }
         }
     }

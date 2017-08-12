@@ -6,7 +6,6 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Objects;
-using Log = StardewLib.Log;
 using Object = StardewValley.Object;
 
 
@@ -19,7 +18,6 @@ namespace SortMyStuff
         *********/
         private SortMyStuffConfig config;
         private Keys actionKey;
-        private Log Log;
         private ChestManager ChestManager;
 
 
@@ -41,20 +39,19 @@ namespace SortMyStuff
             try
             {
                 this.config = this.Helper.ReadConfig<SortMyStuffConfig>();
-                this.Log = new Log(false);
-                this.ChestManager = new ChestManager(this.Log);
+                this.ChestManager = new ChestManager(this.Monitor);
 
                 if (!Enum.TryParse(config.keybind, true, out this.actionKey))
                 {
                     this.actionKey = Keys.G;
-                    Log.force_INFO("[SMS] Error parsing key binding. Defaulted to G");
+                    this.Monitor.Log("Error parsing key binding. Defaulted to G");
                 }
 
                 ChestManager.ParseChests(config.chests);
             }
             catch (Exception ex)
             {
-                Log.ERROR(ex.ToString());
+                this.Monitor.Log(ex.ToString(), LogLevel.Error);
             }
         }
 
@@ -72,7 +69,7 @@ namespace SortMyStuff
 
             if (e.KeyPressed == actionKey)
             {
-                Log.INFO("Logging key stroke G!!!");
+                this.Monitor.Log("Logging key stroke G!!!", LogLevel.Trace);
                 List<ItemContainer> ic = new List<ItemContainer>();
                 try
                 {
@@ -80,7 +77,7 @@ namespace SortMyStuff
                     {
                         if (item != null)
                         {
-                            Log.INFO(item.Name + "/" + item.parentSheetIndex);
+                            this.Monitor.Log($"{item.Name}/{item.parentSheetIndex}", LogLevel.Trace);
                             Object c = ChestManager.GetChest(item.parentSheetIndex);
                             if (c != null && c is Chest)
                             {
@@ -113,12 +110,11 @@ namespace SortMyStuff
                     {
                         message += chestDefs.Key + ": " + chestDefs.Value + "\n";
                     }
-                    Log.INFO(message);
-
+                    this.Monitor.Log(message);
                 }
                 catch (Exception ex)
                 {
-                    Log.ERROR(ex.ToString());
+                    this.Monitor.Log(ex.ToString(), LogLevel.Error);
                 }
             }
         }

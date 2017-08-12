@@ -12,7 +12,6 @@ namespace ExtremePetting
         public bool harvestEnabled { get; set; } = true;
         public bool pettingEnabled { get; set; } = true;
         public bool maxFriendshipEnabled { get; set; }
-        public bool verboseLogging { get; set; }
         public int costPerAction { get; set; }
         public string WhoChecks { get; set; } = "spouse";
         public bool enableMessages { get; set; } = true;

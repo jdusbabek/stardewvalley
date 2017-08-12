@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using StardewModdingAPI;
 using StardewValley;
 
 namespace StardewLib
@@ -13,18 +14,18 @@ namespace StardewLib
         private readonly Dictionary<string, Dictionary<int, string>> DialogueLookups = new Dictionary<string, Dictionary<int, string>>();
         private readonly IConfig Config;
         private readonly Random Random = new Random();
-        private readonly Log Log;
+        private readonly IMonitor Monitor;
         private Dictionary<string, string> AllMessages = new Dictionary<string, string>();
 
 
         /*********
         ** Public methods
         *********/
-        public DialogueManager(IConfig config, IServiceProvider provider, string path, Log log)
+        public DialogueManager(IConfig config, IServiceProvider provider, string path, IMonitor monitor)
         {
             this.Config = config;
             this.Content = new LocalizedContentManager(provider, path);
-            this.Log = log;
+            this.Monitor = monitor;
         }
 
         /**
@@ -99,7 +100,7 @@ namespace StardewLib
                 return "...$h#$e#";
             }
 
-            Log.INFO("[jwdred-StardewLib] Returning message " + index + ": " + messagePool[index]);
+            this.Monitor.Log($"Returning message {index}: {messagePool[index]}", LogLevel.Trace);
             return messagePool[index];
             //return messagePool.ElementAt(index).Value;
         }
@@ -117,7 +118,7 @@ namespace StardewLib
             }
             catch (Exception ex)
             {
-                Log.force_ERROR((object)("[jwdred-StardewLib] Exception loading content:" + ex.ToString()));
+                this.Monitor.Log($"[jwdred-StardewLib] Exception loading content:{ex}", LogLevel.Error);
             }
         }
 
@@ -143,12 +144,12 @@ namespace StardewLib
                     }
                     else
                     {
-                        this.Log.force_ERROR("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
+                        this.Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
                     }
                 }
                 else
                 {
-                    this.Log.force_ERROR("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
+                    this.Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
                 }
             }
 
@@ -177,12 +178,12 @@ namespace StardewLib
                     }
                     else
                     {
-                        Log.force_ERROR((object)"Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
+                        this.Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
                     }
                 }
                 else
                 {
-                    Log.force_ERROR((object)"Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.");
+                    this.Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
                 }
             }
 

@@ -10,7 +10,6 @@ using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using Log = StardewLib.Log;
 using SFarmer = StardewValley.Farmer;
 
 namespace Replanter
@@ -127,7 +126,6 @@ namespace Replanter
         private bool inventoryAndChestFull;
 
         private DialogueManager DialogueManager;
-        private Log Log;
 
 
         /*********
@@ -137,11 +135,10 @@ namespace Replanter
         {
             // load config
             this.config = this.Helper.ReadConfig<ReplanterConfig>();
-            this.Log = new Log(config.enableLogging);
             importConfiguration();
 
             // load dialogue manager
-            this.DialogueManager = new DialogueManager(this.config, Game1.content.ServiceProvider, Game1.content.RootDirectory, this.Log);
+            this.DialogueManager = new DialogueManager(this.config, Game1.content.ServiceProvider, Game1.content.RootDirectory, this.Monitor);
 
             // hook events
             PlayerEvents.LoadedGame += onLoaded;
@@ -187,8 +184,7 @@ namespace Replanter
                 }
                 catch (Exception ex)
                 {
-                    Log.ERROR("[Replanter] Exception performAction: " + ex.Message);
-                    Log.ERROR("[Replanter] Stacktrace: " + ex);
+                    this.Monitor.Log($"Exception: {ex}", LogLevel.Error);
                 }
 
             }
@@ -199,7 +195,7 @@ namespace Replanter
             if (!Enum.TryParse(config.keybind, true, out this.actionKey))
             {
                 this.actionKey = Keys.J;
-                Log.force_INFO("[Replanter] Error parsing key binding. Defaulted to J");
+                this.Monitor.Log("Error parsing key binding. Defaulted to J");
             }
 
             this.messagesEnabled = config.enableMessages;
@@ -409,20 +405,20 @@ namespace Replanter
             if (stats.runningSellPrice > 0)
             {
                 farmer.Money = farmer.Money + stats.runningSellPrice;
-                Log.INFO("[Replanter] " + "Sale price of your crops: " + stats.runningSellPrice);
+                this.Monitor.Log($"Sale price of your crops: {stats.runningSellPrice}", LogLevel.Trace);
             }
 
             if (!free)
             {
                 farmer.Money = Math.Max(0, farmer.Money - stats.runningSeedCost);
-                Log.INFO("[Replanter] " + "Total cost of new seeds: " + stats.runningSeedCost);
+                this.Monitor.Log($"Total cost of new seeds: {stats.runningSeedCost}", LogLevel.Trace);
             }
 
             if (!free)
             {
                 stats.farmhandCost = (int)Math.Round(stats.cropsHarvested * this.costPerHarvestedCrop);
                 farmer.Money = Math.Max(0, farmer.Money - stats.farmhandCost);
-                Log.INFO("[Replanter] " + "Costs paid to farm hand: " + stats.farmhandCost);
+                this.Monitor.Log($"Costs paid to farm hand: {stats.farmhandCost}", LogLevel.Trace);
             }
 
             if (this.messagesEnabled)
@@ -558,7 +554,7 @@ namespace Replanter
 
             replantLog += "replanted?:" + replanted;
 
-            Log.DEBUG(replantLog);
+            this.Monitor.Log(replantLog, LogLevel.Trace);
 
             return replanted;
         }
@@ -600,7 +596,7 @@ namespace Replanter
                 {
                     Game1.createObjectDebris(421, tileX, tileY, -1, flower.quality);
 
-                    Log.INFO("[Replanter] Sunflower was harvested, but couldn't add flower to inventory, you'll have to go pick it up.");
+                    this.Monitor.Log("Sunflower was harvested, but couldn't add flower to inventory, you'll have to go pick it up.", LogLevel.Trace);
                 }
 
             }
@@ -795,7 +791,7 @@ namespace Replanter
                         seedToPrice.Add(harvestId, seedCost);
                     }
 
-                    Log.INFO("[Replanter] Adding ID to seed price index: " + harvestId + " / " + seedCost);
+                    this.Monitor.Log($"Adding ID to seed price index: {harvestId} / {seedCost}", LogLevel.Trace);
                 }
             }
 
@@ -809,7 +805,7 @@ namespace Replanter
         {
             if (!seedToPrice.ContainsKey(id))
             {
-                Log.ERROR("[Replanter] Couldn't find seed for harvest ID: " + id);
+                this.Monitor.Log($"[Replanter] Couldn\'t find seed for harvest ID: {id}", LogLevel.Error);
 
                 return 20;
             }
@@ -877,7 +873,7 @@ namespace Replanter
                 farmer.addItemToInventory(obj);
                 wasAdded = true;
 
-                Log.INFO("[Replanter] Was able to add item to inventory.");
+                this.Monitor.Log("[Replanter] Was able to add item to inventory.", LogLevel.Trace);
             }
             else
             {
@@ -928,19 +924,19 @@ namespace Replanter
                         {
                             inventoryAndChestFull = true;
 
-                            Log.INFO("[Replanter] Was NOT able to add items to chest.");
+                            this.Monitor.Log("Was NOT able to add items to chest.", LogLevel.Trace);
                         }
                     }
 
                 }
                 else
                 {
-                    Log.INFO("[Replanter] Did not find a chest at " + (int)this.chestCoords.X + "," + (int)this.chestCoords.Y);
+                    this.Monitor.Log($"Did not find a chest at {(int) this.chestCoords.X},{(int) this.chestCoords.Y}", LogLevel.Trace);
 
                     // If bypassInventory is set to true, but there's no chest: try adding to the farmer's inventory.
                     if (bypassInventory)
                     {
-                        Log.INFO("[Replanter] No chest at " + (int)this.chestCoords.X + "," + (int)this.chestCoords.Y + ", you should place a chest there, or set bypassInventory to 'false'.");
+                        this.Monitor.Log($"No chest at {(int) this.chestCoords.X},{(int) this.chestCoords.Y}, you should place a chest there, or set bypassInventory to \'false\'.", LogLevel.Trace);
 
                         if (farmer.couldInventoryAcceptThisItem(obj))
                         {
@@ -951,14 +947,14 @@ namespace Replanter
                         {
                             inventoryAndChestFull = true;
 
-                            Log.INFO("[Replanter] Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'true')");
+                            this.Monitor.Log("Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'true')", LogLevel.Trace);
                         }
                     }
                     else
                     {
                         inventoryAndChestFull = true;
 
-                        Log.INFO("[Replanter] Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'false')");
+                        this.Monitor.Log("Was NOT able to add item to inventory or a chest.  (No chest found, bypassInventory set to 'false')", LogLevel.Trace);
                     }
                 }
             }
@@ -971,7 +967,7 @@ namespace Replanter
          */
         private string getRandomMessage(Dictionary<int, string> messageStore)
         {
-            Log.INFO("returning random message from : " + messageStore.Count);
+            this.Monitor.Log($"returning random message from : {messageStore.Count}", LogLevel.Trace);
 
             int rand = random.Next(1, messageStore.Count + 1);
 
@@ -1013,7 +1009,7 @@ namespace Replanter
             }
             catch (Exception ex)
             {
-                Log.force_ERROR("[Replanter] Exception loading content:" + ex);
+                this.Monitor.Log($"Exception loading content:{ex}", LogLevel.Error);
             }
         }
     }

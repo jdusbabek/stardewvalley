@@ -97,9 +97,7 @@ namespace PointAndPlant
             {
                 this.plowWidth = 1;
                 if (this.plowEnabled)
-                {
-                    Log.Info("[PAP] Plow width must be at least 1. Defaulted to 1");
-                }
+                    this.Monitor.Log("Plow width must be at least 1. Defaulted to 1");
             }
             else
             {
@@ -111,7 +109,7 @@ namespace PointAndPlant
                 this.plowHeight = 1;
                 if (this.plowEnabled)
                 {
-                    Log.Info("[PAP] Plow width must be at least 1. Defaulted to 1");
+                    this.Monitor.Log("Plow height must be at least 1. Defaulted to 1");
                 }
             }
             else
@@ -126,7 +124,7 @@ namespace PointAndPlant
 
                 if (config.plantEnabled)
                 {
-                    Log.Info("[PAP] Plant Radius must be 0 or greater.  Defaulted to 0");
+                    this.Monitor.Log("Plant Radius must be 0 or greater.  Defaulted to 0");
                 }
             }
             else
@@ -140,7 +138,7 @@ namespace PointAndPlant
 
                 if (config.growEnabled)
                 {
-                    Log.Info("[PAP] Grow Radius must be 0 or greater.  Defaulted to 0");
+                    this.Monitor.Log("Grow Radius must be 0 or greater.  Defaulted to 0");
                 }
             }
             else
@@ -154,7 +152,7 @@ namespace PointAndPlant
 
                 if (config.plantEnabled)
                 {
-                    Log.Info("[PAP] Harvest Radius must be 0 or greater.  Defaulted to 0");
+                    this.Monitor.Log("Harvest Radius must be 0 or greater.  Defaulted to 0");
                 }
             }
             else
@@ -171,7 +169,7 @@ namespace PointAndPlant
 
                 if (this.plowEnabled)
                 {
-                    Log.Info("[PAP] Error parsing plow key. Defaulted to Z");
+                    this.Monitor.Log("Error parsing plow key. Defaulted to Z");
                 }
             }
 
@@ -181,7 +179,7 @@ namespace PointAndPlant
 
                 if (this.plantEnabled)
                 {
-                    Log.Info("[PAP] Error parsing plant key. Defaulted to A");
+                    this.Monitor.Log("Error parsing plant key. Defaulted to A");
                 }
 
             }
@@ -192,7 +190,7 @@ namespace PointAndPlant
 
                 if (this.growEnabled)
                 {
-                    Log.Info("[PAP] Error parsing grow key. Defaulted to S");
+                    this.Monitor.Log("Error parsing grow key. Defaulted to S");
                 }
             }
 
@@ -202,7 +200,7 @@ namespace PointAndPlant
 
                 if (this.harvestEnabled)
                 {
-                    Log.Info("[PAP] Error parsing harvest key. Defaulted to D");
+                    this.Monitor.Log("Error parsing harvest key. Defaulted to D");
                 }
 
             }
@@ -239,9 +237,7 @@ namespace PointAndPlant
                     {
                         if (this.loggingEnabled)
                         {
-                            Log.Info("[Point-and-Plant] Plow (key handler) Exception: " + ex.Message);
-                            Log.Error("[Point-and-Plant] Plow (key handler) Stack Trace: " + ex);
-                            //Log.Info((object)("[Point-and-Plant] Plow (key handler) Source: " + ex.Source));
+                            this.Monitor.Log($"Plow (key handler) Exception: {ex}", LogLevel.Error);
                         }
                     }
                 }
@@ -255,9 +251,7 @@ namespace PointAndPlant
                     {
                         if (this.loggingEnabled)
                         {
-                            Log.Info("[Point-and-Plant] Plant (key handler) Exception: " + ex.Message);
-                            Log.Error("[Point-and-Plant] Plant (key handler) Stack Trace: " + ex);
-                            //Log.Info((object)("[Point-and-Plant] Plant (key handler) Source: " + ex.Source));
+                            this.Monitor.Log($"Plant (key handler) Exception: {ex}", LogLevel.Error);
                         }
                     }
 
@@ -272,9 +266,7 @@ namespace PointAndPlant
                     {
                         if (this.loggingEnabled)
                         {
-                            Log.Info("[Point-and-Plant] Grow (key handler) Exception: " + ex.Message);
-                            Log.Error("[Point-and-Plant] Grow (key handler) Stack Trace: " + ex);
-                            //Log.Info((object)("[Point-and-Plant] Grow (key handler) Source: " + ex.Source));
+                            this.Monitor.Log($"Grow (key handler) Exception: {ex}", LogLevel.Error);
                         }
                     }
 
@@ -289,9 +281,7 @@ namespace PointAndPlant
                     {
                         if (this.loggingEnabled)
                         {
-                            Log.Info("[Point-and-Plant] Harvest (key handler) Exception: " + ex.Message);
-                            Log.Error("[Point-and-Plant] Harvest (key handler) Stack Trace: " + ex);
-                            //Log.Info((object)("[Point-and-Plant] Harvest (key handler) Source: " + ex.Source));
+                            this.Monitor.Log($"Harvest (key handler) Exception: {ex}", LogLevel.Error);
                         }
                     }
                 }
@@ -303,12 +293,12 @@ namespace PointAndPlant
                         {
                             if (((MeleeWeapon)Game1.player.CurrentTool).initialParentTileIndex == 39)
                             {
-                                Log.Info("You're holding Leah's Whittler! Chop away!!");
+                                this.Monitor.Log("You're holding Leah's Whittler! Chop away!!", LogLevel.Trace);
                                 chopTrees();
                             }
                             else if (((MeleeWeapon)Game1.player.CurrentTool).initialParentTileIndex == 37)
                             {
-                                Log.Info("You're holding Harvey's Mallet! Pound away!!");
+                                this.Monitor.Log("You're holding Harvey's Mallet! Pound away!!", LogLevel.Trace);
                                 breakRocks();
                             }
                             else
@@ -326,9 +316,7 @@ namespace PointAndPlant
                     {
                         if (this.loggingEnabled)
                         {
-                            Log.Info("[Point-and-Plant] Plant Grass (key handler) Exception: " + ex.Message);
-                            Log.Error("[Point-and-Plant] Plant Grass (key handler) Stack Trace: " + ex);
-                            //Log.Info((object)("[Point-and-Plant] Harvest (key handler) Source: " + ex.Source));
+                            this.Monitor.Log($"Plant Grass (key handler) Exception: {ex}", LogLevel.Error);
                         }
                     }
                 }
@@ -427,11 +415,8 @@ namespace PointAndPlant
                 {
                     if (this.loggingEnabled)
                     {
-                        Log.Info("[Point-and-Plant] Plow Exception: " + exception.Message);
-                        Log.Error("[Point-and-Plant] Plow Stack Trace: " + exception);
-                        //Log.Error((object)("[Point-and-Plant] Plow Source: " + exception.Source));
+                        this.Monitor.Log($"Plow Exception: {exception}", LogLevel.Error);
                     }
-
                 }
             }
         }
@@ -490,9 +475,7 @@ namespace PointAndPlant
                 {
                     if (this.loggingEnabled)
                     {
-                        Log.Info("[Point-and-Plant] Planting Exception: " + exception.Message);
-                        Log.Error("[Point-and-Plant] Planting Stack Trace: " + exception);
-                        //Log.Info((object)("[Point-and-Plant] Planting Source: " + exception.Source));
+                        this.Monitor.Log($"Planting Exception: {exception}", LogLevel.Error);
                     }
                 }
             }
@@ -525,7 +508,7 @@ namespace PointAndPlant
                     }
                     else
                     {
-                        Log.Info("Adding grass to: " + index);
+                        this.Monitor.Log($"Adding grass to: {index}", LogLevel.Trace);
                         plr.currentLocation.terrainFeatures.Add(index, new Grass(1, 4));
                         Game1.playSound("dirtyHit");
                     }
@@ -540,9 +523,7 @@ namespace PointAndPlant
                 {
                     if (this.loggingEnabled)
                     {
-                        Log.Info("[Point-and-Plant] Planting Exception: " + exception.Message);
-                        Log.Error("[Point-and-Plant] Planting Stack Trace: " + exception);
-                        //Log.Info((object)("[Point-and-Plant] Planting Source: " + exception.Source));
+                        this.Monitor.Log($"Planting Exception: {exception}", LogLevel.Error);
                     }
                 }
             }
@@ -584,9 +565,7 @@ namespace PointAndPlant
                 {
                     if (this.loggingEnabled)
                     {
-                        Log.Info("[Point-and-Plant] Tree Chopping Exception: " + exception.Message);
-                        Log.Error("[Point-and-Plant] Tree Chopping Trace: " + exception);
-                        //Log.Info((object)("[Point-and-Plant] Planting Source: " + exception.Source));
+                        this.Monitor.Log($"Tree Chopping Exception: {exception}", LogLevel.Error);
                     }
                 }
             }
@@ -632,8 +611,7 @@ namespace PointAndPlant
                 {
                     if (this.loggingEnabled)
                     {
-                        Log.Info("[Point-and-Plant] Rock Pounding Exception: " + exception.Message);
-                        Log.Error("[Point-and-Plant] Rock Pounding  Trace: " + exception);
+                        this.Monitor.Log($"[Point-and-Plant] Rock Pounding Exception: {exception}", LogLevel.Error);
                     }
                 }
             }
@@ -673,9 +651,7 @@ namespace PointAndPlant
                 {
                     if (this.loggingEnabled)
                     {
-                        Log.Info("[Point-and-Plant] Grow Exception: " + exception.Message);
-                        Log.Error("[Point-and-Plant] Grow Stack Trace: " + exception);
-                        //Log.Info((object)("[Point-and-Plant] Grow Source: " + exception.Source));
+                        this.Monitor.Log($"Grow Exception: {exception}", LogLevel.Error);
                     }
                 }
 
@@ -738,9 +714,7 @@ namespace PointAndPlant
                                 {
                                     if (this.loggingEnabled)
                                     {
-                                        Log.Info("[Point-and-Plant] Harvest Inner Exception: " + exception.Message);
-                                        Log.Error("[Point-and-Plant] Harvest Inner Stack Trace: " + exception);
-                                        //Log.Info((object)("[Point-and-Plant] Harvest Inner Source: " + exception.Source));
+                                        this.Monitor.Log($"Harvest Inner Exception: {exception}", LogLevel.Error);
                                     }
                                 }
 
@@ -755,15 +729,10 @@ namespace PointAndPlant
             {
                 if (this.loggingEnabled)
                 {
-                    Log.Info("[Point-and-Plant] Harvest Outer Exception: " + exception.Message);
-                    Log.Error("[Point-and-Plant] Harvest Outer Stack Trace: " + exception);
-                    //Log.Info((object)("[Point-and-Plant] Harvest Outer Source: " + exception.Source));
+                    this.Monitor.Log($"Harvest Outer Exception: {exception}", LogLevel.Error);
                 }
             }
-
-
         }
-
 
         /**
          * Gets some values used by the plow.
@@ -814,9 +783,7 @@ namespace PointAndPlant
             {
                 if (this.loggingEnabled)
                 {
-                    Log.Info("[Point-and-Plant] Drawing Plow Overlay: " + exception.Message);
-                    Log.Error("[Point-and-Plant] Drawing Plow Overlay Stack Trace: " + exception);
-                    //Log.Info((object)("[Point-and-Plant] Drawing Plow Overlay Source: " + exception.Source));
+                    this.Monitor.Log($"Drawing Plow Overlay: {exception}", LogLevel.Error);
                 }
             }
         }

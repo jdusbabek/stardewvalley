@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.Tools;
-using Log = StardewLib.Log;
 using Object = StardewValley.Object;
 using SFarmer = StardewValley.Farmer;
 
@@ -17,16 +17,16 @@ namespace PelicanFiber
         ** Properties
         *********/
         private readonly LocalizedContentManager ContentManager;
-        private readonly Log Log;
+        private readonly IMonitor Monitor;
 
 
         /*********
         ** Public methods
         *********/
-        public ItemUtils(LocalizedContentManager contentManager, Log log)
+        public ItemUtils(LocalizedContentManager contentManager, IMonitor monitor)
         {
             this.ContentManager = contentManager;
-            this.Log = log;
+            this.Monitor = monitor;
         }
 
         public List<Item> getShopStock(bool Pierres, bool unfiltered = false)
@@ -710,7 +710,7 @@ namespace PelicanFiber
                 }
                 else
                 {
-                    Log.force_ERROR("Parts not >= 6: " + kvp.Key + ": " + kvp.Value);
+                    this.Monitor.Log($"Parts not >= 6: {kvp.Key}: {kvp.Value}", LogLevel.Error);
                 }
             }
 

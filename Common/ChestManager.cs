@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Objects;
@@ -13,7 +14,7 @@ namespace StardewLib
         /*********
         ** Properties
         *********/
-        private readonly Log Log;
+        private readonly IMonitor Monitor;
         private ChestDef DefaultChest;
         private Dictionary<int, ChestDef> Chests;
 
@@ -21,9 +22,9 @@ namespace StardewLib
         /*********
         ** Public methods
         *********/
-        public ChestManager(Log log)
+        public ChestManager(IMonitor monitor)
         {
-            this.Log = log;
+            this.Monitor = monitor;
         }
 
         public void ParseChests(string chestString)
@@ -40,14 +41,14 @@ namespace StardewLib
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
+                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // A farm house chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
+                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
                 }
             }
         }
@@ -64,14 +65,14 @@ namespace StardewLib
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
+                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // Another location.
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
+                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
                 }
             }
         }
@@ -88,14 +89,14 @@ namespace StardewLib
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
+                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // Another location.
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    Log.INFO("Parsing chest: " + cd.x + "," + cd.y + " for item: " + chestInfo[0] + ", location: " + cd.location);
+                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
                 }
             }
         }
