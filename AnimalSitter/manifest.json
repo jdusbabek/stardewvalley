@@ -1,14 +1,13 @@
 ﻿{
-  "Name": "AnimalSitter",
-  "Authour": "jwdred",
+  "Name": "Animal Sitter",
+  "Author": "jwdred",
   "Version": {
     "MajorVersion": 1,
     "MinorVersion": 0,
-    "PatchVersion": 4,
-    "Build": ""
+    "PatchVersion": 8,
+    "Build": null
   },
   "Description": "Let someone else pet all those pesky animals!",
-  "UniqueID": "",
-  "PerSaveConfigs": false,
+  "UniqueID": "jwdred.AnimalSitter",
   "EntryDll": "AnimalSitter.dll"
 }

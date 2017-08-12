@@ -1,14 +1,13 @@
 ﻿{
   "Name": "PelicanFiber",
-  "Authour": "jwdred",
+  "Author": "jwdred",
   "Version": {
-    "MajorVersion": 1,
+    "MajorVersion": 3,
     "MinorVersion": 0,
     "PatchVersion": 0,
-    "Build": ""
+    "Build": null
   },
   "Description": "Order stuff over the internet, and save all kinds of money!",
-  "UniqueID": "",
-  "PerSaveConfigs": false,
+  "UniqueID": "jwdred.PelicanFiber",
   "EntryDll": "PelicanFiber.dll"
 }

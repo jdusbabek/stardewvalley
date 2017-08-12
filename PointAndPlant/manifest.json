@@ -1,14 +1,13 @@
 ﻿{
-  "Name": "PointAndPlant",
-  "Authour": "jwdred",
+  "Name": "Point-and-Plant",
+  "Author": "jwdred",
   "Version": {
     "MajorVersion": 1,
     "MinorVersion": 0,
     "PatchVersion": 2,
-    "Build": ""
+    "Build": null
   },
   "Description": "Plant and harvest from the comfort of your front porch!",
-  "UniqueID": "",
-  "PerSaveConfigs": false,
+  "UniqueID": "jwdred.PointAndPlant",
   "EntryDll": "PointAndPlant.dll"
 }
