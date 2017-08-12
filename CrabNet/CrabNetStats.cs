@@ -10,48 +10,47 @@ namespace CrabNet
         ** Accessors
         *********/
         // The total number of crab pots that are placed
-        public int numTotal { get; set; }
+        public int NumTotal { get; set; }
 
         // The number of crab pots that were successfully checked
-        public int numChecked { get; set; }
+        public int NumChecked { get; set; }
 
         // The number of crab pots that were successfully emptied
-        public int numEmptied { get; set; }
+        public int NumEmptied { get; set; }
 
         // The number of crab pots that were successfully baited
-        public int numBaited { get; set; }
+        public int NumBaited { get; set; }
 
         // The number of crab pots that were completed.  Possibly deprecated, check for occurences and delete.
-        public int numCompleted { get; set; }
+        public int NumCompleted { get; set; }
 
         // The number of crab pots that were traversed, but not checked.
-        public int notChecked { get; set; }
+        public int NotChecked { get; set; }
 
         // The number of crab pots that were not emptied.
-        public int notEmptied { get; set; }
+        public int NotEmptied { get; set; }
 
         // The number of crab pots that were not baited.
-        public int notBaited { get; set; }
+        public int NotBaited { get; set; }
 
         // The number of crab pots that had nothing to retrieve.  Possibly deprecated, check for occurrences and delete.
-        public int nothingToRetrieve { get; set; }
+        public int NothingToRetrieve { get; set; }
 
         // The number of crab pots that did not need to be baited.  Possibly deprecated, check for occurences and delete.
-        public int nothingToBait { get; set; }
+        public int NothingToBait { get; set; }
 
         // A running total of the costs, used to check for "can afford" while waiting to deduct costs until the end.
-        public int runningTotal { get; set; }
+        public int RunningTotal { get; set; }
 
 
         /*********
         ** Public methods
         *********/
         // Whether all pots were checked, emptied, and baited.
-        public bool hasUnfinishedBusiness()
+        public bool HasUnfinishedBusiness()
         {
-            int tot = (numBaited + nothingToBait) + (numEmptied + nothingToRetrieve) + numChecked;
-
-            return (tot != (numTotal * 3));
+            int total = this.NumBaited + this.NothingToBait + this.NumEmptied + this.NothingToRetrieve + this.NumChecked;
+            return total != (this.NumTotal * 3);
         }
 
         public IDictionary<string, object> GetFields()
@@ -61,7 +60,7 @@ namespace CrabNet
                 .ToDictionary(p => p.Name, p => p.GetValue(this));
 
             // TODO: fix this bug (carried over from previous code)
-            fields["numChecked"] = this.numTotal;
+            fields["numChecked"] = this.NumTotal;
 
             return fields;
         }

@@ -18,45 +18,45 @@ namespace PointAndPlant
         /*********
         ** Properties
         *********/
-        private Keys plowKey;
-        private Keys plantKey;
-        private Keys growKey;
-        private Keys harvestKey;
-        private Keys grassKey;
+        private Keys PlowKey;
+        private Keys PlantKey;
+        private Keys GrowKey;
+        private Keys HarvestKey;
+        private Keys GrassKey;
 
-        private bool plowEnabled;
-        private bool plantEnabled;
-        private bool growEnabled;
-        private bool harvestEnabled;
+        private bool PlowEnabled;
+        private bool PlantEnabled;
+        private bool GrowEnabled;
+        private bool HarvestEnabled;
 
-        private int plantRadius;
-        private int growRadius;
-        private int harvestRadius;
+        private int PlantRadius;
+        private int GrowRadius;
+        private int HarvestRadius;
 
-        private int fertilizer;
+        private int Fertilizer;
 
-        private int plowWidth;
-        private int plowHeight;
+        private int PlowWidth;
+        private int PlowHeight;
 
-        private int mouseX;
-        private int mouseY;
-        private int tileX;
-        private int tileY;
+        private int MouseX;
+        private int MouseY;
+        private int TileX;
+        private int TileY;
 
-        private Vector2 vector;
-        private Texture2D buildingTiles;
+        private Vector2 Vector;
+        private Texture2D BuildingTiles;
 
-        private PAPConfig config;
+        private PAPConfig Config;
 
-        private Hoe papHoe;
-        private PAPSickle papSickle;
-        private Axe phantomAxe;
-        private Pickaxe phantomPick;
+        private Hoe CustomHoe;
+        private PAPSickle CustomSickle;
+        private Axe PhantomAxe;
+        private Pickaxe PhantomPick;
 
-        private int power = -1;
-        private int toolLevel = 4;
+        private int Power = -1;
+        private int ToolLevel = 4;
 
-        private bool loggingEnabled;
+        private bool LoggingEnabled;
 
 
         /*********
@@ -64,155 +64,153 @@ namespace PointAndPlant
         *********/
         public override void Entry(params object[] objects)
         {
-            PlayerEvents.LoadedGame += onLoaded;
-            ControlEvents.KeyReleased += onKeyReleased;
-            GraphicsEvents.OnPreRenderHudEvent += drawPlowOverlay;
+            PlayerEvents.LoadedGame += this.PlayerEvents_LoadedGame;
+            ControlEvents.KeyReleased += this.ControlEvents_KeyReleased;
+            GraphicsEvents.OnPreRenderHudEvent += this.GraphicsEvents_OnPreRenderHudEvent;
         }
 
 
         /*********
         ** Private methods
         *********/
-        private void onLoaded(object sender, EventArgs e)
+        private void PlayerEvents_LoadedGame(object sender, EventArgs e)
         {
-            this.config = this.Helper.ReadConfig<PAPConfig>();
+            this.Config = this.Helper.ReadConfig<PAPConfig>();
 
-            this.plowEnabled = config.plowEnabled;
-            this.plantEnabled = config.plantEnabled;
-            this.growEnabled = config.growEnabled;
-            this.harvestEnabled = config.harvestEnabled;
+            this.PlowEnabled = this.Config.PlowEnabled;
+            this.PlantEnabled = this.Config.PlantEnabled;
+            this.GrowEnabled = this.Config.GrowEnabled;
+            this.HarvestEnabled = this.Config.HarvestEnabled;
 
-            this.plantRadius = config.plantRadius;
-            this.growRadius = config.growRadius;
-            this.harvestRadius = config.harvestRadius;
+            this.PlantRadius = this.Config.PlantRadius;
+            this.GrowRadius = this.Config.GrowRadius;
+            this.HarvestRadius = this.Config.HarvestRadius;
 
-            this.plowWidth = config.plowWidth;
-            this.plowHeight = config.plowHeight;
+            this.PlowWidth = this.Config.PlowWidth;
+            this.PlowHeight = this.Config.PlowHeight;
 
-            this.fertilizer = config.fertilizer;
+            this.Fertilizer = this.Config.Fertilizer;
 
-            this.loggingEnabled = config.loggingEnabled;
+            this.LoggingEnabled = this.Config.LoggingEnabled;
 
-            if (config.plowWidth < 1)
+            if (this.Config.PlowWidth < 1)
             {
-                this.plowWidth = 1;
-                if (this.plowEnabled)
+                this.PlowWidth = 1;
+                if (this.PlowEnabled)
                     this.Monitor.Log("Plow width must be at least 1. Defaulted to 1");
             }
             else
             {
-                this.plowWidth = config.plowWidth;
+                this.PlowWidth = this.Config.PlowWidth;
             }
 
-            if (config.plowHeight < 1)
+            if (this.Config.PlowHeight < 1)
             {
-                this.plowHeight = 1;
-                if (this.plowEnabled)
+                this.PlowHeight = 1;
+                if (this.PlowEnabled)
                 {
                     this.Monitor.Log("Plow height must be at least 1. Defaulted to 1");
                 }
             }
             else
             {
-                this.plowHeight = config.plowHeight;
+                this.PlowHeight = this.Config.PlowHeight;
             }
 
 
-            if (config.plantRadius < 0)
+            if (this.Config.PlantRadius < 0)
             {
-                this.plantRadius = 0;
+                this.PlantRadius = 0;
 
-                if (config.plantEnabled)
+                if (this.Config.PlantEnabled)
                 {
                     this.Monitor.Log("Plant Radius must be 0 or greater.  Defaulted to 0");
                 }
             }
             else
             {
-                this.plantRadius = config.plantRadius;
+                this.PlantRadius = this.Config.PlantRadius;
             }
 
-            if (config.growRadius < 0)
+            if (this.Config.GrowRadius < 0)
             {
-                this.growRadius = 0;
+                this.GrowRadius = 0;
 
-                if (config.growEnabled)
+                if (this.Config.GrowEnabled)
                 {
                     this.Monitor.Log("Grow Radius must be 0 or greater.  Defaulted to 0");
                 }
             }
             else
             {
-                this.growRadius = config.growRadius;
+                this.GrowRadius = this.Config.GrowRadius;
             }
 
-            if (config.harvestRadius < 0)
+            if (this.Config.HarvestRadius < 0)
             {
-                this.harvestRadius = 0;
+                this.HarvestRadius = 0;
 
-                if (config.plantEnabled)
+                if (this.Config.PlantEnabled)
                 {
                     this.Monitor.Log("Harvest Radius must be 0 or greater.  Defaulted to 0");
                 }
             }
             else
             {
-                this.harvestRadius = config.harvestRadius;
+                this.HarvestRadius = this.Config.HarvestRadius;
             }
+            
 
-
-
-
-            if (!Enum.TryParse(config.plowKey, true, out this.plowKey))
+            if (!Enum.TryParse(this.Config.PlowKey, true, out this.PlowKey))
             {
-                this.plowKey = Keys.Z;
+                this.PlowKey = Keys.Z;
 
-                if (this.plowEnabled)
+                if (this.PlowEnabled)
                 {
                     this.Monitor.Log("Error parsing plow key. Defaulted to Z");
                 }
             }
 
-            if (!Enum.TryParse(config.plantKey, true, out this.plantKey))
+            if (!Enum.TryParse(this.Config.PlantKey, true, out this.PlantKey))
             {
-                this.plantKey = Keys.A;
+                this.PlantKey = Keys.A;
 
-                if (this.plantEnabled)
+                if (this.PlantEnabled)
                 {
                     this.Monitor.Log("Error parsing plant key. Defaulted to A");
                 }
 
             }
 
-            if (!Enum.TryParse(config.growKey, true, out this.growKey))
+            if (!Enum.TryParse(this.Config.GrowKey, true, out this.GrowKey))
             {
-                this.growKey = Keys.S;
+                this.GrowKey = Keys.S;
 
-                if (this.growEnabled)
+                if (this.GrowEnabled)
                 {
                     this.Monitor.Log("Error parsing grow key. Defaulted to S");
                 }
             }
 
-            if (!Enum.TryParse(config.harvestKey, true, out this.harvestKey))
+            if (!Enum.TryParse(this.Config.HarvestKey, true, out this.HarvestKey))
             {
-                this.harvestKey = Keys.D;
+                this.HarvestKey = Keys.D;
 
-                if (this.harvestEnabled)
+                if (this.HarvestEnabled)
                 {
                     this.Monitor.Log("Error parsing harvest key. Defaulted to D");
                 }
 
             }
 
-            this.grassKey = Keys.Q;
+            this.GrassKey = Keys.Q;
 
-            this.papSickle = new PAPSickle(47, config.harvestRadius, this.vector);
-            this.papHoe = new Hoe();
-            this.papHoe.upgradeLevel = this.toolLevel;
+            this.CustomSickle = new PAPSickle(47, this.Config.HarvestRadius, this.Vector);
+            this.CustomHoe = new Hoe();
+            this.CustomHoe.upgradeLevel = this.ToolLevel;
         }
 
-        private void onKeyReleased(object sender, EventArgsKeyPressed e)
+        private void ControlEvents_KeyReleased(object sender, EventArgsKeyPressed e)
         {
             if (Game1.currentLocation == null
                 || (Game1.player == null
@@ -227,65 +225,65 @@ namespace PointAndPlant
 
             if (Game1.hasLoadedGame)
             {
-                if (e.KeyPressed == this.plowKey && config.plowEnabled)
+                if (e.KeyPressed == this.PlowKey && this.Config.PlowEnabled)
                 {
                     try
                     {
-                        plow();
+                        this.Plow();
                     }
                     catch (Exception ex)
                     {
-                        if (this.loggingEnabled)
+                        if (this.LoggingEnabled)
                         {
                             this.Monitor.Log($"Plow (key handler) Exception: {ex}", LogLevel.Error);
                         }
                     }
                 }
-                else if (e.KeyPressed == this.plantKey && config.plantEnabled)
+                else if (e.KeyPressed == this.PlantKey && this.Config.PlantEnabled)
                 {
                     try
                     {
-                        plant();
+                        this.Plant();
                     }
                     catch (Exception ex)
                     {
-                        if (this.loggingEnabled)
+                        if (this.LoggingEnabled)
                         {
                             this.Monitor.Log($"Plant (key handler) Exception: {ex}", LogLevel.Error);
                         }
                     }
 
                 }
-                else if (e.KeyPressed == this.growKey && config.growEnabled)
+                else if (e.KeyPressed == this.GrowKey && this.Config.GrowEnabled)
                 {
                     try
                     {
-                        grow();
+                        this.Grow();
                     }
                     catch (Exception ex)
                     {
-                        if (this.loggingEnabled)
+                        if (this.LoggingEnabled)
                         {
                             this.Monitor.Log($"Grow (key handler) Exception: {ex}", LogLevel.Error);
                         }
                     }
 
                 }
-                else if (e.KeyPressed == this.harvestKey && config.harvestEnabled)
+                else if (e.KeyPressed == this.HarvestKey && this.Config.HarvestEnabled)
                 {
                     try
                     {
-                        harvest();
+                        this.Harvest();
                     }
                     catch (Exception ex)
                     {
-                        if (this.loggingEnabled)
+                        if (this.LoggingEnabled)
                         {
                             this.Monitor.Log($"Harvest (key handler) Exception: {ex}", LogLevel.Error);
                         }
                     }
                 }
-                else if (e.KeyPressed == this.grassKey)
+                else if (e.KeyPressed == this.GrassKey)
                 {
                     try
                     {
@@ -294,27 +292,27 @@ namespace PointAndPlant
                             if (((MeleeWeapon)Game1.player.CurrentTool).initialParentTileIndex == 39)
                             {
                                 this.Monitor.Log("You're holding Leah's Whittler! Chop away!!", LogLevel.Trace);
-                                chopTrees();
+                                this.ChopTrees();
                             }
                             else if (((MeleeWeapon)Game1.player.CurrentTool).initialParentTileIndex == 37)
                             {
                                 this.Monitor.Log("You're holding Harvey's Mallet! Pound away!!", LogLevel.Trace);
-                                breakRocks();
+                                this.BreakRocks();
                             }
                             else
                             {
-                                plantGrass();
+                                this.PlantGrass();
                             }
                         }
                         else
                         {
-                            plantGrass();
+                            this.PlantGrass();
                         }
 
                     }
                     catch (Exception ex)
                     {
-                        if (this.loggingEnabled)
+                        if (this.LoggingEnabled)
                         {
                             this.Monitor.Log($"Plant Grass (key handler) Exception: {ex}", LogLevel.Error);
                         }
@@ -325,7 +323,7 @@ namespace PointAndPlant
         }
 
 
-        private void plow()
+        private void Plow()
         {
             //Log.Info((object)("[Point-and-Plant] Plow "));
 
@@ -334,11 +332,11 @@ namespace PointAndPlant
 
             if (plr.currentLocation.name.Equals("Farm") || plr.currentLocation.name.Contains("Greenhouse"))
             {
-                for (int x = 0; x < this.plowWidth; x++)
+                for (int x = 0; x < this.PlowWidth; x++)
                 {
-                    for (int y = 0; y < this.plowHeight; y++)
+                    for (int y = 0; y < this.PlowHeight; y++)
                     {
-                        tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                        tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                     }
                 }
             }
@@ -348,14 +346,14 @@ namespace PointAndPlant
                 {
                     for (int y = 0; y < 15; y++)
                     {
-                        tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                        tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                     }
                 }
             }
 
 
             GameLocation location = Game1.player.currentLocation;
-            Vector2 vector2 = new Vector2(this.tileX, this.tileY);
+            Vector2 vector2 = new Vector2(this.TileX, this.TileY);
 
             foreach (Vector2 index in tiles)
             {
@@ -364,12 +362,12 @@ namespace PointAndPlant
                     //index.Equals(vector2);
                     if (location.terrainFeatures.ContainsKey(index))
                     {
-                        if (location.terrainFeatures[index].performToolAction(this.papHoe, 0, index))
+                        if (location.terrainFeatures[index].performToolAction(this.CustomHoe, 0, index))
                             location.terrainFeatures.Remove(index);
                     }
                     else
                     {
-                        if (location.objects.ContainsKey(index) && location.Objects[index].performToolAction(this.papHoe))
+                        if (location.objects.ContainsKey(index) && location.Objects[index].performToolAction(this.CustomHoe))
                         {
                             if (location.Objects[index].type.Equals("Crafting") && location.Objects[index].fragility != 2)
                                 location.debris.Add(new Debris(location.Objects[index].bigCraftable ? -location.Objects[index].ParentSheetIndex : location.Objects[index].ParentSheetIndex, Game1.player.GetToolLocation(), new Vector2(Game1.player.GetBoundingBox().Center.X, Game1.player.GetBoundingBox().Center.Y)));
@@ -413,7 +411,7 @@ namespace PointAndPlant
                 }
                 catch (Exception exception)
                 {
-                    if (this.loggingEnabled)
+                    if (this.LoggingEnabled)
                     {
                         this.Monitor.Log($"Plow Exception: {exception}", LogLevel.Error);
                     }
@@ -421,20 +419,20 @@ namespace PointAndPlant
             }
         }
 
-        private void plant()
+        private void Plant()
         {
             //Log.Info((object)("[Point-and-Plant] Plant "));
 
             SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
-            int min = this.plantRadius * -1;
+            int min = this.PlantRadius * -1;
 
-            for (int x = min; x <= this.plantRadius; x++)
+            for (int x = min; x <= this.PlantRadius; x++)
             {
-                for (int y = min; y <= this.plantRadius; y++)
+                for (int y = min; y <= this.PlantRadius; y++)
                 {
-                    tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                    tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                 }
             }
 
@@ -459,9 +457,9 @@ namespace PointAndPlant
                                     //Basic Retaining Soil: 370
                                     //Deluxe Speed-Gro: 466
                                     //Speed - Gro: 465
-                                    dirt.fertilizer = this.fertilizer;
+                                    dirt.fertilizer = this.Fertilizer;
 
-                                    if (dirt.plant(Game1.player.ActiveObject.ParentSheetIndex, this.mouseX, this.mouseY, Game1.player, Game1.player.ActiveObject.Category == -19) && Game1.player.IsMainPlayer)
+                                    if (dirt.plant(Game1.player.ActiveObject.ParentSheetIndex, this.MouseX, this.MouseY, Game1.player, Game1.player.ActiveObject.Category == -19) && Game1.player.IsMainPlayer)
                                         Game1.player.reduceActiveItemByOne();
                                     Game1.haltAfterCheck = false;
                                 }
@@ -473,7 +471,7 @@ namespace PointAndPlant
                 }
                 catch (Exception exception)
                 {
-                    if (this.loggingEnabled)
+                    if (this.LoggingEnabled)
                     {
                         this.Monitor.Log($"Planting Exception: {exception}", LogLevel.Error);
                     }
@@ -482,19 +480,19 @@ namespace PointAndPlant
         }
 
 
-        private void plantGrass()
+        private void PlantGrass()
         {
 
             SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
-            int min = this.plantRadius * -1;
+            int min = this.PlantRadius * -1;
 
-            for (int x = min; x <= this.plantRadius; x++)
+            for (int x = min; x <= this.PlantRadius; x++)
             {
-                for (int y = min; y <= this.plantRadius; y++)
+                for (int y = min; y <= this.PlantRadius; y++)
                 {
-                    tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                    tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                 }
             }
 
@@ -521,7 +519,7 @@ namespace PointAndPlant
                 }
                 catch (Exception exception)
                 {
-                    if (this.loggingEnabled)
+                    if (this.LoggingEnabled)
                     {
                         this.Monitor.Log($"Planting Exception: {exception}", LogLevel.Error);
                     }
@@ -530,24 +528,24 @@ namespace PointAndPlant
         }
 
 
-        private void chopTrees()
+        private void ChopTrees()
         {
             SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
-            if (this.phantomAxe == null)
+            if (this.PhantomAxe == null)
             {
-                this.phantomAxe = new Axe();
-                this.phantomAxe.upgradeLevel = 4;
+                this.PhantomAxe = new Axe();
+                this.PhantomAxe.upgradeLevel = 4;
             }
 
-            int min = this.plantRadius * -1;
+            int min = this.PlantRadius * -1;
 
-            for (int x = min; x <= this.plantRadius; x++)
+            for (int x = min; x <= this.PlantRadius; x++)
             {
-                for (int y = min; y <= this.plantRadius; y++)
+                for (int y = min; y <= this.PlantRadius; y++)
                 {
-                    tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                    tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                 }
             }
 
@@ -557,13 +555,13 @@ namespace PointAndPlant
                 {
                     if (plr.currentLocation.terrainFeatures.ContainsKey(index) && plr.currentLocation.terrainFeatures[index] is Tree)
                     {
-                        this.phantomAxe.DoFunction(plr.currentLocation, (int)(index.X * Game1.tileSize), (int)(index.Y * Game1.tileSize), 4, plr);
+                        this.PhantomAxe.DoFunction(plr.currentLocation, (int)(index.X * Game1.tileSize), (int)(index.Y * Game1.tileSize), 4, plr);
                     }
 
                 }
                 catch (Exception exception)
                 {
-                    if (this.loggingEnabled)
+                    if (this.LoggingEnabled)
                     {
                         this.Monitor.Log($"Tree Chopping Exception: {exception}", LogLevel.Error);
                     }
@@ -572,24 +570,24 @@ namespace PointAndPlant
         }
 
 
-        private void breakRocks()
+        private void BreakRocks()
         {
             SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
-            if (this.phantomPick == null)
+            if (this.PhantomPick == null)
             {
-                this.phantomPick = new Pickaxe();
-                this.phantomPick.upgradeLevel = 4;
+                this.PhantomPick = new Pickaxe();
+                this.PhantomPick.upgradeLevel = 4;
             }
 
-            int min = this.plantRadius * -1;
+            int min = this.PlantRadius * -1;
 
-            for (int x = min; x <= this.plantRadius; x++)
+            for (int x = min; x <= this.PlantRadius; x++)
             {
-                for (int y = min; y <= this.plantRadius; y++)
+                for (int y = min; y <= this.PlantRadius; y++)
                 {
-                    tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                    tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                 }
             }
 
@@ -603,13 +601,13 @@ namespace PointAndPlant
                         if (o != null && o.name.Equals("Stone"))
                         {
                             o.minutesUntilReady = 0;
-                            this.phantomPick.DoFunction(plr.currentLocation, (int)(index.X * Game1.tileSize), (int)(index.Y * Game1.tileSize), 4, plr);
+                            this.PhantomPick.DoFunction(plr.currentLocation, (int)(index.X * Game1.tileSize), (int)(index.Y * Game1.tileSize), 4, plr);
                         }
                     }
                 }
                 catch (Exception exception)
                 {
-                    if (this.loggingEnabled)
+                    if (this.LoggingEnabled)
                     {
                         this.Monitor.Log($"[Point-and-Plant] Rock Pounding Exception: {exception}", LogLevel.Error);
                     }
@@ -617,20 +615,20 @@ namespace PointAndPlant
             }
         }
 
-        private void grow()
+        private void Grow()
         {
             //Log.Info((object)("[Point-and-Plant] Grow "));
 
             SFarmer plr = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
-            int min = this.growRadius * -1;
+            int min = this.GrowRadius * -1;
 
-            for (int x = min; x <= this.growRadius; x++)
+            for (int x = min; x <= this.GrowRadius; x++)
             {
-                for (int y = min; y <= this.growRadius; y++)
+                for (int y = min; y <= this.GrowRadius; y++)
                 {
-                    tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                    tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                 }
             }
 
@@ -649,16 +647,15 @@ namespace PointAndPlant
                 }
                 catch (Exception exception)
                 {
-                    if (this.loggingEnabled)
+                    if (this.LoggingEnabled)
                     {
                         this.Monitor.Log($"Grow Exception: {exception}", LogLevel.Error);
                     }
                 }
-
             }
         }
 
-        private void harvest()
+        private void Harvest()
         {
             //Log.Info((object)("[Point-and-Plant] Harvest "));
 
@@ -666,8 +663,8 @@ namespace PointAndPlant
             GameLocation currentLocation = Game1.currentLocation;
             StardewValley.Object @object = null;
             TerrainFeature terrainFeature = null;
-            currentLocation.Objects.TryGetValue(this.vector, out @object);
-            currentLocation.terrainFeatures.TryGetValue(this.vector, out terrainFeature);
+            currentLocation.Objects.TryGetValue(this.Vector, out @object);
+            currentLocation.terrainFeatures.TryGetValue(this.Vector, out terrainFeature);
 
             //List<Vector2> tiles = new List<Vector2>();
             try
@@ -678,18 +675,18 @@ namespace PointAndPlant
                     {
                         if (((HoeDirt)terrainFeature).crop != null && (((HoeDirt)terrainFeature).crop.harvestMethod == 1 && ((HoeDirt)terrainFeature).readyForHarvest() || ((HoeDirt)terrainFeature).crop.dead))
                         {
-                            this.papSickle.DoDamage(currentLocation, this.mouseX, this.mouseY, Game1.player.getFacingDirection(), 0, Game1.player);
+                            this.CustomSickle.DoDamage(currentLocation, this.MouseX, this.MouseY, Game1.player.getFacingDirection(), 0, Game1.player);
                         }
                         else if (((HoeDirt)terrainFeature).crop != null && (((HoeDirt)terrainFeature).crop.harvestMethod != 1 && ((HoeDirt)terrainFeature).readyForHarvest()))
                         {
                             List<Vector2> tiles = new List<Vector2>();
-                            int min = this.harvestRadius * -1;
+                            int min = this.HarvestRadius * -1;
 
-                            for (int x = min; x <= this.harvestRadius; x++)
+                            for (int x = min; x <= this.HarvestRadius; x++)
                             {
-                                for (int y = min; y <= this.harvestRadius; y++)
+                                for (int y = min; y <= this.HarvestRadius; y++)
                                 {
-                                    tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                                    tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                                 }
                             }
 
@@ -712,22 +709,19 @@ namespace PointAndPlant
                                 }
                                 catch (Exception exception)
                                 {
-                                    if (this.loggingEnabled)
+                                    if (this.LoggingEnabled)
                                     {
                                         this.Monitor.Log($"Harvest Inner Exception: {exception}", LogLevel.Error);
                                     }
                                 }
-
                             }
-
                         }
-
                     }
                 }
             }
             catch (Exception exception)
             {
-                if (this.loggingEnabled)
+                if (this.LoggingEnabled)
                 {
                     this.Monitor.Log($"Harvest Outer Exception: {exception}", LogLevel.Error);
                 }
@@ -737,20 +731,20 @@ namespace PointAndPlant
         /**
          * Gets some values used by the plow.
          */
-        private void drawPlowOverlay(object sender, EventArgs e)
+        private void GraphicsEvents_OnPreRenderHudEvent(object sender, EventArgs e)
         {
             try
             {
-                if (this.buildingTiles == null)
-                    this.buildingTiles = Game1.content.Load<Texture2D>("LooseSprites\\buildingPlacementTiles");
+                if (this.BuildingTiles == null)
+                    this.BuildingTiles = Game1.content.Load<Texture2D>("LooseSprites\\buildingPlacementTiles");
 
                 KeyboardState keyboard = Keyboard.GetState();
 
-                if ((!keyboard.IsKeyDown(this.grassKey) &&
-                    !keyboard.IsKeyDown(this.plowKey) &&
-                    !keyboard.IsKeyDown(this.plantKey) &&
-                    !keyboard.IsKeyDown(this.growKey) &&
-                    !keyboard.IsKeyDown(this.harvestKey)) ||
+                if ((!keyboard.IsKeyDown(this.GrassKey) &&
+                    !keyboard.IsKeyDown(this.PlowKey) &&
+                    !keyboard.IsKeyDown(this.PlantKey) &&
+                    !keyboard.IsKeyDown(this.GrowKey) &&
+                    !keyboard.IsKeyDown(this.HarvestKey)) ||
                     Game1.currentLocation == null ||
                     (Game1.player == null ||
                     Game1.hasLoadedGame == false) ||
@@ -761,27 +755,27 @@ namespace PointAndPlant
                     Game1.gameMode != 3)
                     return;
 
-                this.mouseX = Game1.getMouseX() + @Game1.viewport.X;
-                this.mouseY = Game1.getMouseY() + @Game1.viewport.Y;
+                this.MouseX = Game1.getMouseX() + @Game1.viewport.X;
+                this.MouseY = Game1.getMouseY() + @Game1.viewport.Y;
 
-                this.tileX = this.mouseX / Game1.tileSize;
-                this.tileY = this.mouseY / Game1.tileSize;
-                this.vector = new Vector2(this.tileX, this.tileY);
+                this.TileX = this.MouseX / Game1.tileSize;
+                this.TileY = this.MouseY / Game1.tileSize;
+                this.Vector = new Vector2(this.TileX, this.TileY);
 
-                if (keyboard.IsKeyDown(this.plowKey))
+                if (keyboard.IsKeyDown(this.PlowKey))
                 {
-                    foreach (Vector2 vector2 in this.tilesAffected(this.vector, 0, Game1.player))
-                        Game1.spriteBatch.Draw(this.buildingTiles, Game1.GlobalToLocal(Game1.viewport, vector2 * Game1.tileSize), Game1.getSourceRectForStandardTileSheet(this.buildingTiles, 0), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
+                    foreach (Vector2 vector2 in this.TilesAffected(this.Vector, 0, Game1.player))
+                        Game1.spriteBatch.Draw(this.BuildingTiles, Game1.GlobalToLocal(Game1.viewport, vector2 * Game1.tileSize), Game1.getSourceRectForStandardTileSheet(this.BuildingTiles, 0), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
                 }
-                else if (keyboard.IsKeyDown(this.grassKey))
+                else if (keyboard.IsKeyDown(this.GrassKey))
                 {
-                    foreach (Vector2 vector2 in this.tilesAffectedGrass(this.vector, Game1.player))
-                        Game1.spriteBatch.Draw(this.buildingTiles, Game1.GlobalToLocal(Game1.viewport, vector2 * Game1.tileSize), Game1.getSourceRectForStandardTileSheet(this.buildingTiles, 0), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
+                    foreach (Vector2 vector2 in this.TilesAffectedGrass(this.Vector, Game1.player))
+                        Game1.spriteBatch.Draw(this.BuildingTiles, Game1.GlobalToLocal(Game1.viewport, vector2 * Game1.tileSize), Game1.getSourceRectForStandardTileSheet(this.BuildingTiles, 0), Color.White, 0.0f, Vector2.Zero, 1f, SpriteEffects.None, 0.999f);
                 }
             }
             catch (Exception exception)
             {
-                if (this.loggingEnabled)
+                if (this.LoggingEnabled)
                 {
                     this.Monitor.Log($"Drawing Plow Overlay: {exception}", LogLevel.Error);
                 }
@@ -789,17 +783,17 @@ namespace PointAndPlant
         }
 
 
-        private List<Vector2> tilesAffected(Vector2 tileLocation, int power, SFarmer who)
+        private List<Vector2> TilesAffected(Vector2 tileLocation, int power, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 
             if (who.currentLocation.name.Equals("Farm") || who.currentLocation.name.Contains("Greenhouse"))
             {
-                for (int x = 0; x < this.plowWidth; x++)
+                for (int x = 0; x < this.PlowWidth; x++)
                 {
-                    for (int y = 0; y < this.plowHeight; y++)
+                    for (int y = 0; y < this.PlowHeight; y++)
                     {
-                        tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                        tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                     }
                 }
             }
@@ -809,7 +803,7 @@ namespace PointAndPlant
                 {
                     for (int y = 0; y < 15; y++)
                     {
-                        tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                        tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                     }
                 }
             }
@@ -817,56 +811,55 @@ namespace PointAndPlant
             return tiles;
         }
 
-        private List<Vector2> tilesAffectedTree(Vector2 tileLocation, SFarmer who)
+        private List<Vector2> TilesAffectedTree(Vector2 tileLocation, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 
-            int min = this.plantRadius * -1;
+            int min = this.PlantRadius * -1;
 
-            for (int x = min; x <= this.plantRadius; x++)
+            for (int x = min; x <= this.PlantRadius; x++)
             {
-                for (int y = min; y <= this.plantRadius; y++)
+                for (int y = min; y <= this.PlantRadius; y++)
                 {
-                    tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                    tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                 }
             }
 
             return tiles;
         }
 
-        private List<Vector2> tilesAffectedRock(Vector2 tileLocation, SFarmer who)
+        private List<Vector2> TilesAffectedRock(Vector2 tileLocation, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 
-            int min = this.plantRadius * -1;
+            int min = this.PlantRadius * -1;
 
-            for (int x = min; x <= this.plantRadius; x++)
+            for (int x = min; x <= this.PlantRadius; x++)
             {
-                for (int y = min; y <= this.plantRadius; y++)
+                for (int y = min; y <= this.PlantRadius; y++)
                 {
-                    tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                    tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                 }
             }
 
             return tiles;
         }
 
-        private List<Vector2> tilesAffectedGrass(Vector2 tileLocation, SFarmer who)
+        private List<Vector2> TilesAffectedGrass(Vector2 tileLocation, SFarmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 
-            int min = this.plantRadius * -1;
+            int min = this.PlantRadius * -1;
 
-            for (int x = min; x <= this.plantRadius; x++)
+            for (int x = min; x <= this.PlantRadius; x++)
             {
-                for (int y = min; y <= this.plantRadius; y++)
+                for (int y = min; y <= this.PlantRadius; y++)
                 {
-                    tiles.Add(new Vector2(this.tileX + x, this.tileY + y));
+                    tiles.Add(new Vector2(this.TileX + x, this.TileY + y));
                 }
             }
 
             return tiles;
         }
-
     }
 }

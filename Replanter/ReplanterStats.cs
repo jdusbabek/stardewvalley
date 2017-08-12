@@ -9,25 +9,24 @@ namespace Replanter
         /*********
         ** Accessors
         *********/
-        public int cropsHarvested { get; set; }
-        public int runningSeedCost { get; set; }
-        public int runningSellPrice { get; set; }
-        public int farmhandCost { get; set; }
-        public int totalCrops { get; set; }
-        public int cropsWatered { get; set; }
-        public int plantsCleared { get; set; }
+        public int CropsHarvested { get; set; }
+        public int RunningSeedCost { get; set; }
+        public int RunningSellPrice { get; set; }
+        public int FarmhandCost { get; set; }
+        public int TotalCrops { get; set; }
+        public int CropsWatered { get; set; }
+        public int PlantsCleared { get; set; }
 
-        public int totalCost { get { return farmhandCost + runningSeedCost; } }
-        public int numUnharvested { get { return totalCrops - cropsHarvested; } }
+        public int TotalCost { get { return this.FarmhandCost + this.RunningSeedCost; } }
+        public int NumUnharvested { get { return this.TotalCrops - this.CropsHarvested; } }
 
 
         /*********
         ** Public methods
         *********/
-        public bool hasUnfinishedBusiness()
+        public bool HasUnfinishedBusiness()
         {
-            int tot = 0;
-
+            int total = 0;
             return (1 < 0);
         }
 
@@ -36,7 +35,7 @@ namespace Replanter
             IDictionary<string, object> fields = typeof(ReplanterStats)
                 .GetProperties()
                 .ToDictionary(p => p.Name, p => p.GetValue(this));
-            fields["runningLaborCost"] = this.farmhandCost;
+            fields["runningLaborCost"] = this.FarmhandCost;
             return fields;
         }
     }

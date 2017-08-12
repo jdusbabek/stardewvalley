@@ -41,14 +41,14 @@ namespace StardewLib
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
+                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // A farm house chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
+                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
                 }
             }
         }
@@ -65,14 +65,14 @@ namespace StardewLib
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
+                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // Another location.
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
+                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
                 }
             }
         }
@@ -89,14 +89,14 @@ namespace StardewLib
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
+                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // Another location.
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
                     this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.x},{cd.y} for item: {chestInfo[0]}, location: {cd.location}", LogLevel.Trace);
+                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
                 }
             }
         }
@@ -117,13 +117,13 @@ namespace StardewLib
             if (def == null)
                 return null;
 
-            GameLocation loc = Game1.getLocationFromName(def.location);
+            GameLocation loc = Game1.getLocationFromName(def.Location);
 
             if (loc == null)
                 return null;
 
             Object chest;
-            loc.objects.TryGetValue(def.vector, out chest);
+            loc.objects.TryGetValue(def.Tile, out chest);
 
             if (chest == null || !(chest is Chest))
             {
@@ -133,7 +133,7 @@ namespace StardewLib
             return chest;
         }
 
-        public SortedDictionary<int, ChestDef> parseAllChests()
+        public SortedDictionary<int, ChestDef> ParseAllChests()
         {
             SortedDictionary<int, ChestDef> bestGuessChest = new SortedDictionary<int, ChestDef>();
 
@@ -165,7 +165,7 @@ namespace StardewLib
                         {
                             if (bestGuessChest.ContainsKey(item.Key))
                             {
-                                if (bestGuessChest[item.Key].count < item.Value)
+                                if (bestGuessChest[item.Key].Count < item.Value)
                                 {
                                     bestGuessChest[item.Key] = new ChestDef((int)o.Key.X, (int)o.Key.Y, loc.Name, item.Value, c);
                                 }
@@ -210,7 +210,7 @@ namespace StardewLib
                                         {
                                             if (bestGuessChest.ContainsKey(item2.Key))
                                             {
-                                                if (bestGuessChest[item2.Key].count < item2.Value)
+                                                if (bestGuessChest[item2.Key].Count < item2.Value)
                                                 {
                                                     bestGuessChest[item2.Key] = new ChestDef((int)o2.Key.X, (int)o2.Key.Y, bgl.indoors.Name, item2.Value, c);
                                                 }

@@ -2,24 +2,24 @@
 {
     internal class PAPConfig
     {
-        public string plowKey { get; set; } = "Z";
-        public string plantKey { get; set; } = "A";
-        public string growKey { get; set; } = "S";
-        public string harvestKey { get; set; } = "D";
+        public string PlowKey { get; set; } = "Z";
+        public string PlantKey { get; set; } = "A";
+        public string GrowKey { get; set; } = "S";
+        public string HarvestKey { get; set; } = "D";
 
-        public int plantRadius { get; set; } = 4;
-        public int growRadius { get; set; } = 4;
-        public int harvestRadius { get; set; } = 4;
-        public int plowWidth { get; set; } = 3;
-        public int plowHeight { get; set; } = 6;
+        public int PlantRadius { get; set; } = 4;
+        public int GrowRadius { get; set; } = 4;
+        public int HarvestRadius { get; set; } = 4;
+        public int PlowWidth { get; set; } = 3;
+        public int PlowHeight { get; set; } = 6;
 
-        public bool plowEnabled { get; set; } = true;
-        public bool plantEnabled { get; set; } = true;
-        public bool growEnabled { get; set; } = true;
-        public bool harvestEnabled { get; set; } = true;
+        public bool PlowEnabled { get; set; } = true;
+        public bool PlantEnabled { get; set; } = true;
+        public bool GrowEnabled { get; set; } = true;
+        public bool HarvestEnabled { get; set; } = true;
 
-        public int fertilizer { get; set; }
+        public int Fertilizer { get; set; }
 
-        public bool loggingEnabled { get; set; }
+        public bool LoggingEnabled { get; set; }
     }
 }

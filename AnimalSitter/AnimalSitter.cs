@@ -19,52 +19,52 @@ namespace ExtremePetting
         /*********
         ** Properties
         *********/
-        private Keys petKey;
+        private Keys PetKey;
 
         // Whether to use dark magic to age the animals to maturity when visiting the animals.
-        private bool growUpEnabled = true;
+        private bool GrowUpEnabled = true;
 
         // Whether to pet the animal until their maximum happiness level is reached.
-        private bool maxHappinessEnabled = true;
+        private bool MaxHappinessEnabled = true;
 
         // Whether to feed the animals to their max fullness when visiting.
-        private bool maxFullnessEnabled = true;
+        private bool MaxFullnessEnabled = true;
 
         // Whether to harvest animal drops while visiting.
-        private bool harvestEnabled = true;
+        private bool HarvestEnabled = true;
 
         // Whether to pet animals as they are visited.
-        private bool pettingEnabled = true;
+        private bool PettingEnabled = true;
 
         // Whether to max the animal's friendship toward the farmer while visiting, even though the farmer is completely ignoring them.
-        private bool maxFriendshipEnabled = true;
+        private bool MaxFriendshipEnabled = true;
 
         // Whether to display the in game dialogue messages.
-        private bool messagesEnabled = true;
+        private bool MessagesEnabled = true;
 
         // Who does the checking.
-        private string checker = "spouse";
+        private string Checker = "spouse";
 
         // How much to charge per animal.
-        private int costPerAnimal;
+        private int CostPerAnimal;
 
         // Whether to snatch hidden truffles from the snout of the pig.
-        private bool takeTrufflesFromPigs = true;
+        private bool TakeTrufflesFromPigs = true;
 
         // Coordinates of the default chest.
-        private Vector2 chestCoords = new Vector2(73f, 14f);
+        private Vector2 ChestCoords = new Vector2(73f, 14f);
 
         // Whether to bypass the inventory, and first attempt to deposit the harvest into the chest.  Inventory is then used as fallback.
-        private bool bypassInventory;
+        private bool BypassInventory;
 
         // A string defining the locations of specific chests.
-        private String chestDefs = "";
+        private String ChestDefs = "";
 
         // Whether both inventory and chests are full.
-        private bool inventoryAndChestFull;
+        private bool InventoryAndChestFull;
 
         // How many days the farmer has not been able to afford to pay the laborer.
-        private int shortDays;
+        private int ShortDays;
 
         private AnimalSitterConfig Config;
 
@@ -82,61 +82,60 @@ namespace ExtremePetting
             this.DialogueManager = new DialogueManager(this.Config, Game1.content.ServiceProvider, this.PathOnDisk, this.Monitor);
             this.ChestManager = new ChestManager(this.Monitor);
 
-            PlayerEvents.LoadedGame += onLoaded;
-            ControlEvents.KeyReleased += onKeyReleased;
+            PlayerEvents.LoadedGame += this.PlayerEvents_LoadedGame;
+            ControlEvents.KeyReleased += this.ControlEvents_KeyReleased;
         }
 
 
-        private void onLoaded(object sender, EventArgs e)
+        private void PlayerEvents_LoadedGame(object sender, EventArgs e)
         {
-            importConfiguration();
+            this.ImportConfiguration();
 
             //parseChestLocations();
-            this.ChestManager.ParseChests(this.chestDefs);
-            this.ChestManager.SetDefault(this.chestCoords);
+            this.ChestManager.ParseChests(this.ChestDefs);
+            this.ChestManager.SetDefault(this.ChestCoords);
 
             // Read in dialogue
             this.DialogueManager.ReadInMessages();
 
-            this.Monitor.Log($"chestCoords:{this.chestCoords.X},{this.chestCoords.Y}", LogLevel.Trace);
+            this.Monitor.Log($"chestCoords:{this.ChestCoords.X},{this.ChestCoords.Y}", LogLevel.Trace);
         }
 
-
-        private void importConfiguration()
+        private void ImportConfiguration()
         {
-            if (!Enum.TryParse(this.Config.keybind, true, out this.petKey))
+            if (!Enum.TryParse(this.Config.KeyBind, true, out this.PetKey))
             {
-                this.petKey = Keys.O;
+                this.PetKey = Keys.O;
                 this.Monitor.Log("Error parsing key binding. Defaulted to O");
             }
 
-            this.pettingEnabled = this.Config.pettingEnabled;
-            this.growUpEnabled = this.Config.growUpEnabled;
-            this.maxHappinessEnabled = this.Config.maxHappinessEnabled;
-            this.maxFriendshipEnabled = this.Config.maxFriendshipEnabled;
-            this.maxFullnessEnabled = this.Config.maxFullnessEnabled;
-            this.harvestEnabled = this.Config.harvestEnabled;
-            this.checker = this.Config.WhoChecks;
-            this.messagesEnabled = this.Config.enableMessages;
-            this.takeTrufflesFromPigs = this.Config.takeTrufflesFromPigs;
-            this.chestCoords = this.Config.chestCoords;
+            this.PettingEnabled = this.Config.PettingEnabled;
+            this.GrowUpEnabled = this.Config.GrowUpEnabled;
+            this.MaxHappinessEnabled = this.Config.MaxHappinessEnabled;
+            this.MaxFriendshipEnabled = this.Config.MaxFriendshipEnabled;
+            this.MaxFullnessEnabled = this.Config.MaxFullnessEnabled;
+            this.HarvestEnabled = this.Config.HarvestEnabled;
+            this.Checker = this.Config.WhoChecks;
+            this.MessagesEnabled = this.Config.EnableMessages;
+            this.TakeTrufflesFromPigs = this.Config.TakeTrufflesFromPigs;
+            this.ChestCoords = this.Config.ChestCoords;
 
-            this.bypassInventory = this.Config.bypassInventory;
-            this.chestDefs = this.Config.chestDefs;
+            this.BypassInventory = this.Config.BypassInventory;
+            this.ChestDefs = this.Config.ChestDefs;
 
-            if (this.Config.costPerAction < 0)
+            if (this.Config.CostPerAction < 0)
             {
                 this.Monitor.Log("I'll do it for free, but I'm not paying YOU to take care of YOUR stinking animals!", LogLevel.Trace);
                 this.Monitor.Log("Setting costPerAction to 0.", LogLevel.Trace);
-                this.costPerAnimal = 0;
+                this.CostPerAnimal = 0;
             }
             else
             {
-                this.costPerAnimal = this.Config.costPerAction;
+                this.CostPerAnimal = this.Config.CostPerAction;
             }
         }
 
-        private void onKeyReleased(object sender, EventArgsKeyPressed e)
+        private void ControlEvents_KeyReleased(object sender, EventArgsKeyPressed e)
         {
             if (Game1.currentLocation == null
                 || (Game1.player == null
@@ -151,11 +150,11 @@ namespace ExtremePetting
                 return;
             }
 
-            if (e.KeyPressed == this.petKey)
+            if (e.KeyPressed == this.PetKey)
             {
                 try
                 {
-                    iterateOverAnimals();
+                    this.IterateOverAnimals();
                 }
                 catch (Exception ex)
                 {
@@ -164,81 +163,81 @@ namespace ExtremePetting
             }
         }
 
-        private void iterateOverAnimals()
+        private void IterateOverAnimals()
         {
             SFarmer farmer = Game1.player;
             Farm farm = Game1.getFarm();
             AnimalTasks stats = new AnimalTasks();
 
-            foreach (FarmAnimal animal in getAllFarmAnimals())
+            foreach (FarmAnimal animal in this.GetAnimals())
             {
                 try
                 {
-                    if (!animal.wasPet && this.pettingEnabled)
+                    if (!animal.wasPet && this.PettingEnabled)
                     {
                         animal.pet(Game1.player);
-                        stats.animalsPet++;
+                        stats.AnimalsPet++;
 
                         this.Monitor.Log($"Petting animal: {animal.name}", LogLevel.Trace);
                     }
 
 
-                    if (this.growUpEnabled && animal.isBaby())
+                    if (this.GrowUpEnabled && animal.isBaby())
                     {
                         this.Monitor.Log($"Aging animal to mature+1 days: {animal.name}", LogLevel.Trace);
 
                         animal.age = animal.ageWhenMature + 1;
                         animal.reload();
-                        stats.aged++;
+                        stats.Aged++;
                     }
 
-                    if (this.maxFullnessEnabled && animal.fullness < byte.MaxValue)
+                    if (this.MaxFullnessEnabled && animal.fullness < byte.MaxValue)
                     {
                         this.Monitor.Log($"Feeding animal: {animal.name}", LogLevel.Trace);
 
                         animal.fullness = byte.MaxValue;
-                        stats.fed++;
+                        stats.Fed++;
                     }
 
-                    if (this.maxHappinessEnabled && animal.happiness < byte.MaxValue)
+                    if (this.MaxHappinessEnabled && animal.happiness < byte.MaxValue)
                     {
                         this.Monitor.Log($"Maxing Happiness of animal {animal.name}", LogLevel.Trace);
 
                         animal.happiness = byte.MaxValue;
-                        stats.maxHappiness++;
+                        stats.MaxHappiness++;
                     }
 
-                    if (this.maxFriendshipEnabled && animal.friendshipTowardFarmer < 1000)
+                    if (this.MaxFriendshipEnabled && animal.friendshipTowardFarmer < 1000)
                     {
                         this.Monitor.Log($"Maxing Friendship of animal {animal.name}", LogLevel.Trace);
 
                         animal.friendshipTowardFarmer = 1000;
-                        stats.maxFriendship++;
+                        stats.MaxFriendship++;
                     }
 
-                    if (animal.currentProduce > 0 && this.harvestEnabled)
+                    if (animal.currentProduce > 0 && this.HarvestEnabled)
                     {
                         this.Monitor.Log($"Has produce: {animal.name} {animal.currentProduce}", LogLevel.Trace);
 
                         if (animal.type.Equals("Pig"))
                         {
-                            if (takeTrufflesFromPigs)
+                            if (this.TakeTrufflesFromPigs)
                             {
                                 //Game1.player.addItemToInventoryBool((Item)new StardewValley.Object(animal.currentProduce, 1, false, -1, animal.produceQuality), false);
                                 Object toAdd = new Object(animal.currentProduce, 1, false, -1, animal.produceQuality);
-                                addItemToInventory(toAdd, farmer, farm, stats);
+                                this.AddItemToInventory(toAdd, farmer, farm, stats);
 
                                 animal.currentProduce = 0;
-                                stats.trufflesHarvested++;
+                                stats.TrufflesHarvested++;
                             }
                         }
                         else
                         {
                             Object toAdd = new Object(animal.currentProduce, 1, false, -1, animal.produceQuality);
-                            addItemToInventory(toAdd, farmer, farm, stats);
+                            this.AddItemToInventory(toAdd, farmer, farm, stats);
 
                             animal.currentProduce = 0;
-                            stats.productsHarvested++;
+                            stats.ProductsHarvested++;
                         }
 
 
@@ -250,27 +249,27 @@ namespace ExtremePetting
                 }
             }
 
-            harvestTruffles(stats);
-            harvestCoops(stats);
+            this.HarvestTruffles(stats);
+            this.HarvestCoops(stats);
 
-            int actions = stats.getTaskCount();
-            bool gatheringOnly = stats.justGathering();
+            int actions = stats.GetTaskCount();
+            bool gatheringOnly = stats.JustGathering();
 
-            if (actions > 0 && this.costPerAnimal > 0)
+            if (actions > 0 && this.CostPerAnimal > 0)
             {
-                int totalCost = actions * this.costPerAnimal;
+                int totalCost = actions * this.CostPerAnimal;
                 bool doesPlayerHaveEnoughCash = Game1.player.Money >= totalCost;
                 Game1.player.Money = Math.Max(0, Game1.player.Money - totalCost);
 
-                if (messagesEnabled)
-                    showMessage(actions, totalCost, doesPlayerHaveEnoughCash, gatheringOnly, stats);
+                if (this.MessagesEnabled)
+                    this.ShowMessage(actions, totalCost, doesPlayerHaveEnoughCash, gatheringOnly, stats);
 
                 this.Monitor.Log($"Animal sitter performed {actions} actions. Total cost: {totalCost}g", LogLevel.Trace);
 
             }
-            else if (actions == 0 && this.costPerAnimal > 0)
+            else if (actions == 0 && this.CostPerAnimal > 0)
             {
-                if (messagesEnabled)
+                if (this.MessagesEnabled)
                 {
                     HUDMessage msg = new HUDMessage("There's nothing to do for the animals right now.");
                     Game1.addHUDMessage(msg);
@@ -279,9 +278,8 @@ namespace ExtremePetting
                 this.Monitor.Log("There's nothing to do for the animals right now.", LogLevel.Trace);
             }
         }
-
-
-        private void harvestTruffles(AnimalTasks stats)
+        
+        private void HarvestTruffles(AnimalTasks stats)
         {
             Farm farm = Game1.getFarm();
             SFarmer farmer = Game1.player;
@@ -301,7 +299,7 @@ namespace ExtremePetting
                         obj.quality = 4;
 
                     double randomNum = Game1.random.NextDouble();
-                    bool doubleChance = (checker.Equals("pet")) ? (randomNum < 0.4) : (randomNum < 0.2);
+                    bool doubleChance = (this.Checker.Equals("pet")) ? (randomNum < 0.4) : (randomNum < 0.2);
 
                     if (Game1.player.professions.Contains(13) && doubleChance)
                     {
@@ -309,15 +307,15 @@ namespace ExtremePetting
                         doubleHarvest = true;
                     }
 
-                    if (addItemToInventory(obj, farmer, farm, stats))
+                    if (this.AddItemToInventory(obj, farmer, farm, stats))
                     {
                         itemsToRemove.Add(keyvalue.Key);
                         farmer.gainExperience(2, 7);
-                        stats.trufflesHarvested++;
+                        stats.TrufflesHarvested++;
 
                         if (doubleHarvest)
                         {
-                            stats.trufflesHarvested++;
+                            stats.TrufflesHarvested++;
                             farmer.gainExperience(2, 7);
                         }
 
@@ -338,7 +336,7 @@ namespace ExtremePetting
 
         }
 
-        private void harvestCoops(AnimalTasks stats)
+        private void HarvestCoops(AnimalTasks stats)
         {
             Farm farm = Game1.getFarm();
             SFarmer farmer = Game1.player;
@@ -357,10 +355,10 @@ namespace ExtremePetting
 
                         if (obj.isAnimalProduct() || obj.parentSheetIndex == 107)
                         {
-                            if (addItemToInventory(obj, farmer, farm, stats))
+                            if (this.AddItemToInventory(obj, farmer, farm, stats))
                             {
                                 itemsToRemove.Add(keyvalue.Key);
-                                stats.productsHarvested++;
+                                stats.ProductsHarvested++;
                                 farmer.gainExperience(0, 5);
                             }
                             else
@@ -379,11 +377,11 @@ namespace ExtremePetting
             }
         }
 
-        private bool addItemToInventory(Object obj, SFarmer farmer, Farm farm, AnimalTasks stats)
+        private bool AddItemToInventory(Object obj, SFarmer farmer, Farm farm, AnimalTasks stats)
         {
             bool wasAdded = false;
 
-            if (!bypassInventory)
+            if (!this.BypassInventory)
             {
                 if (farmer.couldInventoryAcceptThisItem(obj))
                 {
@@ -419,14 +417,14 @@ namespace ExtremePetting
                 return true;
             }
 
-            inventoryAndChestFull = true;
+            this.InventoryAndChestFull = true;
             return wasAdded;
         }
 
 
-        private String getGathererName()
+        private String GetGathererName()
         {
-            if (checker.ToLower() == "spouse")
+            if (this.Checker.ToLower() == "spouse")
             {
                 if (Game1.player.isMarried())
                     return Game1.player.getSpouse().getName();
@@ -435,20 +433,20 @@ namespace ExtremePetting
             }
             else
             {
-                return checker;
+                return this.Checker;
             }
 
         }
 
 
-        private void showMessage(int numActions, int totalCost, bool doesPlayerHaveEnoughCash, bool gatheringOnly, AnimalTasks stats)
+        private void ShowMessage(int numActions, int totalCost, bool doesPlayerHaveEnoughCash, bool gatheringOnly, AnimalTasks stats)
         {
-            stats.numActions = numActions;
-            stats.totalCost = totalCost;
+            stats.NumActions = numActions;
+            stats.TotalCost = totalCost;
 
             string message = "";
 
-            if (checker.ToLower() == "pet")
+            if (this.Checker.ToLower() == "pet")
             {
                 if (Game1.player.hasPet())
                 {
@@ -471,7 +469,7 @@ namespace ExtremePetting
             }
             else
             {
-                if (checker.ToLower() == "spouse")
+                if (this.Checker.ToLower() == "spouse")
                 {
                     if (Game1.player.isMarried())
                     {
@@ -482,7 +480,7 @@ namespace ExtremePetting
                         message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(2, "Xdialog"), stats, this.Config);
                     }
 
-                    if (totalCost > 0 && costPerAnimal > 0)
+                    if (totalCost > 0 && this.CostPerAnimal > 0)
                     {
                         message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(3, "Xdialog"), stats, this.Config);
                     }
@@ -494,7 +492,7 @@ namespace ExtremePetting
                 {
                     message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(4, "Xdialog"), stats, this.Config);
 
-                    if (totalCost > 0 && costPerAnimal > 0)
+                    if (totalCost > 0 && this.CostPerAnimal > 0)
                     {
                         message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(3, "Xdialog"), stats, this.Config);
                     }
@@ -504,7 +502,7 @@ namespace ExtremePetting
                 }
                 else
                 {
-                    NPC character = Game1.getCharacterFromName(checker);
+                    NPC character = Game1.getCharacterFromName(this.Checker);
                     if (character != null)
                     {
                         //this.isCheckerCharacter = true;
@@ -523,12 +521,12 @@ namespace ExtremePetting
                         message += DialogueManager.PerformReplacement(DialogueManager.GetRandomMessage("greeting"), stats, this.Config);
                         message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(5, "Xdialog"), stats, this.Config);
 
-                        if (costPerAnimal > 0)
+                        if (this.CostPerAnimal > 0)
                         {
                             if (doesPlayerHaveEnoughCash)
                             {
                                 message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(6, "Xdialog"), stats, this.Config);
-                                shortDays = 0;
+                                this.ShortDays = 0;
                             }
                             else
                             {
@@ -559,7 +557,7 @@ namespace ExtremePetting
 
         }
 
-        private List<FarmAnimal> getAllFarmAnimals()
+        private List<FarmAnimal> GetAnimals()
         {
             List<FarmAnimal> list = Game1.getFarm().animals.Values.ToList();
             foreach (Building building in Game1.getFarm().buildings)

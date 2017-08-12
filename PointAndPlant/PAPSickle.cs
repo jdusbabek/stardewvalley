@@ -9,7 +9,7 @@ internal class PAPSickle : MeleeWeapon
     /*********
     ** Properties
     *********/
-    private int radius = 4;
+    private int Radius = 4;
     private Vector2 Vector;
 
 
@@ -19,7 +19,7 @@ internal class PAPSickle : MeleeWeapon
     public PAPSickle(int spriteIndex, int radius, Vector2 vector)
         : base(spriteIndex)
     {
-        this.radius = radius;
+        this.Radius = radius;
         this.Vector = vector;
     }
 
@@ -34,8 +34,8 @@ internal class PAPSickle : MeleeWeapon
 
         List<Vector2> newvec = new List<Vector2>();
 
-        int min = radius * -1;
-        int max = radius;
+        int min = this.Radius * -1;
+        int max = this.Radius;
 
         for (int nx = min; nx <= max; nx++)
         {

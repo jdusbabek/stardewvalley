@@ -5,19 +5,19 @@ namespace ExtremePetting
 {
     internal class AnimalSitterConfig : IConfig
     {
-        public string keybind { get; set; } = "O";
-        public bool growUpEnabled { get; set; }
-        public bool maxHappinessEnabled { get; set; }
-        public bool maxFullnessEnabled { get; set; }
-        public bool harvestEnabled { get; set; } = true;
-        public bool pettingEnabled { get; set; } = true;
-        public bool maxFriendshipEnabled { get; set; }
-        public int costPerAction { get; set; }
+        public string KeyBind { get; set; } = "O";
+        public bool GrowUpEnabled { get; set; }
+        public bool MaxHappinessEnabled { get; set; }
+        public bool MaxFullnessEnabled { get; set; }
+        public bool HarvestEnabled { get; set; } = true;
+        public bool PettingEnabled { get; set; } = true;
+        public bool MaxFriendshipEnabled { get; set; }
+        public int CostPerAction { get; set; }
         public string WhoChecks { get; set; } = "spouse";
-        public bool enableMessages { get; set; } = true;
-        public bool takeTrufflesFromPigs { get; set; } = true;
-        public bool bypassInventory { get; set; }
-        public Vector2 chestCoords { get; set; } = new Vector2(73f, 14f);
-        public string chestDefs { get; set; } = "";
+        public bool EnableMessages { get; set; } = true;
+        public bool TakeTrufflesFromPigs { get; set; } = true;
+        public bool BypassInventory { get; set; }
+        public Vector2 ChestCoords { get; set; } = new Vector2(73f, 14f);
+        public string ChestDefs { get; set; } = "";
     }
 }

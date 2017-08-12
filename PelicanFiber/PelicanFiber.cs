@@ -13,11 +13,11 @@ namespace PelicanFiber
         /*********
         ** Properties
         *********/
-        private Keys menuKey = Keys.PageDown;
-        private LocalizedContentManager content;
-        private Texture2D websites;
-        private PelicanFiberConfig config;
-        private bool unfiltered = true;
+        private Keys MenuKey = Keys.PageDown;
+        private LocalizedContentManager Content;
+        private Texture2D Websites;
+        private PelicanFiberConfig Config;
+        private bool Unfiltered = true;
         private ItemUtils ItemUtils;
 
 
@@ -27,19 +27,19 @@ namespace PelicanFiber
         public override void Entry(params object[] objects)
         {
             // load config
-            this.config = this.Helper.ReadConfig<PelicanFiberConfig>();
-            if (!Enum.TryParse(config.keybind, true, out this.menuKey))
+            this.Config = this.Helper.ReadConfig<PelicanFiberConfig>();
+            if (!Enum.TryParse(this.Config.KeyBind, true, out this.MenuKey))
             {
-                this.menuKey = Keys.PageDown;
+                this.MenuKey = Keys.PageDown;
                 this.Monitor.Log("404 Not Found: Error parsing key binding. Defaulted to Page Down");
             }
-            this.unfiltered = !config.internetFilter;
+            this.Unfiltered = !this.Config.InternetFilter;
 
             // load textures
             try
             {
-                this.content = new LocalizedContentManager(Game1.content.ServiceProvider, this.PathOnDisk);
-                this.websites = this.content.Load<Texture2D>("websites");
+                this.Content = new LocalizedContentManager(Game1.content.ServiceProvider, this.PathOnDisk);
+                this.Websites = this.Content.Load<Texture2D>("websites");
             }
             catch (Exception ex)
             {
@@ -47,17 +47,17 @@ namespace PelicanFiber
             }
 
             // load utils
-            this.ItemUtils = new ItemUtils(this.content, this.Monitor);
+            this.ItemUtils = new ItemUtils(this.Content, this.Monitor);
 
             // hook events
-            ControlEvents.KeyReleased += onKeyReleased;
+            ControlEvents.KeyReleased += this.ControlEvents_OnKeyReleased;
         }
 
 
         /*********
         ** Private methods
         *********/
-        private void onKeyReleased(object sender, EventArgsKeyPressed e)
+        private void ControlEvents_OnKeyReleased(object sender, EventArgsKeyPressed e)
         {
             if (Game1.currentLocation == null
                 || (Game1.player == null
@@ -71,7 +71,7 @@ namespace PelicanFiber
                 return;
             }
 
-            if (e.KeyPressed == this.menuKey)
+            if (e.KeyPressed == this.MenuKey)
             {
                 try
                 {
@@ -79,7 +79,7 @@ namespace PelicanFiber
                     if (Game1.viewport.Height < 1325)
                         scale = Game1.viewport.Height / 1325f;
 
-                    Game1.activeClickableMenu = new PelicanFiberMenu(this.websites, this.ItemUtils, this.config.giveAchievements, this.ShowMainMenu, scale, unfiltered);
+                    Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Config.GiveAchievements, this.ShowMainMenu, scale, this.Unfiltered);
                 }
                 catch (Exception ex)
                 {
@@ -97,7 +97,7 @@ namespace PelicanFiber
                 if (Game1.viewport.Height < 1325)
                     scale = Game1.viewport.Height / 1325f;
 
-                Game1.activeClickableMenu = new PelicanFiberMenu(this.websites, this.ItemUtils, this.config.giveAchievements, this.ShowMainMenu, scale, !this.config.internetFilter);
+                Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Config.GiveAchievements, this.ShowMainMenu, scale, !this.Config.InternetFilter);
             }
             catch (Exception ex)
             {

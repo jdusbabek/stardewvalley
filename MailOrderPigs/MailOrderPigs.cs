@@ -14,10 +14,10 @@ namespace MailOrderPigs
         /*********
         ** Properties
         *********/
-        private Keys menuKey = Keys.PageUp;
-        private MailOrderPigsConfig config;
-        private bool allowOvercrowding = false;
-        private bool enableLogging = false;
+        private Keys MenuKey = Keys.PageUp;
+        private MailOrderPigsConfig Config;
+        private bool AllowOvercrowding = false;
+        private bool EnableLogging = false;
 
 
         /*********
@@ -25,28 +25,28 @@ namespace MailOrderPigs
         *********/
         public override void Entry(params object[] objects)
         {
-            PlayerEvents.LoadedGame += onLoaded;
-            ControlEvents.KeyReleased += onKeyReleased;
+            PlayerEvents.LoadedGame += this.PlayerEvents_LoadedGame;
+            ControlEvents.KeyReleased += this.ControlEvents_KeyReleased;
         }
 
 
         /*********
         ** Private methods
         *********/
-        private void onLoaded(object sender, EventArgs e)
+        private void PlayerEvents_LoadedGame(object sender, EventArgs e)
         {
             try
             {
-                this.config = this.Helper.ReadConfig<MailOrderPigsConfig>();
+                this.Config = this.Helper.ReadConfig<MailOrderPigsConfig>();
 
-                if (!Enum.TryParse(config.keybind, true, out this.menuKey))
+                if (!Enum.TryParse(this.Config.KeyBind, true, out this.MenuKey))
                 {
-                    this.menuKey = Keys.PageUp;
+                    this.MenuKey = Keys.PageUp;
                     this.Monitor.Log("Error parsing key binding. Defaulted to Page Up");
                 }
 
-                this.allowOvercrowding = config.allowOvercrowding;
-                this.enableLogging = config.enableLogging;
+                this.AllowOvercrowding = this.Config.AllowOvercrowding;
+                this.EnableLogging = this.Config.EnableLogging;
 
                 this.Monitor.Log("Mod loaded successfully.", LogLevel.Trace);
             }
@@ -57,7 +57,7 @@ namespace MailOrderPigs
 
         }
 
-        private void onKeyReleased(object sender, EventArgsKeyPressed e)
+        private void ControlEvents_KeyReleased(object sender, EventArgsKeyPressed e)
         {
             if (Game1.currentLocation == null
                 || (Game1.player == null
@@ -71,14 +71,14 @@ namespace MailOrderPigs
                 return;
             }
 
-            if (e.KeyPressed == this.menuKey)
+            if (e.KeyPressed == this.MenuKey)
             {
                 this.Monitor.Log("Attempting to bring up menu.", LogLevel.Trace);
                 if (Game1.currentLocation is AnimalHouse)
                 {
                     try
                     {
-                        if (((AnimalHouse)Game1.currentLocation).isFull() && !allowOvercrowding)
+                        if (((AnimalHouse)Game1.currentLocation).isFull() && !this.AllowOvercrowding)
                         {
                             this.Monitor.Log("Not bringing up menu: building is full.", LogLevel.Trace);
                             Game1.showRedMessage("This Building Is Full");
@@ -86,7 +86,7 @@ namespace MailOrderPigs
                         else
                         {
                             this.Monitor.Log("Bringing up menu.", LogLevel.Trace);
-                            Game1.activeClickableMenu = new MailOrderPigMenu(this.getPurchaseAnimalStock());
+                            Game1.activeClickableMenu = new MailOrderPigMenu(this.GetPurchaseAnimalStock());
                         }
                     }
                     catch (Exception ex)
@@ -101,7 +101,7 @@ namespace MailOrderPigs
             }
         }
 
-        private List<Object> getPurchaseAnimalStock()
+        private List<Object> GetPurchaseAnimalStock()
         {
             //string locationName = ((AnimalHouse)Game1.currentLocation).Name;
             string locationName = ((AnimalHouse)Game1.currentLocation).getBuilding().buildingType;

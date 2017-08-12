@@ -8,12 +8,12 @@ namespace StardewLib
         /*********
         ** Accessors
         *********/
-        public int x { get; set; }
-        public int y { get; set; }
-        public Vector2 vector { get; set; }
-        public string location { get; set; }
-        public int count { get; set; }
-        public Chest chest { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public Vector2 Tile { get; set; }
+        public string Location { get; set; }
+        public int Count { get; set; }
+        public Chest Chest { get; set; }
 
 
         /*********
@@ -21,53 +21,52 @@ namespace StardewLib
         *********/
         public ChestDef()
         {
-            this.x = -1;
-            this.y = -1;
+            this.X = -1;
+            this.Y = -1;
         }
 
         public ChestDef(int x, int y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
 
-            this.vector = new Vector2(x, y);
+            this.Tile = new Vector2(x, y);
 
-            this.location = "Farm";
+            this.Location = "Farm";
         }
 
         public ChestDef(int x, int y, string location)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
 
-            this.vector = new Vector2(x, y);
+            this.Tile = new Vector2(x, y);
 
-            this.location = location;
+            this.Location = location;
         }
 
         public ChestDef(int x, int y, string location, int count)
         {
-            this.x = x;
-            this.y = y;
-            this.vector = new Vector2(x, y);
-            this.location = location;
-            this.count = count;
+            this.X = x;
+            this.Y = y;
+            this.Tile = new Vector2(x, y);
+            this.Location = location;
+            this.Count = count;
         }
 
         public ChestDef(int x, int y, string location, int count, Chest chest)
         {
-            this.x = x;
-            this.y = y;
-            this.vector = new Vector2(x, y);
-            this.location = location;
-            this.count = count;
-            this.chest = chest;
+            this.X = x;
+            this.Y = y;
+            this.Tile = new Vector2(x, y);
+            this.Location = location;
+            this.Count = count;
+            this.Chest = chest;
         }
 
         public override string ToString()
         {
-            return location + " " + this.vector + " #" + count;
+            return $"{this.Location} {this.Tile} #{this.Count}";
         }
     }
-
 }

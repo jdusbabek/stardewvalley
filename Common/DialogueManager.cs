@@ -62,7 +62,7 @@ namespace StardewLib
 
             if (messagePool == null)
             {
-                messagePool = readDialogue(messageStoreName);
+                messagePool = this.ReadDialogue(messageStoreName);
             }
             else if (messagePool.Count == 0)
             {
@@ -89,7 +89,7 @@ namespace StardewLib
 
             if (messagePool == null)
             {
-                messagePool = readDialogue(messageStoreName);
+                messagePool = this.ReadDialogue(messageStoreName);
             }
             else if (messagePool.Count == 0)
             {
@@ -159,7 +159,7 @@ namespace StardewLib
         /*********
         ** Private methods
         *********/
-        private Dictionary<int, string> readDialogue(string identifier)
+        private Dictionary<int, string> ReadDialogue(string identifier)
         {
             Dictionary<int, string> result = new Dictionary<int, string>();
 
@@ -189,7 +189,7 @@ namespace StardewLib
 
             if (identifier.Equals("smalltalk"))
             {
-                Dictionary<int, string> characterDialog = this.readDialogue(this.Config.WhoChecks);
+                Dictionary<int, string> characterDialog = this.ReadDialogue(this.Config.WhoChecks);
 
                 if (characterDialog.Count > 0)
                 {

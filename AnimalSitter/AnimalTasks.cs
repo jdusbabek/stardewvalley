@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using StardewLib;
 
 namespace ExtremePetting
@@ -11,29 +9,29 @@ namespace ExtremePetting
         /*********
         ** Accessors
         *********/
-        public int animalsPet { get; set; } = 0;
-        public int trufflesHarvested { get; set; } = 0;
-        public int productsHarvested { get; set; } = 0;
-        public int aged { get; set; } = 0;
-        public int fed { get; set; } = 0;
-        public int maxHappiness { get; set; } = 0;
-        public int maxFriendship { get; set; } = 0;
+        public int AnimalsPet { get; set; } = 0;
+        public int TrufflesHarvested { get; set; } = 0;
+        public int ProductsHarvested { get; set; } = 0;
+        public int Aged { get; set; } = 0;
+        public int Fed { get; set; } = 0;
+        public int MaxHappiness { get; set; } = 0;
+        public int MaxFriendship { get; set; } = 0;
 
-        public int numActions { get; set; } = 0;
-        public int totalCost { get; set; } = 0;
+        public int NumActions { get; set; } = 0;
+        public int TotalCost { get; set; } = 0;
 
 
         /*********
         ** Public methods
         *********/
-        public int getTaskCount()
+        public int GetTaskCount()
         {
-            return animalsPet + trufflesHarvested + productsHarvested + aged + fed + maxHappiness + maxFriendship;
+            return this.AnimalsPet + this.TrufflesHarvested + this.ProductsHarvested + this.Aged + this.Fed + this.MaxHappiness + this.MaxFriendship;
         }
 
-        public bool justGathering()
+        public bool JustGathering()
         {
-            return (((animalsPet + aged + fed + maxHappiness + maxFriendship) == 0) && getTaskCount() > 0);
+            return (this.AnimalsPet + this.Aged + this.Fed + this.MaxHappiness + this.MaxFriendship) == 0 && this.GetTaskCount() > 0;
         }
 
         public IDictionary<string, object> GetFields()

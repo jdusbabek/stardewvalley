@@ -16,8 +16,8 @@ namespace SortMyStuff
         /*********
         ** Properties
         *********/
-        private SortMyStuffConfig config;
-        private Keys actionKey;
+        private SortMyStuffConfig Config;
+        private Keys ActionKey;
         private ChestManager ChestManager;
 
 
@@ -26,28 +26,28 @@ namespace SortMyStuff
         *********/
         public override void Entry(params object[] objects)
         {
-            PlayerEvents.LoadedGame += onLoaded;
-            ControlEvents.KeyReleased += onKeyReleased;
+            PlayerEvents.LoadedGame += this.PlayerEvents_OnLoaded;
+            ControlEvents.KeyReleased += this.ControlEvents_KeyReleased;
         }
 
 
         /*********
         ** Private methods
         *********/
-        private void onLoaded(object sender, EventArgs e)
+        private void PlayerEvents_OnLoaded(object sender, EventArgs e)
         {
             try
             {
-                this.config = this.Helper.ReadConfig<SortMyStuffConfig>();
+                this.Config = this.Helper.ReadConfig<SortMyStuffConfig>();
                 this.ChestManager = new ChestManager(this.Monitor);
 
-                if (!Enum.TryParse(config.keybind, true, out this.actionKey))
+                if (!Enum.TryParse(this.Config.keybind, true, out this.ActionKey))
                 {
-                    this.actionKey = Keys.G;
+                    this.ActionKey = Keys.G;
                     this.Monitor.Log("Error parsing key binding. Defaulted to G");
                 }
 
-                ChestManager.ParseChests(config.chests);
+                ChestManager.ParseChests(this.Config.chests);
             }
             catch (Exception ex)
             {
@@ -55,7 +55,7 @@ namespace SortMyStuff
             }
         }
 
-        private void onKeyReleased(object sender, EventArgsKeyPressed e)
+        private void ControlEvents_KeyReleased(object sender, EventArgsKeyPressed e)
         {
             if (Game1.currentLocation == null
                 || (Game1.player == null
@@ -67,7 +67,7 @@ namespace SortMyStuff
                 || Game1.gameMode != 3)
                 return;
 
-            if (e.KeyPressed == actionKey)
+            if (e.KeyPressed == this.ActionKey)
             {
                 this.Monitor.Log("Logging key stroke G!!!", LogLevel.Trace);
                 List<ItemContainer> ic = new List<ItemContainer>();
@@ -96,15 +96,15 @@ namespace SortMyStuff
 
                     foreach (ItemContainer i in ic)
                     {
-                        Item o = i.chest.addItem(i.item);
+                        Item o = i.Chest.addItem(i.Item);
                         if (o == null)
-                            Game1.player.removeItemFromInventory(i.item);
+                            Game1.player.removeItemFromInventory(i.Item);
                         //else
                         //    Game1.player.addItemToInventory(i.item);
                     }
 
 
-                    SortedDictionary<int, ChestDef> bestGuessChests = ChestManager.parseAllChests();
+                    SortedDictionary<int, ChestDef> bestGuessChests = ChestManager.ParseAllChests();
                     string message = "";
                     foreach (KeyValuePair<int, ChestDef> chestDefs in bestGuessChests)
                     {

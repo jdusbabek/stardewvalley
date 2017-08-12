@@ -2,8 +2,8 @@
 {
     internal class MailOrderPigsConfig
     {
-        public string keybind { get; set; } = "PageUp";
-        public bool allowOvercrowding { get; set; }
-        public bool enableLogging { get; set; }
+        public string KeyBind { get; set; } = "PageUp";
+        public bool AllowOvercrowding { get; set; }
+        public bool EnableLogging { get; set; }
     }
 }

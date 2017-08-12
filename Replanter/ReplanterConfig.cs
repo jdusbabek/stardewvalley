@@ -5,39 +5,39 @@ namespace Replanter
 {
     internal class ReplanterConfig : IConfig
     {
-        public string keybind { get; set; } = "J";
+        public string KeyBind { get; set; } = "J";
 
-        public bool free { get; set; }
+        public bool Free { get; set; }
 
-        public int seedDiscount { get; set; }
+        public int SeedDiscount { get; set; }
 
         public string WhoChecks { get; set; } = "spouse";
 
-        public bool enableMessages { get; set; } = true;
+        public bool EnableMessages { get; set; } = true;
 
         // If negative, don't add to inventory.
-        public float costPerCropHarvested { get; set; } = 0.5f;
+        public float CostPerCropHarvested { get; set; } = 0.5f;
 
-        public bool sellHarvestedCropsImmediately { get; set; }
+        public bool SellHarvestedCropsImmediately { get; set; }
 
-        public bool waterCrops { get; set; }
+        public bool WaterCrops { get; set; }
 
-        public string ignoreList { get; set; } = "591|593|595|597|376";
+        public string IgnoreList { get; set; } = "591|593|595|597|376";
 
-        public string alwaysSellList { get; set; } = "";
+        public string AlwaysSellList { get; set; } = "";
 
-        public string neverSellList { get; set; } = "";
+        public string NeverSellList { get; set; } = "";
 
         // The X, Y coordinates of a chest, into which surplus items can be deposited.  The farmers inventory will be tried first, unless bypassInventory is true.
-        public Vector2 chestCoords { get; set; } = new Vector2(70f, 14f);
+        public Vector2 ChestCoords { get; set; } = new Vector2(70f, 14f);
 
         // Whether to bypass the user's inventory and try depositing to the chest first.  Will fall back to the inventory if no chest is present.
-        public bool bypassInventory { get; set; }
+        public bool BypassInventory { get; set; }
 
-        public string chestDefs { get; set; } = "613,70,14|643,73,14";
+        public string ChestDefs { get; set; } = "613,70,14|643,73,14";
 
-        public bool clearDeadPlants { get; set; } = true;
+        public bool ClearDeadPlants { get; set; } = true;
 
-        public bool smartReplantingEnabled { get; set; } = true;
+        public bool SmartReplantingEnabled { get; set; } = true;
     }
 }

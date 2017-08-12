@@ -8,8 +8,8 @@ namespace SortMyStuff
         /*********
         ** Accessors
         *********/
-        public Chest chest { get; set; }
-        public Item item { get; set; }
+        public Chest Chest { get; set; }
+        public Item Item { get; set; }
 
 
         /*********
@@ -17,10 +17,10 @@ namespace SortMyStuff
         *********/
         public ItemContainer() { }
 
-        public ItemContainer(Chest c, Item i)
+        public ItemContainer(Chest chest, Item item)
         {
-            chest = c;
-            item = i;
+            this.Chest = chest;
+            this.Item = item;
         }
     }
 }
