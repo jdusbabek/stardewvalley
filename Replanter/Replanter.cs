@@ -147,14 +147,7 @@ namespace Replanter
 
         private void ControlEvents_KeyReleased(object sender, EventArgsKeyPressed e)
         {
-            if (Game1.currentLocation == null
-                || (Game1.player == null
-                || Game1.hasLoadedGame == false)
-                || ((Game1.player).UsingTool
-                || !(Game1.player).CanMove
-                || (Game1.activeClickableMenu != null
-                || Game1.CurrentEvent != null))
-                || Game1.gameMode != 3)
+            if (!Context.IsPlayerFree)
                 return;
 
             if (e.KeyPressed == this.ActionKey)

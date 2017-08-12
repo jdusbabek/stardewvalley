@@ -175,14 +175,7 @@ namespace PointAndPlant
 
         private void ControlEvents_KeyReleased(object sender, EventArgsKeyPressed e)
         {
-            if (Game1.currentLocation == null
-                || (Game1.player == null
-                || Game1.hasLoadedGame == false)
-                || ((Game1.player).UsingTool
-                || !(Game1.player).CanMove
-                || (Game1.activeClickableMenu != null
-                || Game1.CurrentEvent != null))
-                || Game1.gameMode != 3)
+            if (!Context.IsPlayerFree)
                 return;
 
             if (Game1.hasLoadedGame)
@@ -617,21 +610,11 @@ namespace PointAndPlant
                 if (this.BuildingTiles == null)
                     this.BuildingTiles = this.Helper.Content.Load<Texture2D>("LooseSprites\\buildingPlacementTiles", ContentSource.GameContent);
 
-                KeyboardState keyboard = Keyboard.GetState();
+                if (!Context.IsPlayerFree)
+                    return;
 
-                if ((!keyboard.IsKeyDown(this.GrassKey) &&
-                    !keyboard.IsKeyDown(this.PlowKey) &&
-                    !keyboard.IsKeyDown(this.PlantKey) &&
-                    !keyboard.IsKeyDown(this.GrowKey) &&
-                    !keyboard.IsKeyDown(this.HarvestKey)) ||
-                    Game1.currentLocation == null ||
-                    (Game1.player == null ||
-                    Game1.hasLoadedGame == false) ||
-                    ((Game1.player).UsingTool ||
-                    !(Game1.player).CanMove ||
-                    (Game1.activeClickableMenu != null ||
-                    Game1.CurrentEvent != null)) ||
-                    Game1.gameMode != 3)
+                KeyboardState keyboard = Keyboard.GetState();
+                if (!keyboard.IsKeyDown(this.GrassKey) && !keyboard.IsKeyDown(this.PlowKey) && !keyboard.IsKeyDown(this.PlantKey) && !keyboard.IsKeyDown(this.GrowKey) && !keyboard.IsKeyDown(this.HarvestKey))
                     return;
 
                 this.MouseX = Game1.getMouseX() + @Game1.viewport.X;
