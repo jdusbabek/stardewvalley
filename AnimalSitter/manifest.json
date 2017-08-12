@@ -7,6 +7,7 @@
     "PatchVersion": 9,
     "Build": null
   },
+  "MinimumApiVersion": "1.15",
   "Description": "Let someone else pet all those pesky animals!",
   "UniqueID": "jwdred.AnimalSitter",
   "EntryDll": "AnimalSitter.dll"

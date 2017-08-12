@@ -7,6 +7,7 @@
     "PatchVersion": 3,
     "Build": null
   },
+  "MinimumApiVersion": "1.15",
   "Description": "Plant and harvest from the comfort of your front porch!",
   "UniqueID": "jwdred.PointAndPlant",
   "EntryDll": "PointAndPlant.dll"
