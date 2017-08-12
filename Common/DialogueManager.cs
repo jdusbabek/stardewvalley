@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -34,23 +35,18 @@ namespace StardewLib
          */
         public string PerformReplacement(string message, IStats stats, IConfig config)
         {
-            string retVal = message;
+            string newText = message;
 
+            // get fields
             IDictionary<string, object> fields = stats.GetFields();
+            fields["checker"] = config.WhoChecks;
+            fields["spouse"] = Game1.player.isMarried() ? Game1.player.getSpouse().getName() : config.WhoChecks;
 
-
+            // replace tokens
             foreach (var field in fields)
-            {
-                retVal = retVal.Replace(("%%" + field.Key + "%%"), field.Value.ToString());
-            }
+                newText = Regex.Replace(newText, Regex.Escape($"%%{field.Key}%%"), field.Value.ToString(), RegexOptions.IgnoreCase); // case-insensitive token replace
 
-            retVal = retVal.Replace("%%checker%%", config.WhoChecks);
-            if (Game1.player.isMarried())
-                retVal = retVal.Replace("%%spouse%%", Game1.player.getSpouse().getName());
-            else
-                retVal = retVal.Replace("%%spouse%%", config.WhoChecks);
-
-            return retVal;
+            return newText;
         }
 
         public string GetRandomMessage(string messageStoreName)
