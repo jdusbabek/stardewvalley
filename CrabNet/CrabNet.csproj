@@ -34,12 +34,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrabNetConfig.cs" />
-    <Compile Include="CrabNetStats.cs" />
-    <Compile Include="CrabNet\CrabNet.cs" />
+    <Compile Include="CrabNet.cs" />
+    <Compile Include="Framework\ModConfig.cs" />
+    <Compile Include="Framework\CrabNetStats.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\dialog.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\dialog.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="..\Common\Common.projitems" Label="Shared" />

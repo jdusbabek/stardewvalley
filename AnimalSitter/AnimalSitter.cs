@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AnimalSitter.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using StardewLib;
@@ -12,7 +13,7 @@ using StardewValley.Objects;
 using Object = StardewValley.Object;
 using SFarmer = StardewValley.Farmer;
 
-namespace ExtremePetting
+namespace AnimalSitter
 {
     public class AnimalSitter : Mod
     {
@@ -66,7 +67,7 @@ namespace ExtremePetting
         // How many days the farmer has not been able to afford to pay the laborer.
         private int ShortDays;
 
-        private AnimalSitterConfig Config;
+        private ModConfig Config;
 
         private DialogueManager DialogueManager;
 
@@ -80,7 +81,7 @@ namespace ExtremePetting
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            this.Config = this.Helper.ReadConfig<AnimalSitterConfig>();
+            this.Config = this.Helper.ReadConfig<ModConfig>();
             this.DialogueManager = new DialogueManager(this.Config, helper.Content, this.Monitor);
             this.ChestManager = new ChestManager(this.Monitor);
 
@@ -280,7 +281,7 @@ namespace ExtremePetting
                 this.Monitor.Log("There's nothing to do for the animals right now.", LogLevel.Trace);
             }
         }
-        
+
         private void HarvestTruffles(AnimalTasks stats)
         {
             Farm farm = Game1.getFarm();
@@ -475,16 +476,16 @@ namespace ExtremePetting
                 {
                     if (Game1.player.isMarried())
                     {
-                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(1, "Xdialog"), stats, this.Config);
+                        message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetMessageAt(1, "Xdialog"), stats, this.Config);
                     }
                     else
                     {
-                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(2, "Xdialog"), stats, this.Config);
+                        message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetMessageAt(2, "Xdialog"), stats, this.Config);
                     }
 
                     if (totalCost > 0 && this.CostPerAnimal > 0)
                     {
-                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(3, "Xdialog"), stats, this.Config);
+                        message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetMessageAt(3, "Xdialog"), stats, this.Config);
                     }
 
                     HUDMessage msg = new HUDMessage(message);
@@ -492,11 +493,11 @@ namespace ExtremePetting
                 }
                 else if (gatheringOnly)
                 {
-                    message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(4, "Xdialog"), stats, this.Config);
+                    message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetMessageAt(4, "Xdialog"), stats, this.Config);
 
                     if (totalCost > 0 && this.CostPerAnimal > 0)
                     {
-                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(3, "Xdialog"), stats, this.Config);
+                        message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetMessageAt(3, "Xdialog"), stats, this.Config);
                     }
 
                     HUDMessage msg = new HUDMessage(message);
@@ -520,19 +521,19 @@ namespace ExtremePetting
                             spouseName = Game1.player.getSpouse().getName();
                         }
 
-                        message += DialogueManager.PerformReplacement(DialogueManager.GetRandomMessage("greeting"), stats, this.Config);
-                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(5, "Xdialog"), stats, this.Config);
+                        message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetRandomMessage("greeting"), stats, this.Config);
+                        message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetMessageAt(5, "Xdialog"), stats, this.Config);
 
                         if (this.CostPerAnimal > 0)
                         {
                             if (doesPlayerHaveEnoughCash)
                             {
-                                message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(6, "Xdialog"), stats, this.Config);
+                                message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetMessageAt(6, "Xdialog"), stats, this.Config);
                                 this.ShortDays = 0;
                             }
                             else
                             {
-                                message += DialogueManager.PerformReplacement(DialogueManager.GetRandomMessage("unfinishedmoney"), stats, this.Config);
+                                message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetRandomMessage("unfinishedmoney"), stats, this.Config);
                             }
                         }
                         else
@@ -541,7 +542,7 @@ namespace ExtremePetting
                             //message += portrait + "#$e#";
                         }
 
-                        message += DialogueManager.PerformReplacement(DialogueManager.GetRandomMessage("smalltalk"), stats, this.Config);
+                        message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetRandomMessage("smalltalk"), stats, this.Config);
                         message += portrait + "#$e#";
 
                         character.CurrentDialogue.Push(new Dialogue(message, character));
@@ -550,7 +551,7 @@ namespace ExtremePetting
                     else
                     {
                         //message += checker + " has performed " + numActions + " for your animals.";
-                        message += DialogueManager.PerformReplacement(DialogueManager.GetMessageAt(7, "Xdialog"), stats, this.Config);
+                        message += this.DialogueManager.PerformReplacement(this.DialogueManager.GetMessageAt(7, "Xdialog"), stats, this.Config);
                         HUDMessage msg = new HUDMessage(message);
                         Game1.addHUDMessage(msg);
                     }

@@ -114,7 +114,7 @@ namespace StardewLib
             //Dictionary<int, string> objects = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
             try
             {
-                this.AllMessages = this.Content.Load<Dictionary<string, string>>("dialog");
+                this.AllMessages = this.Content.Load<Dictionary<string, string>>("assets/dialog");
             }
             catch (Exception ex)
             {

@@ -34,12 +34,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PAPSickle.cs" />
-    <Compile Include="PAPConfig.cs" />
-    <Compile Include="PointAndPlant\PointAndPlant.cs" />
+    <Compile Include="Framework\ModSickle.cs" />
+    <Compile Include="Framework\ModConfig.cs" />
+    <Compile Include="PointAndPlant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="manifest.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

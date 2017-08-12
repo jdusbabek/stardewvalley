@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using SortMyStuff.Framework;
 using StardewLib;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -16,7 +17,7 @@ namespace SortMyStuff
         /*********
         ** Properties
         *********/
-        private SortMyStuffConfig Config;
+        private ModConfig Config;
         private Keys ActionKey;
         private ChestManager ChestManager;
 
@@ -40,16 +41,16 @@ namespace SortMyStuff
         {
             try
             {
-                this.Config = this.Helper.ReadConfig<SortMyStuffConfig>();
+                this.Config = this.Helper.ReadConfig<ModConfig>();
                 this.ChestManager = new ChestManager(this.Monitor);
 
-                if (!Enum.TryParse(this.Config.keybind, true, out this.ActionKey))
+                if (!Enum.TryParse(this.Config.Keybind, true, out this.ActionKey))
                 {
                     this.ActionKey = Keys.G;
                     this.Monitor.Log("Error parsing key binding. Defaulted to G");
                 }
 
-                ChestManager.ParseChests(this.Config.chests);
+                ChestManager.ParseChests(this.Config.Chests);
             }
             catch (Exception ex)
             {

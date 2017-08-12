@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Replanter",
+  "Authour": "jwdred",
+  "Version": {
+    "MajorVersion": 1,
+    "MinorVersion": 0,
+    "PatchVersion": 3,
+    "Build": ""
+  },
+  "Description": "Harvest and replant fields that are ready.",
+  "UniqueID": "",
+  "PerSaveConfigs": false,
+  "EntryDll": "Replanter.dll"
+}

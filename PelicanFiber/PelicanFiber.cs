@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using PelicanFiber.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Menus;
 
 namespace PelicanFiber
 {
@@ -15,7 +15,7 @@ namespace PelicanFiber
         *********/
         private Keys MenuKey = Keys.PageDown;
         private Texture2D Websites;
-        private PelicanFiberConfig Config;
+        private ModConfig Config;
         private bool Unfiltered = true;
         private ItemUtils ItemUtils;
 
@@ -28,7 +28,7 @@ namespace PelicanFiber
         public override void Entry(IModHelper helper)
         {
             // load config
-            this.Config = this.Helper.ReadConfig<PelicanFiberConfig>();
+            this.Config = this.Helper.ReadConfig<ModConfig>();
             if (!Enum.TryParse(this.Config.KeyBind, true, out this.MenuKey))
             {
                 this.MenuKey = Keys.PageDown;

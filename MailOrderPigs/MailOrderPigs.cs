@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using MailOrderPigs.Framework;
 using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Menus;
 using Object = StardewValley.Object;
 
 namespace MailOrderPigs
@@ -15,7 +15,7 @@ namespace MailOrderPigs
         ** Properties
         *********/
         private Keys MenuKey = Keys.PageUp;
-        private MailOrderPigsConfig Config;
+        private ModConfig Config;
         private bool AllowOvercrowding = false;
         private bool EnableLogging = false;
 
@@ -39,7 +39,7 @@ namespace MailOrderPigs
         {
             try
             {
-                this.Config = this.Helper.ReadConfig<MailOrderPigsConfig>();
+                this.Config = this.Helper.ReadConfig<ModConfig>();
 
                 if (!Enum.TryParse(this.Config.KeyBind, true, out this.MenuKey))
                 {
