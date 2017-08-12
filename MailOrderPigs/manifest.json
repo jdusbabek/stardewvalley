@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Mail Order Pigs",
+  "Author": "jwdred",
+  "Version": {
+    "MajorVersion": 1,
+    "MinorVersion": 0,
+    "PatchVersion": 2,
+    "Build": null
+  },
+  "MinimumApiVersion": "1.15",
+  "Description": "Order animals over the internet!",
+  "UniqueID": "jwdred.MailOrderPigs",
+  "EntryDll": "MailOrderPigs.dll"
+}

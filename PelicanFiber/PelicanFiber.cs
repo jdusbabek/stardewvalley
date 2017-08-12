@@ -1,124 +1,98 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StardewLib;
-using StardewValley;
-using StardewModdingAPI;
-using Microsoft.Xna.Framework.Input;
-using StardewModdingAPI.Events;
-using StardewValley.Menus;
-using Object = StardewValley.Object;
-using Log = StardewLib.Log;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using PelicanFiber.Framework;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
 
 namespace PelicanFiber
 {
     public class PelicanFiber : Mod
     {
-        private static Keys menuKey = Keys.PageDown;
-        public static LocalizedContentManager content;
-        public static Texture2D websites;
-        public static PelicanFiberConfig config;
+        /*********
+        ** Properties
+        *********/
+        private Keys MenuKey = Keys.PageDown;
+        private Texture2D Websites;
+        private ModConfig Config;
+        private bool Unfiltered = true;
+        private ItemUtils ItemUtils;
 
-        public bool unfiltered = true;
-        public static bool giveAchievements = false;
 
-
-        public override void Entry(params object[] objects)
+        /*********
+        ** Public methods
+        *********/
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
+        public override void Entry(IModHelper helper)
         {
-            PlayerEvents.LoadedGame += onLoaded;
-            ControlEvents.KeyReleased += onKeyReleased;
-        }
-
-        private void onLoaded(object sender, EventArgs e)
-        {
-            PelicanFiber.config = (PelicanFiberConfig)ConfigExtensions.InitializeConfig<PelicanFiberConfig>(new PelicanFiberConfig(), this.BaseConfigPath);
-
-            if (!Enum.TryParse<Keys>(config.keybind, true, out PelicanFiber.menuKey))
+            // load config
+            this.Config = this.Helper.ReadConfig<ModConfig>();
+            if (!Enum.TryParse(this.Config.KeyBind, true, out this.MenuKey))
             {
-                PelicanFiber.menuKey = Keys.PageDown;
-                Log.force_ERROR((object)"[PelicanFiber] 404 Not Found: Error parsing key binding. Defaulted to Page Down");
+                this.MenuKey = Keys.PageDown;
+                this.Monitor.Log("404 Not Found: Error parsing key binding. Defaulted to Page Down");
             }
+            this.Unfiltered = !this.Config.InternetFilter;
 
-            this.unfiltered = !config.internetFilter;
-            PelicanFiber.giveAchievements = config.giveAchievements;
-
+            // load textures
             try
             {
-                PelicanFiber.content = new LocalizedContentManager(Game1.content.ServiceProvider, this.PathOnDisk);
-                PelicanFiber.websites = PelicanFiber.content.Load<Texture2D>("websites");
+                this.Websites = helper.Content.Load<Texture2D>("assets/websites.png");
             }
             catch (Exception ex)
             {
-                Log.force_ERROR("[PelicanFiber] 400 Bad Request: Could not load image content. " + ex.ToString());
+                this.Monitor.Log($"400 Bad Request: Could not load image content. {ex}", LogLevel.Error);
             }
-            
+
+            // load utils
+            this.ItemUtils = new ItemUtils(helper.Content, this.Monitor);
+
+            // hook events
+            ControlEvents.KeyReleased += this.ControlEvents_OnKeyReleased;
         }
 
-        private void onKeyReleased(object sender, EventArgsKeyPressed e)
-        {
-            if (Game1.currentLocation == null
-                || (Game1.player == null
-                || Game1.hasLoadedGame == false)
-                || (((Farmer)Game1.player).UsingTool
-                || !((Farmer)Game1.player).CanMove
-                || (Game1.activeClickableMenu != null
-                || Game1.CurrentEvent != null))
-                || Game1.gameMode != 3)
-            {
-                return;
-            }
 
-            if (e.KeyPressed == PelicanFiber.menuKey)
+        /*********
+        ** Private methods
+        *********/
+        private void ControlEvents_OnKeyReleased(object sender, EventArgsKeyPressed e)
+        {
+            if (!Context.IsPlayerFree)
+                return;
+
+            if (e.KeyPressed == this.MenuKey)
             {
                 try
                 {
                     float scale = 1.0f;
                     if (Game1.viewport.Height < 1325)
-                        scale = (float)(Game1.viewport.Height) / 1325f;
+                        scale = Game1.viewport.Height / 1325f;
 
-                    Game1.activeClickableMenu = new PelicanFiberMenu(scale, unfiltered);
+                    Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Config.GiveAchievements, this.ShowMainMenu, scale, this.Unfiltered);
                 }
                 catch (Exception ex)
                 {
-                    Log.force_ERROR("[PelicanFiber] 500 Internal Error: " + ex.ToString());
+                    this.Monitor.Log($"500 Internal Error: {ex}", LogLevel.Error);
                 }
-                
             }
         }
 
-        public static void showTheMenu()
+        private void ShowMainMenu()
         {
             try
             {
                 float scale = 1.0f;
                 if (Game1.viewport.Height < 1325)
-                    scale = (float)(Game1.viewport.Height) / 1325f;
+                    scale = Game1.viewport.Height / 1325f;
 
-                Game1.activeClickableMenu = new PelicanFiberMenu(scale, !config.internetFilter);
+                Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Config.GiveAchievements, this.ShowMainMenu, scale, !this.Config.InternetFilter);
             }
             catch (Exception ex)
             {
-                Log.force_ERROR("[PelicanFiber] 500 Internal Error: " + ex.ToString());
+                this.Monitor.Log($"500 Internal Error: {ex}", LogLevel.Error);
             }
         }
-
-        public static MailOrderPigMenu getMailOrderPigMenu()
-        {
-            return new MailOrderPigMenu(ItemUtils.getPurchaseAnimalStock());
-        }
-
-        public static BuyAnimalMenu getBuyAnimalMenu()
-        {
-            return new BuyAnimalMenu(Utility.getPurchaseAnimalStock());
-        }
-
-        public static ConstructionMenu getConstructionMenu(bool magical)
-        {
-            return new ConstructionMenu(magical);
-        }
-
     }
 }

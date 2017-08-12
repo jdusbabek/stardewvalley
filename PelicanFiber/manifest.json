@@ -1,0 +1,14 @@
+﻿{
+  "Name": "PelicanFiber",
+  "Author": "jwdred",
+  "Version": {
+    "MajorVersion": 3,
+    "MinorVersion": 0,
+    "PatchVersion": 1,
+    "Build": null
+  },
+  "MinimumApiVersion": "1.15",
+  "Description": "Order stuff over the internet, and save all kinds of money!",
+  "UniqueID": "jwdred.PelicanFiber",
+  "EntryDll": "PelicanFiber.dll"
+}
