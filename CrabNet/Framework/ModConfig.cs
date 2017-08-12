@@ -9,7 +9,7 @@ namespace CrabNet.Framework
         public string KeyBind { get; set; } = "H";
 
         // Whether or not logging is enabled.  If set to true, then debugging log entries will be output to the SMAPI console.
-        public bool EnableLogging { get; set; } = true;
+        public bool EnableLogging { get; set; }
 
         // This overrides all cost settings.  If this is set to true, there will be no costs associated with using the command.
         public bool Free { get; set; }
