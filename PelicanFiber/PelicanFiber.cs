@@ -39,7 +39,7 @@ namespace PelicanFiber
             // load textures
             try
             {
-                this.Websites = helper.Content.Load<Texture2D>("websites");
+                this.Websites = helper.Content.Load<Texture2D>("assets/websites.png");
             }
             catch (Exception ex)
             {
