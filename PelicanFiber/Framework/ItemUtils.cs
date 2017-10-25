@@ -564,7 +564,7 @@ namespace PelicanFiber.Framework
         public List<Item> GetJunimoStock()
         {
             List<Item> junimoItems = new List<Item>();
-            Dictionary<int, string> junContent = this.Content.Load<Dictionary<int, string>>("bundles");
+            Dictionary<int, string> junContent = this.Content.Load<Dictionary<int, string>>("assets\\bundles");
             Dictionary<int, bool[]> bundleInfo = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).bundles;
             this.BundleToAreaDictionary = new Dictionary<int, int>();
 
