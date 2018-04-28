@@ -34,22 +34,24 @@ namespace PelicanFiber.Framework
         private int PriceOfAnimal;
         private readonly ItemUtils ItemUtils;
         private readonly Action ShowMainMenu;
+        private readonly Func<long> GetNewId;
 
 
         /*********
         ** Public methods
         *********/
-        public MailOrderPigMenu(List<Object> stock, ItemUtils itemUtils, Action showMainMenu)
+        public MailOrderPigMenu(List<Object> stock, ItemUtils itemUtils, Action showMainMenu, Func<long> getNewId)
           : base(Game1.viewport.Width / 2 - MailOrderPigMenu.MenuWidth / 2 - IClickableMenu.borderWidth * 2, Game1.viewport.Height / 2 - MailOrderPigMenu.MenuHeight - IClickableMenu.borderWidth * 2, MailOrderPigMenu.MenuWidth + IClickableMenu.borderWidth * 2, MailOrderPigMenu.MenuHeight + IClickableMenu.borderWidth)
         {
             this.ItemUtils = itemUtils;
             this.ShowMainMenu = showMainMenu;
+            this.GetNewId = getNewId;
 
             this.height += Game1.tileSize;
             for (int index = 0; index < stock.Count; ++index)
             {
                 List<ClickableTextureComponent> animalsToPurchase = this.AnimalsToPurchase;
-                ClickableTextureComponent textureComponent1 = new ClickableTextureComponent(string.Concat(stock[index].salePrice()), new Rectangle(this.xPositionOnScreen + IClickableMenu.borderWidth + index % 3 * Game1.tileSize * 2, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth / 2 + index / 3 * (Game1.tileSize + Game1.tileSize / 3), Game1.tileSize * 2, Game1.tileSize), null, stock[index].Name, Game1.mouseCursors, new Rectangle(index % 3 * 16 * 2, 448 + index / 3 * 16, 32, 16), 4f, stock[index].type == null);
+                ClickableTextureComponent textureComponent1 = new ClickableTextureComponent(string.Concat(stock[index].salePrice()), new Rectangle(this.xPositionOnScreen + IClickableMenu.borderWidth + index % 3 * Game1.tileSize * 2, this.yPositionOnScreen + IClickableMenu.spaceToClearTopBorder + IClickableMenu.borderWidth / 2 + index / 3 * (Game1.tileSize + Game1.tileSize / 3), Game1.tileSize * 2, Game1.tileSize), null, stock[index].Name, Game1.mouseCursors, new Rectangle(index % 3 * 16 * 2, 448 + index / 3 * 16, 32, 16), 4f, stock[index].Type == null);
                 textureComponent1.item = stock[index];
                 ClickableTextureComponent textureComponent2 = textureComponent1;
                 animalsToPurchase.Add(textureComponent2);
@@ -103,7 +105,7 @@ namespace PelicanFiber.Framework
 
                 if (this.DoneNamingButton.containsPoint(x, y))
                 {
-                    this.AnimalBeingPurchased.name = this.TextBox.Text;
+                    this.AnimalBeingPurchased.Name = this.TextBox.Text;
                     this.TextBoxEnter(this.TextBox);
                     Game1.playSound("smallSelect");
                 }
@@ -111,8 +113,8 @@ namespace PelicanFiber.Framework
                 {
                     if (this.RandomButton.containsPoint(x, y))
                     {
-                        this.AnimalBeingPurchased.name = Dialogue.randomName();
-                        this.TextBox.Text = this.AnimalBeingPurchased.name;
+                        this.AnimalBeingPurchased.Name = Dialogue.randomName();
+                        this.TextBox.Text = this.AnimalBeingPurchased.Name;
                         this.RandomButton.scale = this.RandomButton.baseScale;
                         Game1.playSound("drumkit6");
                     }
@@ -121,7 +123,7 @@ namespace PelicanFiber.Framework
 
             foreach (ClickableTextureComponent textureComponent in this.AnimalsToPurchase)
             {
-                if (textureComponent.containsPoint(x, y) && (textureComponent.item as Object).type == null)
+                if (textureComponent.containsPoint(x, y) && ((Object)textureComponent.item).Type == null)
                 {
                     int int32 = Convert.ToInt32(textureComponent.name);
                     if (Game1.player.money >= int32)
@@ -130,7 +132,7 @@ namespace PelicanFiber.Framework
                         //Game1.globalFadeToBlack(new Game1.afterFadeFunction(this.setUpForAnimalPlacement), 0.02f);
                         Game1.playSound("smallSelect");
                         //this.onFarm = true;
-                        this.AnimalBeingPurchased = new FarmAnimal(textureComponent.hoverText, MultiplayerUtility.getNewID(), Game1.player.uniqueMultiplayerID);
+                        this.AnimalBeingPurchased = new FarmAnimal(textureComponent.hoverText, this.GetNewId(), Game1.player.UniqueMultiplayerID);
                         this.PriceOfAnimal = int32;
 
                         //this.newAnimalHome = ((AnimalHouse)Game1.player.currentLocation).getBuilding();
@@ -219,7 +221,7 @@ namespace PelicanFiber.Framework
                 Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true);
                 Game1.dayTimeMoneyBox.drawMoneyBox(b);
                 foreach (ClickableTextureComponent textureComponent in this.AnimalsToPurchase)
-                    textureComponent.draw(b, (textureComponent.item as Object).type != null ? Color.Black * 0.4f : Color.White, 0.87f);
+                    textureComponent.draw(b, ((Object)textureComponent.item).Type != null ? Color.Black * 0.4f : Color.White, 0.87f);
 
                 this.BackButton.draw(b);
             }
@@ -238,9 +240,9 @@ namespace PelicanFiber.Framework
 
             if (this.Hovered != null)
             {
-                if ((this.Hovered.item as Object).type != null)
+                if (((Object)this.Hovered.item).Type != null)
                 {
-                    IClickableMenu.drawHoverText(b, Game1.parseText((this.Hovered.item as Object).type, Game1.dialogueFont, Game1.tileSize * 5), Game1.dialogueFont);
+                    IClickableMenu.drawHoverText(b, Game1.parseText(((Object)this.Hovered.item).Type, Game1.dialogueFont, Game1.tileSize * 5), Game1.dialogueFont);
                 }
                 else
                 {
@@ -276,13 +278,13 @@ namespace PelicanFiber.Framework
                 {
                     this.NewAnimalHome = ((AnimalHouse)Game1.player.currentLocation).getBuilding();
                     this.TextBox.OnEnterPressed -= this.TextBoxEvent;
-                    this.AnimalBeingPurchased.name = sender.Text;
+                    this.AnimalBeingPurchased.Name = sender.Text;
                     //StardewLib.Log.ERROR("Named Animal: " + sender.Text);
                     this.AnimalBeingPurchased.home = ((AnimalHouse)Game1.player.currentLocation).getBuilding();
-                    this.AnimalBeingPurchased.homeLocation = new Vector2(this.NewAnimalHome.tileX, this.NewAnimalHome.tileY);
-                    this.AnimalBeingPurchased.setRandomPosition(this.AnimalBeingPurchased.home.indoors);
-                    (this.NewAnimalHome.indoors as AnimalHouse).animals.Add(this.AnimalBeingPurchased.myID, this.AnimalBeingPurchased);
-                    (this.NewAnimalHome.indoors as AnimalHouse).animalsThatLiveHere.Add(this.AnimalBeingPurchased.myID);
+                    this.AnimalBeingPurchased.homeLocation.Value = new Vector2(this.NewAnimalHome.tileX.Value, this.NewAnimalHome.tileY.Value);
+                    this.AnimalBeingPurchased.setRandomPosition(this.AnimalBeingPurchased.home.indoors.Value);
+                    ((AnimalHouse)this.NewAnimalHome.indoors.Value).animals.Add(this.AnimalBeingPurchased.myID.Value, this.AnimalBeingPurchased);
+                    ((AnimalHouse)this.NewAnimalHome.indoors.Value).animalsThatLiveHere.Add(this.AnimalBeingPurchased.myID.Value);
                     this.NewAnimalHome = null;
                     Game1.player.money -= this.PriceOfAnimal;
                     this.NamingAnimal = false;
@@ -319,7 +321,7 @@ namespace PelicanFiber.Framework
             Game1.player.forceCanMove();
             this.Freeze = false;
 
-            Game1.activeClickableMenu = new MailOrderPigMenu(this.ItemUtils.GetPurchaseAnimalStock(), this.ItemUtils, this.ShowMainMenu);
+            Game1.activeClickableMenu = new MailOrderPigMenu(this.ItemUtils.GetPurchaseAnimalStock(), this.ItemUtils, this.ShowMainMenu, this.GetNewId);
         }
 
         private void BackButtonPressed()

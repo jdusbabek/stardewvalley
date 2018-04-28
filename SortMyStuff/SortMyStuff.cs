@@ -73,13 +73,13 @@ namespace SortMyStuff
                     {
                         if (item != null)
                         {
-                            this.Monitor.Log($"{item.Name}/{item.parentSheetIndex}", LogLevel.Trace);
-                            Object c = ChestManager.GetChest(item.parentSheetIndex);
+                            this.Monitor.Log($"{item.Name}/{item.ParentSheetIndex}", LogLevel.Trace);
+                            Object c = ChestManager.GetChest(item.ParentSheetIndex);
                             if (c is Chest)
                                 ic.Add(new ItemContainer((Chest)c, item));
                             else
                             {
-                                c = (Chest)ChestManager.GetChest(item.category);
+                                c = (Chest)ChestManager.GetChest(item.Category);
                                 if (c is Chest)
                                     ic.Add(new ItemContainer((Chest)c, item));
                             }

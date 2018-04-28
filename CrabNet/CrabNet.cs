@@ -8,6 +8,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Objects;
+using SObject = StardewValley.Object;
 using SFarmer = StardewValley.Farmer;
 
 namespace CrabNet
@@ -123,7 +124,7 @@ namespace CrabNet
             else
                 this.BaitChoice = 685;
 
-            this.BaitCost = new StardewValley.Object(this.BaitChoice, 1).Price;
+            this.BaitCost = new SObject(this.BaitChoice, 1).Price;
             this.ChargeForBait = this.Config.ChargeForBait;
             this.CostPerCheck = Math.Max(0, this.Config.CostPerCheck);
             this.CostPerEmpty = Math.Max(0, this.Config.CostPerEmpty);
@@ -164,9 +165,9 @@ namespace CrabNet
 
             foreach (GameLocation location in Game1.locations)
             {
-                if (location.isOutdoors)
+                if (location.IsOutdoors)
                 {
-                    foreach (StardewValley.Object obj in location.Objects.Values)
+                    foreach (SObject obj in location.Objects.Values)
                     {
                         if (obj.Name == "Crab Pot")
                         {
@@ -184,7 +185,7 @@ namespace CrabNet
 
                             CrabPot pot = (CrabPot)obj;
 
-                            if (pot.heldObject != null && pot.heldObject.category != -21)
+                            if (pot.heldObject.Value != null && pot.heldObject.Value.Category != -21)
                             {
                                 if (!this.Free && !this.CanAfford(Game1.player, this.CostPerEmpty, stats) && !this.AllowFreebies)
                                 {
@@ -204,9 +205,9 @@ namespace CrabNet
                                 stats.NothingToRetrieve++;
                             }
 
-                            if (pot.bait == null && pot.heldObject == null && !Game1.player.professions.Contains(11))
+                            if (pot.bait.Value == null && pot.heldObject.Value == null && !Game1.player.professions.Contains(11))
                             {
-                                StardewValley.Object b = new StardewValley.Object(this.BaitChoice, 1);
+                                SObject b = new SObject(this.BaitChoice, 1);
 
                                 if (!this.Free && !this.CanAfford(Game1.player, this.BaitCost, stats) && !this.AllowFreebies && this.ChargeForBait)
                                 {
@@ -266,23 +267,23 @@ namespace CrabNet
 
             if (pot.tileIndexToShow == 714)
             {
-                if (farmer.IsMainPlayer && !this.AddItemToInventory(pot.heldObject, farmer, Game1.getFarm()))
+                if (farmer.IsMainPlayer && !this.AddItemToInventory(pot.heldObject.Value, farmer, Game1.getFarm()))
                 {
                     Game1.addHUDMessage(new HUDMessage("Inventory Full", Color.Red, 3500f));
                     return false;
                 }
                 Dictionary<int, string> dictionary = this.Helper.Content.Load<Dictionary<int, string>>("Data\\Fish", ContentSource.GameContent);
-                if (dictionary.ContainsKey(pot.heldObject.parentSheetIndex))
+                if (dictionary.ContainsKey(pot.heldObject.Value.ParentSheetIndex))
                 {
-                    string[] strArray = dictionary[pot.heldObject.parentSheetIndex].Split('/');
+                    string[] strArray = dictionary[pot.heldObject.Value.ParentSheetIndex].Split('/');
                     int minValue = strArray.Length > 5 ? Convert.ToInt32(strArray[5]) : 1;
                     int num = strArray.Length > 5 ? Convert.ToInt32(strArray[6]) : 10;
-                    farmer.caughtFish(pot.heldObject.parentSheetIndex, Game1.random.Next(minValue, num + 1));
+                    farmer.caughtFish(pot.heldObject.Value.ParentSheetIndex, Game1.random.Next(minValue, num + 1));
                 }
-                pot.readyForHarvest = false;
-                pot.heldObject = null;
+                pot.readyForHarvest.Value = false;
+                pot.heldObject.Value = null;
                 pot.tileIndexToShow = 710;
-                pot.bait = null;
+                pot.bait.Value = null;
                 farmer.gainExperience(1, 5);
 
                 return true;
@@ -290,17 +291,17 @@ namespace CrabNet
             return false;
         }
 
-        private bool PerformObjectDropInAction(StardewValley.Object dropIn, SFarmer farmer, CrabPot pot)
+        private bool PerformObjectDropInAction(SObject dropIn, SFarmer farmer, CrabPot pot)
         {
-            if (pot.bait != null || farmer.professions.Contains(11))
+            if (pot.bait.Value != null || farmer.professions.Contains(11))
                 return false;
 
-            pot.bait = dropIn;
+            pot.bait.Value = dropIn;
 
             return true;
         }
 
-        private bool AddItemToInventory(StardewValley.Object obj, SFarmer farmer, Farm farm)
+        private bool AddItemToInventory(SObject obj, SFarmer farmer, Farm farm)
         {
             bool wasAdded = false;
 
@@ -314,15 +315,14 @@ namespace CrabNet
             }
             else
             {
-                StardewValley.Object chest;
-                farm.objects.TryGetValue(this.ChestCoords, out chest);
+                farm.objects.TryGetValue(this.ChestCoords, out SObject chestObj);
 
-                if (chest is Chest)
+                if (chestObj is Chest chest)
                 {
                     if (this.LoggingEnabled)
                         this.Monitor.Log($"Found a chest at {(int)this.ChestCoords.X},{(int)this.ChestCoords.Y}", LogLevel.Trace);
 
-                    Item i = ((Chest)chest).addItem(obj);
+                    Item i = chest.addItem(obj);
                     if (i == null)
                     {
                         wasAdded = true;

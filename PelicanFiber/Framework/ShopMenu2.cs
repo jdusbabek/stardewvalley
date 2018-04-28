@@ -90,7 +90,7 @@ namespace PelicanFiber.Framework
             foreach (Item key in itemsForSale)
             {
                 //if (key is StardewValley.Object && (key as StardewValley.Object).isRecipe || (key as StardewValley.Object).category == -425)
-                if (key is Object && (key as Object).isRecipe || locationName.Equals("Junimo"))
+                if (key is Object && (key as Object).IsRecipe || locationName.Equals("Junimo"))
                 {
                     if (!Game1.player.knowsRecipe(key.Name))
                         key.Stack = 1;
@@ -233,7 +233,7 @@ namespace PelicanFiber.Framework
                     int num = obj.Stack / 8 + 2;
                     for (int index = 0; index < num; ++index)
                     {
-                        this.Animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
+                        this.Animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
                         {
                             alphaFade = 0.025f,
                             motion = new Vector2(Game1.random.Next(-3, 4), -4f),
@@ -241,7 +241,7 @@ namespace PelicanFiber.Framework
                             delayBeforeAnimationStart = index * 25,
                             scale = Game1.pixelZoom * 0.5f
                         });
-                        this.Animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
+                        this.Animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * 16, 64, 16, 16), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
                         {
                             scale = Game1.pixelZoom,
                             alphaFade = 0.025f,
@@ -250,12 +250,12 @@ namespace PelicanFiber.Framework
                             acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), new Vector2(this.xPositionOnScreen - Game1.pixelZoom * 9, this.yPositionOnScreen + this.height - this.Inventory.height - Game1.pixelZoom * 4), 0.5f)
                         });
                     }
-                    if (obj is Object && (obj as Object).edibility != -300)
+                    if (obj is Object && (obj as Object).Edibility != -300)
                     {
                         for (int index = 0; index < obj.Stack; ++index)
                         {
                             if (Game1.random.NextDouble() < 0.04)
-                                (Game1.getLocationFromName("SeedShop") as SeedShop).itemsToStartSellingTomorrow.Add(obj.getOne());
+                                ((SeedShop)Game1.getLocationFromName("SeedShop")).itemsToStartSellingTomorrow.Add(obj.getOne());
                         }
                     }
                     Game1.playSound("sell");
@@ -327,13 +327,13 @@ namespace PelicanFiber.Framework
                     this.ChargePlayer(Game1.player, this.Currency, -((obj1 is Object ? (int)((obj1 as Object).sellToStorePrice() * (double)this.SellPercentage) : (int)(obj1.salePrice() / 2 * (double)this.SellPercentage)) * obj1.Stack));
                     Item obj2 = null;
                     Game1.playSound(Game1.mouseClickPolling > 300 ? "purchaseRepeat" : "purchaseClick");
-                    this.Animations.Add(new TemporaryAnimatedSprite(Game1.debrisSpriteSheet, new Rectangle(Game1.random.Next(2) * Game1.tileSize, 256, Game1.tileSize, Game1.tileSize), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
+                    this.Animations.Add(new TemporaryAnimatedSprite("TileSheets\\debris", new Rectangle(Game1.random.Next(2) * Game1.tileSize, 256, Game1.tileSize, Game1.tileSize), 9999f, 1, 999, clickableComponent + new Vector2(32f, 32f), false, false)
                     {
                         alphaFade = 0.025f,
                         motion = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 12f),
                         acceleration = Utility.getVelocityTowardPoint(new Point((int)clickableComponent.X + 32, (int)clickableComponent.Y + 32), Game1.dayTimeMoneyBox.position + new Vector2(96f, 196f), 0.5f)
                     });
-                    if (obj2 is Object && (obj2 as Object).edibility != -300 && Game1.random.NextDouble() < 0.04)
+                    if (obj2 is Object && (obj2 as Object).Edibility != -300 && Game1.random.NextDouble() < 0.04)
                         (Game1.getLocationFromName("SeedShop") as SeedShop).itemsToStartSellingTomorrow.Add(obj2.getOne());
                     if (this.Inventory.getItemAt(x, y) == null)
                     {
@@ -385,7 +385,7 @@ namespace PelicanFiber.Framework
                 {
                     Item key = this.ForSale[this.CurrentItemIndex + index];
                     this.HoverText = key.getDescription();
-                    this.BoldTitleText = key.category == -425 ? ((Object)key).name : key.Name;
+                    this.BoldTitleText = key.Category == -425 ? ((Object)key).name : key.Name;
                     this.HoverPrice = this.ItemPriceAndStock == null || !this.ItemPriceAndStock.ContainsKey(key) ? key.salePrice() : this.ItemPriceAndStock[key][0];
                     this.HoveredItem = key;
                     this.ForSaleButtons[index].scale = Math.Min(this.ForSaleButtons[index].scale + 0.03f, 1.1f);
@@ -402,7 +402,7 @@ namespace PelicanFiber.Framework
                     Item clickableComponent = this.Inventory.getItemFromClickableComponent(c);
                     if (clickableComponent != null && this.HighlightItemToSell(clickableComponent))
                     {
-                        if (clickableComponent.category == -425)
+                        if (clickableComponent.Category == -425)
                             this.HoverText = ((Object)clickableComponent).name + " x " + clickableComponent.Stack;
                         else
                             this.HoverText = clickableComponent.Name + " x " + clickableComponent.Stack;
@@ -458,7 +458,7 @@ namespace PelicanFiber.Framework
                     IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), this.ForSaleButtons[index].bounds.X, this.ForSaleButtons[index].bounds.Y, this.ForSaleButtons[index].bounds.Width, this.ForSaleButtons[index].bounds.Height, !this.ForSaleButtons[index].containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) || this.Scrolling ? Color.White : Color.Wheat, Game1.pixelZoom, false);
                     b.Draw(Game1.mouseCursors, new Vector2(this.ForSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 3, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 6 - Game1.pixelZoom), new Rectangle(296, 363, 18, 18), Color.White, 0.0f, Vector2.Zero, Game1.pixelZoom, SpriteEffects.None, 1f);
                     this.ForSale[this.CurrentItemIndex + index].drawInMenu(b, new Vector2(this.ForSaleButtons[index].bounds.X + Game1.tileSize / 2 - Game1.pixelZoom * 2, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 6), 1f);
-                    if (this.ForSale[this.CurrentItemIndex + index].category == -425)
+                    if (this.ForSale[this.CurrentItemIndex + index].Category == -425)
                         SpriteText.drawString(b, ((Object)this.ForSale[this.CurrentItemIndex + index]).name, this.ForSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 7);
                     else
                         SpriteText.drawString(b, this.ForSale[this.CurrentItemIndex + index].Name, this.ForSaleButtons[index].bounds.X + Game1.tileSize * 3 / 2 + Game1.pixelZoom * 2, this.ForSaleButtons[index].bounds.Y + Game1.pixelZoom * 7);
@@ -549,7 +549,10 @@ namespace PelicanFiber.Framework
                             text = "Got any spare construction material to sell?";
                             break;
                         case 4:
-                            text = "I've got " + Lexicon.appendArticle(this.ItemPriceAndStock.ElementAt(Game1.random.Next(2, this.ItemPriceAndStock.Count)).Key.Name) + " that would look just " + Lexicon.getRandomPositiveAdjectiveForEventOrPerson() + " in your house.";
+                            {
+                                string itemName = this.ItemPriceAndStock.ElementAt(Game1.random.Next(2, this.ItemPriceAndStock.Count)).Key.DisplayName;
+                                text = $"I've got {Lexicon.getProperArticleForWord(itemName)} {itemName} that would look just {Lexicon.getRandomPositiveAdjectiveForEventOrPerson()} in your house.";
+                            }
                             break;
                     }
                     break;
@@ -632,7 +635,10 @@ namespace PelicanFiber.Framework
                             text = "I'll have new items every week, so make sure to come back!";
                             break;
                         case 3:
-                            text = "Let me see... Oh! I've got just what you need: " + Lexicon.appendArticle(this.ItemPriceAndStock.ElementAt(random.Next(this.ItemPriceAndStock.Count)).Key.Name) + "!";
+                            {
+                                string itemName = this.ItemPriceAndStock.ElementAt(Game1.random.Next(2, this.ItemPriceAndStock.Count)).Key.DisplayName;
+                                text = $"Let me see... Oh! I've got just what you need: {Lexicon.getProperArticleForWord(itemName)} {itemName}!";
+                            }
                             break;
                         case 4:
                             text = "Beautiful country you have here. One of my favorite stops. The pig likes it, too.";
@@ -695,10 +701,10 @@ namespace PelicanFiber.Framework
 
         private bool HighlightItemToSell(Item i)
         {
-            return this.CategoriesToSellHere.Contains(i.category);
+            return this.CategoriesToSellHere.Contains(i.Category);
         }
 
-        private int GetPlayerCurrencyAmount(StardewValley.Farmer who, int currencyType)
+        private int GetPlayerCurrencyAmount(Farmer who, int currencyType)
         {
             switch (currencyType)
             {
@@ -746,7 +752,7 @@ namespace PelicanFiber.Framework
             }
         }
 
-        private void ChargePlayer(StardewValley.Farmer who, int currencyType, int amount)
+        private void ChargePlayer(Farmer who, int currencyType, int amount)
         {
             switch (currencyType)
             {
@@ -790,11 +796,11 @@ namespace PelicanFiber.Framework
                         Game1.player.removeItemsFromInventory(num, 5);
                     if (item.actionWhenPurchased())
                     {
-                        if (this.HeldItem is Object && ((Object)this.HeldItem).isRecipe)
+                        if (this.HeldItem is Object obj && obj.IsRecipe)
                         {
-                            if (((Object)this.HeldItem).name.Contains("Bundle"))
+                            if (obj.name.Contains("Bundle"))
                             {
-                                this.ItemUtils.AddBundle(((Object)this.HeldItem).specialVariable);
+                                this.ItemUtils.AddBundle(obj.SpecialVariable);
                                 Game1.playSound("newRecipe");
                                 this.HeldItem = null;
                             }
@@ -803,13 +809,13 @@ namespace PelicanFiber.Framework
                                 string key = this.HeldItem.Name.Substring(0, this.HeldItem.Name.IndexOf("Recipe") - 1);
                                 try
                                 {
-                                    if (((Object)this.HeldItem).category == -7)
+                                    if (((Object)this.HeldItem).Category == -7)
                                     {
                                         Game1.player.cookingRecipes.Add(key, 0);
 
                                         if (this.LocationName.Equals("Recipe") && this.GiveAchievements)
                                         {
-                                            Game1.player.cookedRecipe(item.parentSheetIndex);
+                                            Game1.player.cookedRecipe(item.ParentSheetIndex);
                                             Game1.stats.checkForCookingAchievements();
                                         }
                                     }
@@ -869,17 +875,17 @@ namespace PelicanFiber.Framework
                 {
                     if (this.LocationName.Equals("FishShop"))
                     {
-                        if (item.category == -4)
-                            Game1.player.caughtFish(item.parentSheetIndex, 12);
+                        if (item.Category == -4)
+                            Game1.player.caughtFish(item.ParentSheetIndex, 12);
                     }
                     else if (this.LocationName.Equals("Artifact"))
                     {
-                        if (item.category == -2)
-                            Game1.player.foundMineral(item.parentSheetIndex);
-                        else if (item.category == -12)
-                            Game1.player.foundMineral(item.parentSheetIndex);
-                        else if (item.category == 0)
-                            Game1.player.foundArtifact(item.parentSheetIndex, numberToBuy);
+                        if (item.Category == -2)
+                            Game1.player.foundMineral(item.ParentSheetIndex);
+                        else if (item.Category == -12)
+                            Game1.player.foundMineral(item.ParentSheetIndex);
+                        else if (item.Category == 0)
+                            Game1.player.foundArtifact(item.ParentSheetIndex, numberToBuy);
                     }
                 }
 

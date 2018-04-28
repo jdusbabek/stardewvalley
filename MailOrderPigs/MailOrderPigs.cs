@@ -65,11 +65,11 @@ namespace MailOrderPigs
             if (e.KeyPressed == this.MenuKey)
             {
                 this.Monitor.Log("Attempting to bring up menu.", LogLevel.Trace);
-                if (Game1.currentLocation is AnimalHouse)
+                if (Game1.currentLocation is AnimalHouse house)
                 {
                     try
                     {
-                        if (((AnimalHouse)Game1.currentLocation).isFull() && !this.AllowOvercrowding)
+                        if (house.isFull() && !this.AllowOvercrowding)
                         {
                             this.Monitor.Log("Not bringing up menu: building is full.", LogLevel.Trace);
                             Game1.showRedMessage("This Building Is Full");
@@ -77,7 +77,7 @@ namespace MailOrderPigs
                         else
                         {
                             this.Monitor.Log("Bringing up menu.", LogLevel.Trace);
-                            Game1.activeClickableMenu = new MailOrderPigMenu(this.GetPurchaseAnimalStock());
+                            Game1.activeClickableMenu = new MailOrderPigMenu(this.GetPurchaseAnimalStock(), this.Helper.Multiplayer.GetNewID);
                         }
                     }
                     catch (Exception ex)
@@ -94,18 +94,18 @@ namespace MailOrderPigs
 
         private List<Object> GetPurchaseAnimalStock()
         {
-            string locationName = ((AnimalHouse)Game1.currentLocation).getBuilding().buildingType;
+            string locationName = ((AnimalHouse)Game1.currentLocation).getBuilding().buildingType.Value;
             this.Monitor.Log($"Returning stock for building: {locationName}", LogLevel.Trace);
 
             return new List<Object>
             {
-                new Object(100, 1, false, 400) { name = "Chicken", type = locationName.Equals("Coop") || locationName.Equals("Deluxe Coop") || locationName.Equals("Big Coop") ? null : "You gotta be in a Coop" },
-                new Object(100, 1, false, 750) { name = "Dairy Cow", type = locationName.Equals("Barn") || locationName.Equals("Deluxe Barn") || locationName.Equals("Big Barn") ? null : "You gotta be in a Barn" },
-                new Object(100, 1, false, 2000) { name = "Goat", type = locationName.Equals("Big Barn") || locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Big Barn" },
-                new Object(100, 1, false, 2000) { name = "Duck", type = locationName.Equals("Big Coop") || locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Big Coop" },
-                new Object(100, 1, false, 4000) { name = "Sheep", type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" },
-                new Object(100, 1, false, 4000) { name = "Rabbit", type = locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Deluxe Coop" },
-                new Object(100, 1, false, 8000) { name = "Pig", type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" }
+                new Object(100, 1, false, 400) { name = "Chicken", Type = locationName.Equals("Coop") || locationName.Equals("Deluxe Coop") || locationName.Equals("Big Coop") ? null : "You gotta be in a Coop" },
+                new Object(100, 1, false, 750) { name = "Dairy Cow", Type = locationName.Equals("Barn") || locationName.Equals("Deluxe Barn") || locationName.Equals("Big Barn") ? null : "You gotta be in a Barn" },
+                new Object(100, 1, false, 2000) { name = "Goat", Type = locationName.Equals("Big Barn") || locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Big Barn" },
+                new Object(100, 1, false, 2000) { name = "Duck", Type = locationName.Equals("Big Coop") || locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Big Coop" },
+                new Object(100, 1, false, 4000) { name = "Sheep", Type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" },
+                new Object(100, 1, false, 4000) { name = "Rabbit", Type = locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Deluxe Coop" },
+                new Object(100, 1, false, 8000) { name = "Pig", Type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" }
             };
         }
     }

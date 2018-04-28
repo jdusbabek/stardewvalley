@@ -26,12 +26,13 @@ namespace PelicanFiber.Framework
         private readonly ItemUtils ItemUtils;
         private readonly Action ReopenMainMenu;
         private readonly bool GiveAchievements;
+        private readonly Func<long> GetNewId;
 
 
         /*********
         ** Public methods
         *********/
-        public PelicanFiberMenu(Texture2D websites, ItemUtils itemUtils, bool giveAchievements, Action reopenMainMenu, float scale = 1.0f, bool unfiltered = true)
+        public PelicanFiberMenu(Texture2D websites, ItemUtils itemUtils, bool giveAchievements, Func<long> getNewId, Action reopenMainMenu, float scale = 1.0f, bool unfiltered = true)
           : base(Game1.viewport.Width / 2 - (int)(PelicanFiberMenu.MenuWidth * scale) / 2 - IClickableMenu.borderWidth * 2,
                 Game1.viewport.Height / 2 - (int)(PelicanFiberMenu.MenuHeight * scale) / 2 - IClickableMenu.borderWidth * 2,
                 (int)(PelicanFiberMenu.MenuWidth * scale) + IClickableMenu.borderWidth * 2,
@@ -39,6 +40,7 @@ namespace PelicanFiber.Framework
         {
             this.ItemUtils = itemUtils;
             this.GiveAchievements = giveAchievements;
+            this.GetNewId = getNewId;
             this.ReopenMainMenu = reopenMainMenu;
 
             this.height += Game1.tileSize;
@@ -154,9 +156,9 @@ namespace PelicanFiber.Framework
                         case "animal_supplies":
                             this.exitThisMenu();
                             if (Game1.currentLocation is AnimalHouse)
-                                Game1.activeClickableMenu = new MailOrderPigMenu(this.ItemUtils.GetPurchaseAnimalStock(), this.ItemUtils, this.ReopenMainMenu);
+                                Game1.activeClickableMenu = new MailOrderPigMenu(this.ItemUtils.GetPurchaseAnimalStock(), this.ItemUtils, this.ReopenMainMenu, this.GetNewId);
                             else
-                                Game1.activeClickableMenu = new BuyAnimalMenu(Utility.getPurchaseAnimalStock(), this.ReopenMainMenu);
+                                Game1.activeClickableMenu = new BuyAnimalMenu(Utility.getPurchaseAnimalStock(), this.ReopenMainMenu, this.GetNewId);
                             break;
                         case "produce":
                             this.exitThisMenu();
@@ -181,7 +183,10 @@ namespace PelicanFiber.Framework
                             break;
                         case "imports":
                             this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getTravelingMerchantStock());
+                            {
+                                Forest forest = (Forest)Game1.getLocationFromName("Forest");
+                                Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getTravelingMerchantStock(forest.stockSeed.Value));
+                            }
                             break;
                         case "adventure":
                             this.exitThisMenu();
@@ -361,26 +366,26 @@ namespace PelicanFiber.Framework
             itemPriceAndStock.Add(new MeleeWeapon(12), new[] { 250, maxValue });
             if (Game1.mine != null)
             {
-                if (Game1.mine.lowestLevelReached >= 15)
+                if (MineShaft.lowestLevelReached >= 15)
                     itemPriceAndStock.Add(new MeleeWeapon(17), new[] { 500, maxValue });
-                if (Game1.mine.lowestLevelReached >= 20)
+                if (MineShaft.lowestLevelReached >= 20)
                     itemPriceAndStock.Add(new MeleeWeapon(1), new[] { 750, maxValue });
-                if (Game1.mine.lowestLevelReached >= 25)
+                if (MineShaft.lowestLevelReached >= 25)
                 {
                     itemPriceAndStock.Add(new MeleeWeapon(43), new[] { 850, maxValue });
                     itemPriceAndStock.Add(new MeleeWeapon(44), new[] { 1500, maxValue });
                 }
-                if (Game1.mine.lowestLevelReached >= 40)
+                if (MineShaft.lowestLevelReached >= 40)
                     itemPriceAndStock.Add(new MeleeWeapon(27), new[] { 2000, maxValue });
-                if (Game1.mine.lowestLevelReached >= 45)
+                if (MineShaft.lowestLevelReached >= 45)
                     itemPriceAndStock.Add(new MeleeWeapon(10), new[] { 2000, maxValue });
-                if (Game1.mine.lowestLevelReached >= 55)
+                if (MineShaft.lowestLevelReached >= 55)
                     itemPriceAndStock.Add(new MeleeWeapon(7), new[] { 4000, maxValue });
-                if (Game1.mine.lowestLevelReached >= 75)
+                if (MineShaft.lowestLevelReached >= 75)
                     itemPriceAndStock.Add(new MeleeWeapon(5), new[] { 6000, maxValue });
-                if (Game1.mine.lowestLevelReached >= 90)
+                if (MineShaft.lowestLevelReached >= 90)
                     itemPriceAndStock.Add(new MeleeWeapon(50), new[] { 9000, maxValue });
-                if (Game1.mine.lowestLevelReached >= 120)
+                if (MineShaft.lowestLevelReached >= 120)
                     itemPriceAndStock.Add(new MeleeWeapon(9), new[] { 25000, maxValue });
                 if (Game1.player.mailReceived.Contains("galaxySword"))
                 {
@@ -390,18 +395,18 @@ namespace PelicanFiber.Framework
                 }
             }
             itemPriceAndStock.Add(new Boots(504), new[] { 500, maxValue });
-            if (Game1.mine != null && Game1.mine.lowestLevelReached >= 40)
+            if (Game1.mine != null && MineShaft.lowestLevelReached >= 40)
                 itemPriceAndStock.Add(new Boots(508), new[] { 1250, maxValue });
-            if (Game1.mine != null && Game1.mine.lowestLevelReached >= 80)
+            if (Game1.mine != null && MineShaft.lowestLevelReached >= 80)
                 itemPriceAndStock.Add(new Boots(511), new[] { 2500, maxValue });
             itemPriceAndStock.Add(new Ring(529), new[] { 1000, maxValue });
             itemPriceAndStock.Add(new Ring(530), new[] { 1000, maxValue });
-            if (Game1.mine != null && Game1.mine.lowestLevelReached >= 40)
+            if (Game1.mine != null && MineShaft.lowestLevelReached >= 40)
             {
                 itemPriceAndStock.Add(new Ring(531), new[] { 2500, maxValue });
                 itemPriceAndStock.Add(new Ring(532), new[] { 2500, maxValue });
             }
-            if (Game1.mine != null && Game1.mine.lowestLevelReached >= 80)
+            if (Game1.mine != null && MineShaft.lowestLevelReached >= 80)
             {
                 itemPriceAndStock.Add(new Ring(533), new[] { 5000, maxValue });
                 itemPriceAndStock.Add(new Ring(534), new[] { 5000, maxValue });

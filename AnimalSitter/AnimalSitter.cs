@@ -159,69 +159,69 @@ namespace AnimalSitter
             {
                 try
                 {
-                    if (!animal.wasPet && this.PettingEnabled)
+                    if (!animal.wasPet.Value && this.PettingEnabled)
                     {
                         animal.pet(Game1.player);
                         stats.AnimalsPet++;
 
-                        this.Monitor.Log($"Petting animal: {animal.name}", LogLevel.Trace);
+                        this.Monitor.Log($"Petting animal: {animal.Name}", LogLevel.Trace);
                     }
 
 
                     if (this.GrowUpEnabled && animal.isBaby())
                     {
-                        this.Monitor.Log($"Aging animal to mature+1 days: {animal.name}", LogLevel.Trace);
+                        this.Monitor.Log($"Aging animal to mature+1 days: {animal.Name}", LogLevel.Trace);
 
-                        animal.age = animal.ageWhenMature + 1;
-                        animal.reload();
+                        animal.age.Value = animal.ageWhenMature.Value + 1;
+                        animal.reload(animal.home);
                         stats.Aged++;
                     }
 
-                    if (this.MaxFullnessEnabled && animal.fullness < byte.MaxValue)
+                    if (this.MaxFullnessEnabled && animal.fullness.Value < byte.MaxValue)
                     {
-                        this.Monitor.Log($"Feeding animal: {animal.name}", LogLevel.Trace);
+                        this.Monitor.Log($"Feeding animal: {animal.Name}", LogLevel.Trace);
 
-                        animal.fullness = byte.MaxValue;
+                        animal.fullness.Value = byte.MaxValue;
                         stats.Fed++;
                     }
 
-                    if (this.MaxHappinessEnabled && animal.happiness < byte.MaxValue)
+                    if (this.MaxHappinessEnabled && animal.happiness.Value < byte.MaxValue)
                     {
-                        this.Monitor.Log($"Maxing Happiness of animal {animal.name}", LogLevel.Trace);
+                        this.Monitor.Log($"Maxing Happiness of animal {animal.Name}", LogLevel.Trace);
 
-                        animal.happiness = byte.MaxValue;
+                        animal.happiness.Value = byte.MaxValue;
                         stats.MaxHappiness++;
                     }
 
-                    if (this.MaxFriendshipEnabled && animal.friendshipTowardFarmer < 1000)
+                    if (this.MaxFriendshipEnabled && animal.friendshipTowardFarmer.Value < 1000)
                     {
-                        this.Monitor.Log($"Maxing Friendship of animal {animal.name}", LogLevel.Trace);
+                        this.Monitor.Log($"Maxing Friendship of animal {animal.Name}", LogLevel.Trace);
 
-                        animal.friendshipTowardFarmer = 1000;
+                        animal.friendshipTowardFarmer.Value = 1000;
                         stats.MaxFriendship++;
                     }
 
-                    if (animal.currentProduce > 0 && this.HarvestEnabled)
+                    if (animal.currentProduce.Value > 0 && this.HarvestEnabled)
                     {
-                        this.Monitor.Log($"Has produce: {animal.name} {animal.currentProduce}", LogLevel.Trace);
+                        this.Monitor.Log($"Has produce: {animal.Name} {animal.currentProduce}", LogLevel.Trace);
 
-                        if (animal.type.Equals("Pig"))
+                        if (animal.type.Value == "Pig")
                         {
                             if (this.TakeTrufflesFromPigs)
                             {
-                                Object toAdd = new Object(animal.currentProduce, 1, false, -1, animal.produceQuality);
+                                Object toAdd = new Object(animal.currentProduce.Value, 1, false, -1, animal.produceQuality.Value);
                                 this.AddItemToInventory(toAdd, farmer);
 
-                                animal.currentProduce = 0;
+                                animal.currentProduce.Value = 0;
                                 stats.TrufflesHarvested++;
                             }
                         }
                         else
                         {
-                            Object toAdd = new Object(animal.currentProduce, 1, false, -1, animal.produceQuality);
+                            Object toAdd = new Object(animal.currentProduce.Value, 1, false, -1, animal.produceQuality.Value);
                             this.AddItemToInventory(toAdd, farmer);
 
-                            animal.currentProduce = 0;
+                            animal.currentProduce.Value = 0;
                             stats.ProductsHarvested++;
                         }
 
@@ -272,7 +272,7 @@ namespace AnimalSitter
             List<Vector2> itemsToRemove = new List<Vector2>();
 
             // Iterate over the objects, and add them to inventory.
-            foreach (KeyValuePair<Vector2, Object> keyvalue in farm.Objects)
+            foreach (KeyValuePair<Vector2, Object> keyvalue in farm.Objects.Pairs)
             {
                 Object obj = keyvalue.Value;
 
@@ -281,7 +281,7 @@ namespace AnimalSitter
                     bool doubleHarvest = false;
 
                     if (Game1.player.professions.Contains(16))
-                        obj.quality = 4;
+                        obj.Quality = 4;
 
                     double randomNum = Game1.random.NextDouble();
                     bool doubleChance = (this.Checker.Equals("pet")) ? (randomNum < 0.4) : (randomNum < 0.2);
@@ -332,13 +332,13 @@ namespace AnimalSitter
                 {
                     List<Vector2> itemsToRemove = new List<Vector2>();
 
-                    foreach (KeyValuePair<Vector2, Object> keyvalue in building.indoors.Objects)
+                    foreach (KeyValuePair<Vector2, Object> keyvalue in building.indoors.Value.Objects.Pairs)
                     {
                         Object obj = keyvalue.Value;
 
                         this.Monitor.Log($"Found coop object: {obj.Name} / {obj.Category}/{obj.isAnimalProduct()}", LogLevel.Trace);
 
-                        if (obj.isAnimalProduct() || obj.parentSheetIndex == 107)
+                        if (obj.isAnimalProduct() || obj.ParentSheetIndex == 107)
                         {
                             if (this.AddItemToInventory(obj, farmer))
                             {
@@ -356,7 +356,7 @@ namespace AnimalSitter
                     // Remove the object that were picked up.
                     foreach (Vector2 itemLocation in itemsToRemove)
                     {
-                        building.indoors.removeObject(itemLocation, false);
+                        building.indoors.Value.removeObject(itemLocation, false);
                     }
                 }
             }
@@ -374,21 +374,21 @@ namespace AnimalSitter
             }
 
             // Get the preferred chest (could be default)
-            Object chest = this.ChestManager.GetChest(obj.parentSheetIndex);
+            Object chestObj = this.ChestManager.GetChest(obj.ParentSheetIndex);
 
-            if (chest is Chest)
+            if (chestObj is Chest chest)
             {
-                Item i = ((Chest)chest).addItem(obj);
+                Item i = chest.addItem(obj);
                 if (i == null)
                     return true;
             }
 
             // We haven't returned, get the default chest.
-            chest = this.ChestManager.GetDefaultChest();
+            chestObj = this.ChestManager.GetDefaultChest();
 
-            if (chest is Chest)
+            if (chestObj is Chest defaultChest)
             {
-                Item i = ((Chest)chest).addItem(obj);
+                Item i = defaultChest.addItem(obj);
                 if (i == null)
                     return true;
             }
@@ -471,7 +471,7 @@ namespace AnimalSitter
                     {
                         //this.isCheckerCharacter = true;
                         string portrait = "";
-                        if (character.name.Equals("Shane"))
+                        if (character.Name.Equals("Shane"))
                         {
                             portrait = "$8";
                         }
@@ -519,8 +519,8 @@ namespace AnimalSitter
             List<FarmAnimal> list = Game1.getFarm().animals.Values.ToList();
             foreach (Building building in Game1.getFarm().buildings)
             {
-                if (building.indoors != null && building.indoors.GetType() == typeof(AnimalHouse))
-                    list.AddRange(((AnimalHouse)building.indoors).animals.Values.ToList());
+                if (building.indoors.Value != null && building.indoors.Value.GetType() == typeof(AnimalHouse))
+                    list.AddRange(((AnimalHouse)building.indoors.Value).animals.Values.ToList());
             }
             return list;
         }
