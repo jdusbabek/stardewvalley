@@ -17,8 +17,8 @@ namespace Replanter.Framework
         public int CropsWatered { get; set; }
         public int PlantsCleared { get; set; }
 
-        public int TotalCost { get { return this.FarmhandCost + this.RunningSeedCost; } }
-        public int NumUnharvested { get { return this.TotalCrops - this.CropsHarvested; } }
+        public int TotalCost => this.FarmhandCost + this.RunningSeedCost;
+        public int NumUnharvested => this.TotalCrops - this.CropsHarvested;
 
 
         /*********

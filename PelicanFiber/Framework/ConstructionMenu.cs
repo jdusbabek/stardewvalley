@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Input;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Buildings;
-using StardewValley.Locations;
 using StardewValley.Menus;
 using xTile.Dimensions;
 using Object = StardewValley.Object;
@@ -48,13 +47,7 @@ namespace PelicanFiber.Framework
         private readonly bool MagicalConstruction;
         private readonly Action ShowMainMenu;
 
-        private BluePrint CurrentBlueprint
-        {
-            get
-            {
-                return this.Blueprints[this.CurrentBlueprintIndex];
-            }
-        }
+        private BluePrint CurrentBlueprint => this.Blueprints[this.CurrentBlueprintIndex];
 
 
         /*********
@@ -114,7 +107,7 @@ namespace PelicanFiber.Framework
                 this.DemolishButton.tryHover(x, y);
                 this.MoveButton.tryHover(x, y);
                 if (this.CurrentBlueprint.isUpgrade() && this.UpgradeIcon.containsPoint(x, y))
-                    this.HoverText = Game1.content.LoadString("Strings\\UI:Carpenter_Upgrade", (object)this.CurrentBlueprint.nameOfBuildingToUpgrade);
+                    this.HoverText = Game1.content.LoadString("Strings\\UI:Carpenter_Upgrade", this.CurrentBlueprint.nameOfBuildingToUpgrade);
                 else if (this.DemolishButton.containsPoint(x, y))
                     this.HoverText = Game1.content.LoadString("Strings\\UI:Carpenter_Demolish");
                 else if (this.MoveButton.containsPoint(x, y))
@@ -126,35 +119,37 @@ namespace PelicanFiber.Framework
             }
             else
             {
+                Farm farm = Game1.getFarm();
+
                 if (!this.Upgrading && !this.Demolishing && !this.Moving || this.Freeze)
                     return;
-                foreach (Building building in ((BuildableGameLocation)Game1.getLocationFromName("Farm")).buildings)
-                    building.color = Color.White;
-                Building building1 = ((BuildableGameLocation)Game1.getLocationFromName("Farm")).getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY()) / Game1.tileSize)) ?? ((BuildableGameLocation)Game1.getLocationFromName("Farm")).getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY() + Game1.tileSize * 2) / Game1.tileSize)) ?? ((BuildableGameLocation)Game1.getLocationFromName("Farm")).getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY() + Game1.tileSize * 3) / Game1.tileSize));
+                foreach (Building building in farm.buildings)
+                    building.color.Value = Color.White;
+                Building building1 = farm.getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY()) / Game1.tileSize)) ?? farm.getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY() + Game1.tileSize * 2) / Game1.tileSize)) ?? farm.getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY() + Game1.tileSize * 3) / Game1.tileSize));
                 if (this.Upgrading)
                 {
-                    if (building1 != null && this.CurrentBlueprint.nameOfBuildingToUpgrade != null && this.CurrentBlueprint.nameOfBuildingToUpgrade.Equals(building1.buildingType))
+                    if (building1 != null && this.CurrentBlueprint.nameOfBuildingToUpgrade != null && this.CurrentBlueprint.nameOfBuildingToUpgrade.Equals(building1.buildingType.Value))
                     {
-                        building1.color = Color.Lime * 0.8f;
+                        building1.color.Value = Color.Lime * 0.8f;
                     }
                     else
                     {
                         if (building1 == null)
                             return;
-                        building1.color = Color.Red * 0.8f;
+                        building1.color.Value = Color.Red * 0.8f;
                     }
                 }
                 else if (this.Demolishing)
                 {
                     if (building1 == null)
                         return;
-                    building1.color = Color.Red * 0.8f;
+                    building1.color.Value = Color.Red * 0.8f;
                 }
                 else
                 {
                     if (!this.Moving || building1 == null)
                         return;
-                    building1.color = Color.Lime * 0.8f;
+                    building1.color.Value = Color.Lime * 0.8f;
                 }
             }
         }
@@ -215,6 +210,8 @@ namespace PelicanFiber.Framework
         {
             if (this.Freeze)
                 return;
+            Farm farm = Game1.getFarm();
+
 
             if (this.GoBackButton != null && this.GoBackButton.containsPoint(x, y))
             {
@@ -284,33 +281,33 @@ namespace PelicanFiber.Framework
                 return;
             if (this.Demolishing)
             {
-                Building buildingAt = ((BuildableGameLocation)Game1.getLocationFromName("Farm")).getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY()) / Game1.tileSize));
-                if (buildingAt != null && (buildingAt.daysOfConstructionLeft > 0 || buildingAt.daysUntilUpgrade > 0))
+                Building buildingAt = farm.getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY()) / Game1.tileSize));
+                if (buildingAt != null && (buildingAt.daysOfConstructionLeft.Value > 0 || buildingAt.daysUntilUpgrade.Value > 0))
                     Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_DuringConstruction"), Color.Red, 3500f));
-                else if (buildingAt?.indoors is AnimalHouse && ((AnimalHouse)buildingAt.indoors).animalsThatLiveHere.Count > 0)
+                else if (buildingAt?.indoors.Value is AnimalHouse animalHouse && animalHouse.animalsThatLiveHere.Count > 0)
                 {
                     Game1.addHUDMessage(new HUDMessage(Game1.content.LoadString("Strings\\UI:Carpenter_CantDemolish_AnimalsHere"), Color.Red, 3500f));
                 }
                 else
                 {
-                    if (buildingAt == null || !((BuildableGameLocation)Game1.getLocationFromName("Farm")).destroyStructure(buildingAt))
+                    if (buildingAt == null || !farm.destroyStructure(buildingAt))
                         return;
                     Game1.flashAlpha = 1f;
-                    buildingAt.showDestroyedAnimation(Game1.getFarm());
+                    buildingAt.showDestroyedAnimation(farm);
                     Game1.playSound("explosion");
-                    Utility.spreadAnimalsAround(buildingAt, (Farm)Game1.getLocationFromName("Farm"));
+                    Utility.spreadAnimalsAround(buildingAt, farm);
                     DelayedAction.fadeAfterDelay(this.ReturnToCarpentryMenu, 1500);
                     this.Freeze = true;
                 }
             }
             else if (this.Upgrading)
             {
-                Building buildingAt = ((BuildableGameLocation)Game1.getLocationFromName("Farm")).getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY()) / Game1.tileSize));
-                if (buildingAt != null && this.CurrentBlueprint.name != null && buildingAt.buildingType.Equals(this.CurrentBlueprint.nameOfBuildingToUpgrade))
+                Building buildingAt = farm.getBuildingAt(new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY()) / Game1.tileSize));
+                if (buildingAt != null && this.CurrentBlueprint.name != null && buildingAt.buildingType.Value.Equals(this.CurrentBlueprint.nameOfBuildingToUpgrade))
                 {
                     this.CurrentBlueprint.consumeResources();
-                    buildingAt.daysUntilUpgrade = 2;
-                    buildingAt.showUpgradeAnimation(Game1.getFarm());
+                    buildingAt.daysUntilUpgrade.Value = 2;
+                    buildingAt.showUpgradeAnimation(farm);
                     Game1.playSound("axe");
                     DelayedAction.fadeAfterDelay(this.ReturnToCarpentryMenuAfterSuccessfulBuild, 1500);
                     this.Freeze = true;
@@ -326,13 +323,13 @@ namespace PelicanFiber.Framework
             {
                 if (this.BuildingToMove == null)
                 {
-                    this.BuildingToMove = ((BuildableGameLocation)Game1.getLocationFromName("Farm")).getBuildingAt(new Vector2((Game1.viewport.X + Game1.getMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getMouseY()) / Game1.tileSize));
+                    this.BuildingToMove = farm.getBuildingAt(new Vector2((Game1.viewport.X + Game1.getMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getMouseY()) / Game1.tileSize));
                     if (this.BuildingToMove == null)
                         return;
-                    ((BuildableGameLocation)Game1.getLocationFromName("Farm")).buildings.Remove(this.BuildingToMove);
+                    farm.buildings.Remove(this.BuildingToMove);
                     Game1.playSound("axchop");
                 }
-                else if (((BuildableGameLocation)Game1.getLocationFromName("Farm")).buildStructure(this.BuildingToMove, new Vector2((Game1.viewport.X + Game1.getMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getMouseY()) / Game1.tileSize), false, Game1.player))
+                else if (farm.buildStructure(this.BuildingToMove, new Vector2((Game1.viewport.X + Game1.getMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getMouseY()) / Game1.tileSize), Game1.player))
                 {
                     this.BuildingToMove = null;
                     Game1.playSound("axchop");
@@ -367,7 +364,7 @@ namespace PelicanFiber.Framework
             {
                 base.draw(b);
                 IClickableMenu.drawTextureBox(b, this.xPositionOnScreen - Game1.tileSize * 3 / 2, this.yPositionOnScreen - Game1.tileSize / 4, this.MaxWidthOfBuildingViewer + Game1.tileSize, this.MaxHeightOfBuildingViewer + Game1.tileSize, this.MagicalConstruction ? Color.RoyalBlue : Color.White);
-                this.CurrentBuilding.drawInMenu(b, this.xPositionOnScreen + this.MaxWidthOfBuildingViewer / 2 - this.CurrentBuilding.tilesWide * Game1.tileSize / 2 - Game1.tileSize, this.yPositionOnScreen + this.MaxHeightOfBuildingViewer / 2 - this.CurrentBuilding.getSourceRectForMenu().Height * Game1.pixelZoom / 2);
+                this.CurrentBuilding.drawInMenu(b, this.xPositionOnScreen + this.MaxWidthOfBuildingViewer / 2 - this.CurrentBuilding.tilesWide.Value * Game1.tileSize / 2 - Game1.tileSize, this.yPositionOnScreen + this.MaxHeightOfBuildingViewer / 2 - this.CurrentBuilding.getSourceRectForMenu().Height * Game1.pixelZoom / 2);
                 if (this.CurrentBlueprint.isUpgrade())
                     this.UpgradeIcon.draw(b);
                 SpriteText.drawStringWithScrollBackground(b, this.BuildingName, this.xPositionOnScreen + this.MaxWidthOfBuildingViewer - IClickableMenu.spaceToClearSideBorder - Game1.tileSize / 4 + Game1.tileSize + ((this.width - (this.MaxWidthOfBuildingViewer + Game1.tileSize * 2)) / 2 - SpriteText.getWidthOfString("Deluxe Barn") / 2), this.yPositionOnScreen, "Deluxe Barn");
@@ -392,7 +389,7 @@ namespace PelicanFiber.Framework
                 {
                     location.Y += Game1.tileSize + Game1.pixelZoom;
                     ingredient.drawInMenu(b, location, 1f);
-                    bool flag = !(ingredient is Object) || Game1.player.hasItemInInventory((ingredient as Object).parentSheetIndex, ingredient.Stack);
+                    bool flag = !(ingredient is Object) || Game1.player.hasItemInInventory((ingredient as Object).ParentSheetIndex, ingredient.Stack);
                     if (this.MagicalConstruction)
                     {
                         Utility.drawTextWithShadow(b, ingredient.Name, Game1.dialogueFont, new Vector2(location.X + Game1.tileSize + Game1.pixelZoom * 3, location.Y + Game1.pixelZoom * 6), Game1.textColor * 0.25f, 1f, -1f, -1, -1, this.MagicalConstruction ? 0.0f : 0.25f);
@@ -414,7 +411,7 @@ namespace PelicanFiber.Framework
                 if (!this.Upgrading)
                     str = this.Demolishing ? Game1.content.LoadString("Strings\\UI:Carpenter_SelectBuilding_Demolish") : Game1.content.LoadString("Strings\\UI:Carpenter_ChooseLocation");
                 else
-                    str = Game1.content.LoadString("Strings\\UI:Carpenter_SelectBuilding_Upgrade", (object)this.CurrentBlueprint.nameOfBuildingToUpgrade);
+                    str = Game1.content.LoadString("Strings\\UI:Carpenter_SelectBuilding_Upgrade", this.CurrentBlueprint.nameOfBuildingToUpgrade);
                 string s = str;
                 SpriteText.drawStringWithScrollBackground(b, s, Game1.viewport.Width / 2 - SpriteText.getWidthOfString(s) / 2, Game1.tileSize / 4);
                 if (!this.Upgrading && !this.Demolishing && !this.Moving)
@@ -435,9 +432,9 @@ namespace PelicanFiber.Framework
                 else if (this.Moving && this.BuildingToMove != null)
                 {
                     Vector2 vector2_1 = new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY()) / Game1.tileSize);
-                    for (int y = 0; y < this.BuildingToMove.tilesHigh; ++y)
+                    for (int y = 0; y < this.BuildingToMove.tilesHigh.Value; ++y)
                     {
-                        for (int x = 0; x < this.BuildingToMove.tilesWide; ++x)
+                        for (int x = 0; x < this.BuildingToMove.tilesWide.Value; ++x)
                         {
                             int structurePlacementTile = this.BuildingToMove.getTileSheetIndexForStructurePlacementTile(x, y);
                             Vector2 vector2_2 = new Vector2(vector2_1.X + x, vector2_1.Y + y);
@@ -501,7 +498,7 @@ namespace PelicanFiber.Framework
 
         private bool TryToBuild()
         {
-            return ((BuildableGameLocation)Game1.getLocationFromName("Farm")).buildStructure(this.CurrentBlueprint, new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY()) / Game1.tileSize), false, Game1.player, this.MagicalConstruction);
+            return Game1.getFarm().buildStructure(this.CurrentBlueprint, new Vector2((Game1.viewport.X + Game1.getOldMouseX()) / Game1.tileSize, (Game1.viewport.Y + Game1.getOldMouseY()) / Game1.tileSize), Game1.player, this.MagicalConstruction);
         }
 
         private void ReturnToCarpentryMenu()
@@ -556,7 +553,7 @@ namespace PelicanFiber.Framework
         {
             Game1.currentLocation.cleanupBeforePlayerExit();
             this.HoverText = "";
-            Game1.currentLocation = Game1.getLocationFromName("Farm");
+            Game1.currentLocation = Game1.getFarm();
             Game1.currentLocation.resetForPlayerEntry();
             Game1.globalFadeToClear();
             this.OnFarm = true;

@@ -70,7 +70,7 @@ namespace PelicanFiber
                     if (Game1.viewport.Height < 1325)
                         scale = Game1.viewport.Height / 1325f;
 
-                    Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Config.GiveAchievements, this.ShowMainMenu, scale, this.Unfiltered);
+                    Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Config.GiveAchievements, this.Helper.Multiplayer.GetNewID, this.ShowMainMenu, scale, this.Unfiltered);
                 }
                 catch (Exception ex)
                 {
@@ -87,7 +87,7 @@ namespace PelicanFiber
                 if (Game1.viewport.Height < 1325)
                     scale = Game1.viewport.Height / 1325f;
 
-                Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Config.GiveAchievements, this.ShowMainMenu, scale, !this.Config.InternetFilter);
+                Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Config.GiveAchievements, this.Helper.Multiplayer.GetNewID, this.ShowMainMenu, scale, !this.Config.InternetFilter);
             }
             catch (Exception ex)
             {

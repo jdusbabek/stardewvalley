@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
@@ -103,8 +104,8 @@ namespace PelicanFiber.Framework
                 Random random = new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2);
                 stock.AddRange(new[]
                 {
-                    new Wallpaper(random.Next(112)) { stack = int.MaxValue },
-                    new Wallpaper(random.Next(40), true) { stack = int.MaxValue }
+                    new Wallpaper(random.Next(112)) { Stack = int.MaxValue },
+                    new Wallpaper(random.Next(40), true) { Stack = int.MaxValue }
                 });
                 if (Game1.player.achievements.Contains(38))
                     stock.Add(new Object(Vector2.Zero, 458, int.MaxValue));
@@ -223,34 +224,34 @@ namespace PelicanFiber.Framework
             }
 
             if (!Game1.player.craftingRecipes.ContainsKey("Wooden Brazier"))
-                stock.Add(new Torch(Vector2.Zero, 143, true) { isRecipe = true });
+                stock.Add(new Torch(Vector2.Zero, 143, true) { IsRecipe = true });
 
             else if (!Game1.player.craftingRecipes.ContainsKey("Stone Brazier"))
-                stock.Add(new Torch(Vector2.Zero, 144, true) { isRecipe = true });
+                stock.Add(new Torch(Vector2.Zero, 144, true) { IsRecipe = true });
 
             else if (!Game1.player.craftingRecipes.ContainsKey("Barrel Brazier"))
-                stock.Add(new Torch(Vector2.Zero, 150, true) { isRecipe = true });
+                stock.Add(new Torch(Vector2.Zero, 150, true) { IsRecipe = true });
 
             else if (!Game1.player.craftingRecipes.ContainsKey("Stump Brazier"))
-                stock.Add(new Torch(Vector2.Zero, 147, true) { isRecipe = true });
+                stock.Add(new Torch(Vector2.Zero, 147, true) { IsRecipe = true });
 
             else if (!Game1.player.craftingRecipes.ContainsKey("Gold Brazier"))
-                stock.Add(new Torch(Vector2.Zero, 145, true) { isRecipe = true });
+                stock.Add(new Torch(Vector2.Zero, 145, true) { IsRecipe = true });
 
             else if (!Game1.player.craftingRecipes.ContainsKey("Carved Brazier"))
-                stock.Add(new Torch(Vector2.Zero, 148, true) { isRecipe = true });
+                stock.Add(new Torch(Vector2.Zero, 148, true) { IsRecipe = true });
 
             else if (!Game1.player.craftingRecipes.ContainsKey("Skull Brazier"))
-                stock.Add(new Torch(Vector2.Zero, 149, true) { isRecipe = true });
+                stock.Add(new Torch(Vector2.Zero, 149, true) { IsRecipe = true });
 
             else if (!Game1.player.craftingRecipes.ContainsKey("Marble Brazier"))
-                stock.Add(new Torch(Vector2.Zero, 151, true) { isRecipe = true });
+                stock.Add(new Torch(Vector2.Zero, 151, true) { IsRecipe = true });
 
             if (!Game1.player.craftingRecipes.ContainsKey("Wood Lamp-post"))
-                stock.Add(new Object(Vector2.Zero, 152, true) { isRecipe = true });
+                stock.Add(new Object(Vector2.Zero, 152, true) { IsRecipe = true });
 
             if (!Game1.player.craftingRecipes.ContainsKey("Iron Lamp-post"))
-                stock.Add(new Object(Vector2.Zero, 153, true) { isRecipe = true });
+                stock.Add(new Object(Vector2.Zero, 153, true) { IsRecipe = true });
 
             if (!Game1.player.craftingRecipes.ContainsKey("Wood Floor"))
                 stock.Add(new Object(328, 1, true, 50));
@@ -323,13 +324,13 @@ namespace PelicanFiber.Framework
                 {
                     foreach (Item obj in stock)
                     {
-                        if (obj is Furniture && obj.parentSheetIndex == num)
+                        if (obj is Furniture && obj.ParentSheetIndex == num)
                             num = -1;
                     }
                 }
             }
             while (this.IsFurnitureOffLimitsForSale(num) || !dictionary.ContainsKey(num));
-            return new Furniture(num, Vector2.Zero) { stack = int.MaxValue };
+            return new Furniture(num, Vector2.Zero) { Stack = int.MaxValue };
         }
 
         public Dictionary<Item, int[]> GetBlacksmithStock(bool unfiltered = false)
@@ -427,7 +428,7 @@ namespace PelicanFiber.Framework
                 new Object(Vector2.Zero, 395, int.MaxValue)
             };
 
-            if (Game1.dishOfTheDay.stack > 0 && !unfiltered)
+            if (Game1.dishOfTheDay.Stack > 0 && !unfiltered)
                 stock.Add(Game1.dishOfTheDay);
             else if (unfiltered)
             {
@@ -538,23 +539,23 @@ namespace PelicanFiber.Framework
 
         public List<Object> GetPurchaseAnimalStock()
         {
-            string locationName = ((AnimalHouse)Game1.currentLocation).getBuilding().buildingType;
+            string locationName = ((AnimalHouse)Game1.currentLocation).getBuilding().buildingType.Value;
 
             return new List<Object>
             {
-                new Object(100, 1, false, 400){ name = "Chicken", type = locationName.Equals("Coop") || locationName.Equals("Deluxe Coop") || locationName.Equals("Big Coop") ? null : "You gotta be in a Coop" },
-                new Object(100, 1, false, 750) { name = "Dairy Cow", type = locationName.Equals("Barn") || locationName.Equals("Deluxe Barn") || locationName.Equals("Big Barn") ? null : "You gotta be in a Barn" },
-                new Object(100, 1, false, 2000){ name = "Goat", type = locationName.Equals("Big Barn") || locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Big Barn" },
-                new Object(100, 1, false, 2000) { name = "Duck", type = locationName.Equals("Big Coop") || locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Big Coop" },
-                new Object(100, 1, false, 4000) { name = "Sheep", type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" },
-                new Object(100, 1, false, 4000) { name = "Rabbit", type = locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Deluxe Coop" },
-                new Object(100, 1, false, 8000){ name = "Pig", type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" }
+                new Object(100, 1, false, 400){ name = "Chicken", Type = locationName.Equals("Coop") || locationName.Equals("Deluxe Coop") || locationName.Equals("Big Coop") ? null : "You gotta be in a Coop" },
+                new Object(100, 1, false, 750) { name = "Dairy Cow", Type = locationName.Equals("Barn") || locationName.Equals("Deluxe Barn") || locationName.Equals("Big Barn") ? null : "You gotta be in a Barn" },
+                new Object(100, 1, false, 2000){ name = "Goat", Type = locationName.Equals("Big Barn") || locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Big Barn" },
+                new Object(100, 1, false, 2000) { name = "Duck", Type = locationName.Equals("Big Coop") || locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Big Coop" },
+                new Object(100, 1, false, 4000) { name = "Sheep", Type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" },
+                new Object(100, 1, false, 4000) { name = "Rabbit", Type = locationName.Equals("Deluxe Coop") ? null : "You gotta be in a Deluxe Coop" },
+                new Object(100, 1, false, 8000){ name = "Pig", Type = locationName.Equals("Deluxe Barn") ? null : "You gotta be in a Deluxe Barn" }
             };
         }
 
         public void FinishAllBundles()
         {
-            foreach (KeyValuePair<int, bool[]> bundle in (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).bundles)
+            foreach (KeyValuePair<int, bool[]> bundle in ((CommunityCenter)Game1.getLocationFromName("CommunityCenter")).bundles.Pairs)
             {
                 for (int index = 0; index < bundle.Value.Length; ++index)
                     bundle.Value[index] = true;
@@ -565,7 +566,7 @@ namespace PelicanFiber.Framework
         {
             List<Item> junimoItems = new List<Item>();
             Dictionary<int, string> junContent = this.Content.Load<Dictionary<int, string>>("assets\\bundles");
-            Dictionary<int, bool[]> bundleInfo = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).bundles;
+            KeyValuePair<int, bool[]>[] bundleInfo = ((CommunityCenter)Game1.getLocationFromName("CommunityCenter")).bundles.Pairs.ToArray();
             this.BundleToAreaDictionary = new Dictionary<int, int>();
 
             foreach (KeyValuePair<int, string> kvp in junContent)
@@ -583,9 +584,9 @@ namespace PelicanFiber.Framework
 
                     Object o = new Object(id, 1, true, price)
                     {
-                        category = category,
-                        name = name,
-                        specialVariable = bundleIndex
+                        Category = category,
+                        Name = name,
+                        SpecialVariable = bundleIndex
                     };
 
                     this.BundleToAreaDictionary.Add(bundleIndex, this.GetAreaNumberFromName(area));
@@ -614,7 +615,7 @@ namespace PelicanFiber.Framework
 
         public void AddBundle(int bundleId)
         {
-            CommunityCenter c = Game1.getLocationFromName("CommunityCenter") as CommunityCenter;
+            CommunityCenter c = (CommunityCenter)Game1.getLocationFromName("CommunityCenter");
 
             // Check if the player has access to the community center
             if (!Game1.player.mailReceived.Contains("ccDoorUnlock"))

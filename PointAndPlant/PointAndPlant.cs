@@ -170,7 +170,7 @@ namespace PointAndPlant
 
             this.GrassKey = Keys.Q;
             this.CustomSickle = new ModSickle(47, this.Config.HarvestRadius, this.Vector);
-            this.CustomHoe = new Hoe { upgradeLevel = this.ToolLevel };
+            this.CustomHoe = new Hoe { UpgradeLevel = this.ToolLevel };
         }
 
         private void ControlEvents_KeyReleased(object sender, EventArgsKeyPressed e)
@@ -236,12 +236,12 @@ namespace PointAndPlant
                     {
                         if (Game1.player.CurrentTool != null && Game1.player.CurrentTool is MeleeWeapon)
                         {
-                            if (((MeleeWeapon)Game1.player.CurrentTool).initialParentTileIndex == 39)
+                            if (((MeleeWeapon)Game1.player.CurrentTool).InitialParentTileIndex == 39)
                             {
                                 this.Monitor.Log("You're holding Leah's Whittler! Chop away!!", LogLevel.Trace);
                                 this.ChopTrees();
                             }
-                            else if (((MeleeWeapon)Game1.player.CurrentTool).initialParentTileIndex == 37)
+                            else if (((MeleeWeapon)Game1.player.CurrentTool).InitialParentTileIndex == 37)
                             {
                                 this.Monitor.Log("You're holding Harvey's Mallet! Pound away!!", LogLevel.Trace);
                                 this.BreakRocks();
@@ -267,7 +267,7 @@ namespace PointAndPlant
             SFarmer player = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
-            if (player.currentLocation.name.Equals("Farm") || player.currentLocation.name.Contains("Greenhouse"))
+            if (player.currentLocation.Name.Equals("Farm") || player.currentLocation.Name.Contains("Greenhouse"))
             {
                 for (int x = 0; x < this.PlowWidth; x++)
                 {
@@ -294,15 +294,15 @@ namespace PointAndPlant
                 {
                     if (location.terrainFeatures.ContainsKey(index))
                     {
-                        if (location.terrainFeatures[index].performToolAction(this.CustomHoe, 0, index))
+                        if (location.terrainFeatures[index].performToolAction(this.CustomHoe, 0, index, location))
                             location.terrainFeatures.Remove(index);
                     }
                     else
                     {
-                        if (location.objects.ContainsKey(index) && location.Objects[index].performToolAction(this.CustomHoe))
+                        if (location.objects.ContainsKey(index) && location.Objects[index].performToolAction(this.CustomHoe, location))
                         {
-                            if (location.Objects[index].type.Equals("Crafting") && location.Objects[index].fragility != 2)
-                                location.debris.Add(new Debris(location.Objects[index].bigCraftable ? -location.Objects[index].ParentSheetIndex : location.Objects[index].ParentSheetIndex, Game1.player.GetToolLocation(), new Vector2(Game1.player.GetBoundingBox().Center.X, Game1.player.GetBoundingBox().Center.Y)));
+                            if (location.Objects[index].Type.Equals("Crafting") && location.Objects[index].Fragility != 2)
+                                location.debris.Add(new Debris(location.Objects[index].bigCraftable.Value ? -location.Objects[index].ParentSheetIndex : location.Objects[index].ParentSheetIndex, Game1.player.GetToolLocation(), new Vector2(Game1.player.GetBoundingBox().Center.X, Game1.player.GetBoundingBox().Center.Y)));
                             location.Objects[index].performRemoveAction(index, location);
                             location.Objects.Remove(index);
                         }
@@ -372,11 +372,9 @@ namespace PointAndPlant
                 {
                     if (player.currentLocation.terrainFeatures.ContainsKey(index))
                     {
-                        if (player.currentLocation.terrainFeatures[index] is HoeDirt)
+                        if (player.currentLocation.terrainFeatures[index] is HoeDirt dirt)
                         {
-                            HoeDirt dirt = (HoeDirt)player.currentLocation.terrainFeatures[index];
-
-                            if (player.currentLocation.isFarm || player.currentLocation.name.Contains("Greenhouse"))
+                            if (player.currentLocation.IsFarm || player.currentLocation.Name.Contains("Greenhouse"))
                             {
                                 if (Game1.player.ActiveObject != null && dirt.crop == null && (Game1.player.ActiveObject.Category == -74 || Game1.player.ActiveObject.Category == -19))
                                 {
@@ -386,9 +384,9 @@ namespace PointAndPlant
                                     //Basic Retaining Soil: 370
                                     //Deluxe Speed-Gro: 466
                                     //Speed - Gro: 465
-                                    dirt.fertilizer = this.Fertilizer;
+                                    dirt.fertilizer.Value = this.Fertilizer;
 
-                                    if (dirt.plant(Game1.player.ActiveObject.ParentSheetIndex, this.MouseX, this.MouseY, Game1.player, Game1.player.ActiveObject.Category == -19) && Game1.player.IsMainPlayer)
+                                    if (dirt.plant(Game1.player.ActiveObject.ParentSheetIndex, this.MouseX, this.MouseY, Game1.player, Game1.player.ActiveObject.Category == -19, player.currentLocation) && Game1.player.IsMainPlayer)
                                         Game1.player.reduceActiveItemByOne();
                                     Game1.haltAfterCheck = false;
                                 }
@@ -442,7 +440,7 @@ namespace PointAndPlant
             List<Vector2> tiles = new List<Vector2>();
 
             if (this.PhantomAxe == null)
-                this.PhantomAxe = new Axe { upgradeLevel = 4 };
+                this.PhantomAxe = new Axe { UpgradeLevel = 4 };
 
             int min = this.PlantRadius * -1;
 
@@ -473,7 +471,7 @@ namespace PointAndPlant
             List<Vector2> tiles = new List<Vector2>();
 
             if (this.PhantomPick == null)
-                this.PhantomPick = new Pickaxe { upgradeLevel = 4 };
+                this.PhantomPick = new Pickaxe { UpgradeLevel = 4 };
 
             int min = this.PlantRadius * -1;
 
@@ -492,7 +490,7 @@ namespace PointAndPlant
                         StardewValley.Object o = Game1.player.currentLocation.Objects[index];
                         if (o != null && o.name.Equals("Stone"))
                         {
-                            o.minutesUntilReady = 0;
+                            o.MinutesUntilReady = 0;
                             this.PhantomPick.DoFunction(player.currentLocation, (int)(index.X * Game1.tileSize), (int)(index.Y * Game1.tileSize), 4, player);
                         }
                     }
@@ -524,11 +522,8 @@ namespace PointAndPlant
                 {
                     if (player.currentLocation.terrainFeatures.ContainsKey(index))
                     {
-                        if (player.currentLocation.terrainFeatures[index] is HoeDirt)
-                        {
-                            HoeDirt dirt = (HoeDirt)player.currentLocation.terrainFeatures[index];
+                        if (player.currentLocation.terrainFeatures[index] is HoeDirt dirt)
                             dirt.crop?.growCompletely();
-                        }
                     }
                 }
                 catch (Exception exception)
@@ -543,22 +538,19 @@ namespace PointAndPlant
         {
             SFarmer player = Game1.player;
             GameLocation currentLocation = Game1.currentLocation;
-            StardewValley.Object @object;
-            TerrainFeature terrainFeature;
-            currentLocation.Objects.TryGetValue(this.Vector, out @object);
-            currentLocation.terrainFeatures.TryGetValue(this.Vector, out terrainFeature);
+            currentLocation.terrainFeatures.TryGetValue(this.Vector, out var terrainFeature);
 
             try
             {
-                if (player.currentLocation.isFarm || player.currentLocation.name.Contains("Greenhouse"))
+                if (player.currentLocation.IsFarm || player.currentLocation.Name.Contains("Greenhouse"))
                 {
-                    if (((HoeDirt)terrainFeature).crop != null || ((HoeDirt)terrainFeature).fertilizer != 0)
+                    if (((HoeDirt)terrainFeature).crop != null || ((HoeDirt)terrainFeature).fertilizer.Value != 0)
                     {
-                        if (((HoeDirt)terrainFeature).crop != null && (((HoeDirt)terrainFeature).crop.harvestMethod == 1 && ((HoeDirt)terrainFeature).readyForHarvest() || ((HoeDirt)terrainFeature).crop.dead))
+                        if (((HoeDirt)terrainFeature).crop != null && (((HoeDirt)terrainFeature).crop.harvestMethod.Value == 1 && ((HoeDirt)terrainFeature).readyForHarvest() || ((HoeDirt)terrainFeature).crop.dead.Value))
                         {
                             this.CustomSickle.DoDamage(currentLocation, this.MouseX, this.MouseY, Game1.player.getFacingDirection(), 0, Game1.player);
                         }
-                        else if (((HoeDirt)terrainFeature).crop != null && (((HoeDirt)terrainFeature).crop.harvestMethod != 1 && ((HoeDirt)terrainFeature).readyForHarvest()))
+                        else if (((HoeDirt)terrainFeature).crop != null && (((HoeDirt)terrainFeature).crop.harvestMethod.Value != 1 && ((HoeDirt)terrainFeature).readyForHarvest()))
                         {
                             List<Vector2> tiles = new List<Vector2>();
                             int min = this.HarvestRadius * -1;
@@ -575,11 +567,10 @@ namespace PointAndPlant
                                 {
                                     if (player.currentLocation.terrainFeatures.ContainsKey(index))
                                     {
-                                        if (player.currentLocation.terrainFeatures[index] is HoeDirt)
+                                        if (player.currentLocation.terrainFeatures[index] is HoeDirt dirt)
                                         {
-                                            HoeDirt dirt = (HoeDirt)player.currentLocation.terrainFeatures[index];
-                                            if (dirt.crop?.harvestMethod == 0)
-                                                dirt.performUseAction(index);
+                                            if (dirt.crop?.harvestMethod.Value == 0)
+                                                dirt.performUseAction(index, player.currentLocation);
                                         }
                                     }
                                 }
@@ -617,8 +608,8 @@ namespace PointAndPlant
                 if (!keyboard.IsKeyDown(this.GrassKey) && !keyboard.IsKeyDown(this.PlowKey) && !keyboard.IsKeyDown(this.PlantKey) && !keyboard.IsKeyDown(this.GrowKey) && !keyboard.IsKeyDown(this.HarvestKey))
                     return;
 
-                this.MouseX = Game1.getMouseX() + @Game1.viewport.X;
-                this.MouseY = Game1.getMouseY() + @Game1.viewport.Y;
+                this.MouseX = Game1.getMouseX() + Game1.viewport.X;
+                this.MouseY = Game1.getMouseY() + Game1.viewport.Y;
 
                 this.TileX = this.MouseX / Game1.tileSize;
                 this.TileY = this.MouseY / Game1.tileSize;
@@ -646,7 +637,7 @@ namespace PointAndPlant
         {
             List<Vector2> tiles = new List<Vector2>();
 
-            if (who.currentLocation.name.Equals("Farm") || who.currentLocation.name.Contains("Greenhouse"))
+            if (who.currentLocation.Name.Equals("Farm") || who.currentLocation.Name.Contains("Greenhouse"))
             {
                 for (int x = 0; x < this.PlowWidth; x++)
                 {

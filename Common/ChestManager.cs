@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
@@ -122,15 +123,8 @@ namespace StardewLib
             if (loc == null)
                 return null;
 
-            Object chest;
-            loc.objects.TryGetValue(def.Tile, out chest);
-
-            if (chest == null || !(chest is Chest))
-            {
-                return null;
-            }
-
-            return chest;
+            loc.objects.TryGetValue(def.Tile, out Object chest);
+            return chest as Chest;
         }
 
         public SortedDictionary<int, ChestDef> ParseAllChests()
@@ -139,9 +133,9 @@ namespace StardewLib
 
             foreach (GameLocation loc in Game1.locations)
             {
-                foreach (KeyValuePair<Vector2, Object> o in loc.objects)
+                foreach (KeyValuePair<Vector2, Object> o in loc.Objects.Pairs)
                 {
-                    if (o.Value != null && o.Value is Chest)
+                    if (o.Value is Chest)
                     {
                         Chest c = (Chest)o.Value;
                         Dictionary<int, int> itemCounts = new Dictionary<int, int>();
@@ -150,13 +144,13 @@ namespace StardewLib
                         {
                             if (i != null)
                             {
-                                if (itemCounts.ContainsKey(i.parentSheetIndex))
+                                if (itemCounts.ContainsKey(i.ParentSheetIndex))
                                 {
-                                    itemCounts[i.parentSheetIndex] += i.Stack;
+                                    itemCounts[i.ParentSheetIndex] += i.Stack;
                                 }
                                 else
                                 {
-                                    itemCounts.Add(i.parentSheetIndex, i.Stack);
+                                    itemCounts.Add(i.ParentSheetIndex, i.Stack);
                                 }
                             }
                         }
@@ -182,11 +176,11 @@ namespace StardewLib
                     {
                         foreach (Building bgl in Game1.getFarm().buildings)
                         {
-                            if (bgl.indoors != null && bgl.indoors.Objects != null && bgl.indoors.Objects.Count > 0)
+                            if (bgl.indoors.Value?.Objects != null && bgl.indoors.Value.Objects.Any())
                             {
-                                foreach (KeyValuePair<Vector2, Object> o2 in bgl.indoors.objects)
+                                foreach (KeyValuePair<Vector2, Object> o2 in bgl.indoors.Value.objects.Pairs)
                                 {
-                                    if (o2.Value != null && o2.Value is Chest)
+                                    if (o2.Value is Chest)
                                     {
                                         Chest c = (Chest)o2.Value;
                                         Dictionary<int, int> itemCounts = new Dictionary<int, int>();
@@ -195,13 +189,13 @@ namespace StardewLib
                                         {
                                             if (i != null)
                                             {
-                                                if (itemCounts.ContainsKey(i.parentSheetIndex))
+                                                if (itemCounts.ContainsKey(i.ParentSheetIndex))
                                                 {
-                                                    itemCounts[i.parentSheetIndex] += i.Stack;
+                                                    itemCounts[i.ParentSheetIndex] += i.Stack;
                                                 }
                                                 else
                                                 {
-                                                    itemCounts.Add(i.parentSheetIndex, i.Stack);
+                                                    itemCounts.Add(i.ParentSheetIndex, i.Stack);
                                                 }
                                             }
                                         }
@@ -212,12 +206,12 @@ namespace StardewLib
                                             {
                                                 if (bestGuessChest[item2.Key].Count < item2.Value)
                                                 {
-                                                    bestGuessChest[item2.Key] = new ChestDef((int)o2.Key.X, (int)o2.Key.Y, bgl.indoors.Name, item2.Value, c);
+                                                    bestGuessChest[item2.Key] = new ChestDef((int)o2.Key.X, (int)o2.Key.Y, bgl.indoors.Value.Name, item2.Value, c);
                                                 }
                                             }
                                             else
                                             {
-                                                bestGuessChest.Add(item2.Key, new ChestDef((int)o2.Key.X, (int)o2.Key.Y, bgl.indoors.Name, item2.Value, c));
+                                                bestGuessChest.Add(item2.Key, new ChestDef((int)o2.Key.X, (int)o2.Key.Y, bgl.indoors.Value.Name, item2.Value, c));
                                             }
                                         }
                                     }
@@ -238,13 +232,8 @@ namespace StardewLib
         *********/
         private ChestDef GetChestDef(int itemId)
         {
-            ChestDef def;
-            this.Chests.TryGetValue(itemId, out def);
-
-            if (def == null)
-                return this.DefaultChest;
-            else
-                return def;
+            this.Chests.TryGetValue(itemId, out ChestDef def);
+            return def ?? this.DefaultChest;
         }
     }
 }

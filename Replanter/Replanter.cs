@@ -210,40 +210,38 @@ namespace Replanter
 
             foreach (GameLocation location in Game1.locations)
             {
-                if (!location.isFarm && !location.name.Contains("Greenhouse")) continue;
+                if (!location.IsFarm && !location.Name.Contains("Greenhouse")) continue;
 
-                foreach (KeyValuePair<Vector2, TerrainFeature> feature in location.terrainFeatures)
+                foreach (KeyValuePair<Vector2, TerrainFeature> feature in location.terrainFeatures.Pairs)
                 {
                     if (feature.Value == null) continue;
 
-                    var itemHarvested = true;
-                    if (feature.Value is HoeDirt)
+                    bool itemHarvested = true;
+                    if (feature.Value is HoeDirt dirt)
                     {
-                        HoeDirt dirt = (HoeDirt)feature.Value;
-
                         if (dirt.crop != null)
                         {
                             Crop crop = dirt.crop;
 
-                            if (this.WaterCrops && dirt.state != 1)
+                            if (this.WaterCrops && dirt.state.Value != 1)
                             {
-                                dirt.state = 1;
+                                dirt.state.Value = 1;
                                 stats.CropsWatered++;
                             }
 
-                            if (this.ClearDeadPlants && crop.dead)
+                            if (this.ClearDeadPlants && crop.dead.Value)
                             {
                                 // TODO: store what kind of crop this was so we can replant.
-                                dirt.destroyCrop(feature.Key);
+                                dirt.destroyCrop(feature.Key, true, location);
                                 stats.PlantsCleared++;
 
                                 continue;
                             }
 
-                            if (this.Ignore(crop.indexOfHarvest))
+                            if (this.Ignore(crop.indexOfHarvest.Value))
                                 continue;
 
-                            if (crop.currentPhase >= crop.phaseDays.Count - 1 && (!crop.fullyGrown || crop.dayOfCurrentPhase <= 0))
+                            if (crop.currentPhase.Value >= crop.phaseDays.Count - 1 && (!crop.fullyGrown.Value || crop.dayOfCurrentPhase.Value <= 0))
                             {
                                 int seedCost = 0;
                                 stats.TotalCrops++;
@@ -251,14 +249,14 @@ namespace Replanter
                                 StardewValley.Object item = this.GetHarvestedCrop(dirt, crop, (int)feature.Key.X, (int)feature.Key.Y);
 
                                 if (!this.Free)
-                                    seedCost = (int)(this.CostOfSeed(crop.indexOfHarvest) * ((100f - this.SeedDiscount) / 100f));
+                                    seedCost = (int)(this.CostOfSeed(crop.indexOfHarvest.Value) * ((100f - this.SeedDiscount) / 100f));
 
                                 if (this.SellAfterHarvest)
                                 {
                                     if (this.SellCrops(farmer, item, stats))
                                     {
-                                        if (crop.indexOfHarvest == 431)
-                                            this.HandleSunflower(farmer, stats, item.quality);
+                                        if (crop.indexOfHarvest.Value == 431)
+                                            this.HandleSunflower(farmer, stats, item.Quality);
                                         itemHarvested = true;
                                     }
                                     else
@@ -269,8 +267,8 @@ namespace Replanter
                                     if (this.AddItemToInventory(item, farmer, farm, stats))
                                     {
                                         itemHarvested = true;
-                                        if (crop.indexOfHarvest == 431)
-                                            this.HandleSunflower(farmer, stats, item.quality, (int)feature.Key.X, (int)feature.Key.Y);
+                                        if (crop.indexOfHarvest.Value == 431)
+                                            this.HandleSunflower(farmer, stats, item.Quality, (int)feature.Key.X, (int)feature.Key.Y);
                                     }
                                     else
                                         itemHarvested = false;
@@ -283,36 +281,34 @@ namespace Replanter
 
                                     if (this.ReplantCrop(crop, location))
                                     {
-                                        if (crop.regrowAfterHarvest == -1)
+                                        if (crop.regrowAfterHarvest.Value == -1)
                                             stats.RunningSeedCost += seedCost;
                                     }
                                     else
                                     {
-                                        if (crop.dead)
+                                        if (crop.dead.Value)
                                         {
                                             // Store what kind of crop this is so you can replant.
-                                            dirt.destroyCrop(feature.Key);
+                                            dirt.destroyCrop(feature.Key, true, location);
                                             stats.PlantsCleared++;
                                         }
                                     }
 
                                     // Add experience
-                                    float experience = (float)(16.0 * Math.Log(0.018 * Convert.ToInt32(Game1.objectInformation[crop.indexOfHarvest].Split('/')[1]) + 1.0, Math.E));
+                                    float experience = (float)(16.0 * Math.Log(0.018 * Convert.ToInt32(Game1.objectInformation[crop.indexOfHarvest.Value].Split('/')[1]) + 1.0, Math.E));
                                     Game1.player.gainExperience(0, (int)Math.Round(experience));
                                 }
 
                             }
                         }
                     }
-                    else if (feature.Value is FruitTree)
+                    else if (feature.Value is FruitTree tree)
                     {
-                        FruitTree tree = (FruitTree)feature.Value;
-
-                        if (tree.fruitsOnTree > 0)
+                        if (tree.fruitsOnTree.Value > 0)
                         {
                             int countFromThisTree = 0;
 
-                            for (int i = 0; i < tree.fruitsOnTree; i++)
+                            for (int i = 0; i < tree.fruitsOnTree.Value; i++)
                             {
                                 stats.TotalCrops++;
 
@@ -343,12 +339,12 @@ namespace Replanter
                                 {
                                     stats.CropsHarvested++;
 
-                                    float experience = (float)(16.0 * Math.Log(0.018 * Convert.ToInt32(Game1.objectInformation[tree.indexOfFruit].Split('/')[1]) + 1.0, Math.E));
+                                    float experience = (float)(16.0 * Math.Log(0.018 * Convert.ToInt32(Game1.objectInformation[tree.indexOfFruit.Value].Split('/')[1]) + 1.0, Math.E));
                                     Game1.player.gainExperience(0, (int)Math.Round(experience));
                                 }
                             }
 
-                            tree.fruitsOnTree -= countFromThisTree;
+                            tree.fruitsOnTree.Value -= countFromThisTree;
                         }
 
 
@@ -384,16 +380,16 @@ namespace Replanter
         private StardewValley.Object GetHarvestedFruit(FruitTree tree)
         {
             int quality = 0;
-            if (tree.daysUntilMature <= -112)
+            if (tree.daysUntilMature.Value <= -112)
                 quality = 1;
-            if (tree.daysUntilMature <= -224)
+            if (tree.daysUntilMature.Value <= -224)
                 quality = 2;
-            if (tree.daysUntilMature <= -336)
+            if (tree.daysUntilMature.Value <= -336)
                 quality = 4;
             //if (tree.struckByLightningCountdown > 0)
             //        quality = 0; 
 
-            StardewValley.Object obj = new StardewValley.Object(tree.indexOfFruit, 1, false, -1, quality);
+            StardewValley.Object obj = new StardewValley.Object(tree.indexOfFruit.Value, 1, false, -1, quality);
 
             return obj;
         }
@@ -406,7 +402,7 @@ namespace Replanter
 
             Random random = new Random(tileX * 7 + tileY * 11 + (int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame);
 
-            switch (dirt.fertilizer)
+            switch (dirt.fertilizer.Value)
             {
                 case 368:
                     fertilizerBuff = 1;
@@ -423,11 +419,11 @@ namespace Replanter
                 itemQuality = 2;
             else if (random.NextDouble() < qualityModifier2)
                 itemQuality = 1;
-            if (crop.minHarvest > 1 || crop.maxHarvest > 1)
-                stackSize = random.Next(crop.minHarvest, Math.Min(crop.minHarvest + 1, crop.maxHarvest + 1 + Game1.player.FarmingLevel / crop.maxHarvestIncreasePerFarmingLevel));
-            if (crop.chanceForExtraCrops > 0.0)
+            if (crop.minHarvest.Value > 1 || crop.maxHarvest.Value > 1)
+                stackSize = random.Next(crop.minHarvest.Value, Math.Min(crop.minHarvest.Value + 1, crop.maxHarvest.Value + 1 + Game1.player.FarmingLevel / crop.maxHarvestIncreasePerFarmingLevel.Value));
+            if (crop.chanceForExtraCrops.Value > 0.0)
             {
-                while (random.NextDouble() < Math.Min(0.9, crop.chanceForExtraCrops))
+                while (random.NextDouble() < Math.Min(0.9, crop.chanceForExtraCrops.Value))
                     ++stackSize;
             }
 
@@ -436,13 +432,13 @@ namespace Replanter
                 stackSize *= 2;
             }
 
-            if (crop.indexOfHarvest == 421)
+            if (crop.indexOfHarvest.Value == 421)
             {
-                crop.indexOfHarvest = 431;
+                crop.indexOfHarvest.Value = 431;
                 stackSize = random.Next(1, 4);
             }
 
-            StardewValley.Object item = new StardewValley.Object(crop.indexOfHarvest, stackSize, false, -1, itemQuality);
+            StardewValley.Object item = new StardewValley.Object(crop.indexOfHarvest.Value, stackSize, false, -1, itemQuality);
 
             return item;
         }
@@ -460,49 +456,49 @@ namespace Replanter
                 int growingDaysTillNextSeason = 28 - day;
                 int totalDaysNeeded = c.phaseDays.Sum();
 
-                replantLog += "smartenabled/dtg:" + "?" + "/gdtns:" + growingDaysTillNextSeason + "/ioh:" + c.indexOfHarvest + "/tdn:" + totalDaysNeeded + "/";
+                replantLog += "smartenabled/dtg:" + "?" + "/gdtns:" + growingDaysTillNextSeason + "/ioh:" + c.indexOfHarvest.Value + "/tdn:" + totalDaysNeeded + "/";
 
-                if (c.regrowAfterHarvest == -1)
+                if (c.regrowAfterHarvest.Value == -1)
                 {
-                    replantLog += "rah:" + c.regrowAfterHarvest + "/cpb:" + c.currentPhase + "/";
+                    replantLog += "rah:" + c.regrowAfterHarvest.Value + "/cpb:" + c.currentPhase.Value + "/";
                     //c.currentPhase = 0;
 
                     if (!((totalDaysNeeded - 99999) <= growingDaysTillNextSeason) && !c.seasonsToGrowIn.Contains(nextSeason))
                     {
                         replantLog += "notreplanted/";
-                        c.dead = true;
+                        c.dead.Value = true;
                         replanted = false;
                     }
                     else
                     {
                         replantLog += "replanted/";
-                        c.currentPhase = 0;
-                        replantLog += "cpa:" + c.currentPhase + "/";
+                        c.currentPhase.Value = 0;
+                        replantLog += "cpa:" + c.currentPhase.Value + "/";
                     }
                 }
                 else
                 {
-                    replantLog += "cp:" + c.currentPhase + "/rah:" + c.regrowAfterHarvest + "/docpb:" + c.dayOfCurrentPhase + "/";
-                    c.dayOfCurrentPhase = c.regrowAfterHarvest;
-                    c.fullyGrown = true;
-                    replantLog += "docpa:" + c.dayOfCurrentPhase + "/";
+                    replantLog += "cp:" + c.currentPhase.Value + "/rah:" + c.regrowAfterHarvest.Value + "/docpb:" + c.dayOfCurrentPhase.Value + "/";
+                    c.dayOfCurrentPhase.Value = c.regrowAfterHarvest.Value;
+                    c.fullyGrown.Value = true;
+                    replantLog += "docpa:" + c.dayOfCurrentPhase.Value + "/";
                 }
             }
             else
             {
                 replantLog += "smartdisabled/";
-                if (c.regrowAfterHarvest == -1)
+                if (c.regrowAfterHarvest.Value == -1)
                 {
-                    replantLog += "rah:" + c.regrowAfterHarvest + "/cpb:" + c.currentPhase + "/";
-                    c.currentPhase = 0;
-                    replantLog += "cpa:" + c.currentPhase + "/";
+                    replantLog += "rah:" + c.regrowAfterHarvest.Value + "/cpb:" + c.currentPhase.Value + "/";
+                    c.currentPhase.Value = 0;
+                    replantLog += "cpa:" + c.currentPhase.Value + "/";
                 }
                 else
                 {
-                    replantLog += "cp:" + c.currentPhase + "/rah:" + c.regrowAfterHarvest + "/docpb:" + c.dayOfCurrentPhase + "/";
-                    c.dayOfCurrentPhase = c.regrowAfterHarvest;
-                    c.fullyGrown = true;
-                    replantLog += "docpa:" + c.dayOfCurrentPhase + "/";
+                    replantLog += "cp:" + c.currentPhase.Value + "/rah:" + c.regrowAfterHarvest.Value + "/docpb:" + c.dayOfCurrentPhase.Value + "/";
+                    c.dayOfCurrentPhase.Value = c.regrowAfterHarvest.Value;
+                    c.fullyGrown.Value = true;
+                    replantLog += "docpa:" + c.dayOfCurrentPhase.Value + "/";
                 }
             }
 
@@ -548,7 +544,7 @@ namespace Replanter
 
                 if (!this.AddItemToInventory(flower, farmer, Game1.getFarm(), stats))
                 {
-                    Game1.createObjectDebris(421, tileX, tileY, -1, flower.quality);
+                    Game1.createObjectDebris(421, tileX, tileY, -1, flower.Quality);
 
                     this.Monitor.Log("Sunflower was harvested, but couldn't add flower to inventory, you'll have to go pick it up.", LogLevel.Trace);
                 }
@@ -613,7 +609,7 @@ namespace Replanter
 
                     if (this.SellAfterHarvest && stats.CropsHarvested > 0)
                     {
-                        if (character.name == "Pierre")
+                        if (character.Name == "Pierre")
                         {
                             message += this.DialogueManager.PerformReplacement(this.Dialogue[10], stats, this.Config);
                         }
@@ -755,7 +751,7 @@ namespace Replanter
          */
         private bool SellCrops(SFarmer farmer, StardewValley.Object obj, ReplanterStats stats)
         {
-            if (this.NeverSell(obj.parentSheetIndex))
+            if (this.NeverSell(obj.ParentSheetIndex))
                 return (this.AddItemToInventory(obj, farmer, Game1.getFarm(), stats));
 
             stats.RunningSellPrice += obj.sellToStorePrice();
@@ -793,7 +789,7 @@ namespace Replanter
          */
         private bool AddItemToInventory(StardewValley.Object obj, SFarmer farmer, Farm farm, ReplanterStats stats)
         {
-            if (this.AlwaysSell(obj.parentSheetIndex))
+            if (this.AlwaysSell(obj.ParentSheetIndex))
                 return this.SellCrops(farmer, obj, stats);
 
             bool wasAdded = false;
@@ -809,8 +805,7 @@ namespace Replanter
             {
                 StardewValley.Object chest;
 
-                ChestDef preferred;
-                this.Chests.TryGetValue(obj.ParentSheetIndex, out preferred);
+                this.Chests.TryGetValue(obj.ParentSheetIndex, out ChestDef preferred);
 
                 if (preferred != null)
                 {
