@@ -19,6 +19,9 @@ namespace PelicanFiber
         private bool Unfiltered = true;
         private ItemUtils ItemUtils;
 
+        //Instance so we can use Helper class
+        public static PelicanFiber instance;
+
 
         /*********
         ** Public methods
@@ -27,6 +30,7 @@ namespace PelicanFiber
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            instance = this;
             // load config
             this.Config = this.Helper.ReadConfig<ModConfig>();
             if (!Enum.TryParse(this.Config.KeyBind, true, out this.MenuKey))
