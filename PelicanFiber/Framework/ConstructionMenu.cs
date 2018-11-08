@@ -50,6 +50,7 @@ namespace PelicanFiber.Framework
 
         private BluePrint CurrentBlueprint => this.Blueprints[this.CurrentBlueprintIndex];
 
+
         /*********
         ** Public methods
         *********/
