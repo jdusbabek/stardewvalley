@@ -8,7 +8,6 @@ using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.Tools;
 using Object = StardewValley.Object;
-using SFarmer = StardewValley.Farmer;
 
 namespace PelicanFiber.Framework
 {
@@ -364,7 +363,7 @@ namespace PelicanFiber.Framework
             }
         }
 
-        public Dictionary<Item, int[]> GetFishShopStock(SFarmer who, bool unfiltered = false)
+        public Dictionary<Item, int[]> GetFishShopStock(Farmer who, bool unfiltered = false)
         {
             Dictionary<Item, int[]> stock = new Dictionary<Item, int[]>
             {

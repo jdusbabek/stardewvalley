@@ -11,7 +11,6 @@ using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Objects;
 using Object = StardewValley.Object;
-using SFarmer = StardewValley.Farmer;
 
 namespace AnimalSitter
 {
@@ -152,7 +151,7 @@ namespace AnimalSitter
 
         private void IterateOverAnimals()
         {
-            SFarmer farmer = Game1.player;
+            Farmer farmer = Game1.player;
             AnimalTasks stats = new AnimalTasks();
 
             foreach (FarmAnimal animal in this.GetAnimals())
@@ -267,7 +266,7 @@ namespace AnimalSitter
         private void HarvestTruffles(AnimalTasks stats)
         {
             Farm farm = Game1.getFarm();
-            SFarmer farmer = Game1.player;
+            Farmer farmer = Game1.player;
 
             List<Vector2> itemsToRemove = new List<Vector2>();
 
@@ -324,7 +323,7 @@ namespace AnimalSitter
         private void HarvestCoops(AnimalTasks stats)
         {
             Farm farm = Game1.getFarm();
-            SFarmer farmer = Game1.player;
+            Farmer farmer = Game1.player;
 
             foreach (Building building in farm.buildings)
             {
@@ -362,7 +361,7 @@ namespace AnimalSitter
             }
         }
 
-        private bool AddItemToInventory(Object obj, SFarmer farmer)
+        private bool AddItemToInventory(Object obj, Farmer farmer)
         {
             if (!this.BypassInventory)
             {

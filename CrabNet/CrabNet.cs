@@ -9,7 +9,6 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Objects;
 using SObject = StardewValley.Object;
-using SFarmer = StardewValley.Farmer;
 
 namespace CrabNet
 {
@@ -153,7 +152,6 @@ namespace CrabNet
                 {
                     this.Monitor.Log($"Exception onKeyReleased: {ex}", LogLevel.Error);
                 }
-
             }
         }
 
@@ -260,7 +258,7 @@ namespace CrabNet
             }
         }
 
-        private bool CheckForAction(SFarmer farmer, CrabPot pot, CrabNetStats stats)
+        private bool CheckForAction(Farmer farmer, CrabPot pot, CrabNetStats stats)
         {
             if (!this.CanAfford(farmer, this.CostPerCheck, stats))
                 return false;
@@ -291,7 +289,7 @@ namespace CrabNet
             return false;
         }
 
-        private bool PerformObjectDropInAction(SObject dropIn, SFarmer farmer, CrabPot pot)
+        private bool PerformObjectDropInAction(SObject dropIn, Farmer farmer, CrabPot pot)
         {
             if (pot.bait.Value != null || farmer.professions.Contains(11))
                 return false;
@@ -301,7 +299,7 @@ namespace CrabNet
             return true;
         }
 
-        private bool AddItemToInventory(SObject obj, SFarmer farmer, Farm farm)
+        private bool AddItemToInventory(SObject obj, Farmer farmer, Farm farm)
         {
             bool wasAdded = false;
 
@@ -379,7 +377,7 @@ namespace CrabNet
             return wasAdded;
         }
 
-        private bool CanAfford(SFarmer farmer, int amount, CrabNetStats stats)
+        private bool CanAfford(Farmer farmer, int amount, CrabNetStats stats)
         {
             // Calculate the running cost (need config passed for that) and determine if additional puts you over.
             return (amount + stats.RunningTotal) <= farmer.Money;

@@ -10,7 +10,6 @@ using StardewValley;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using xTile.Dimensions;
-using SFarmer = StardewValley.Farmer;
 
 namespace PointAndPlant
 {
@@ -264,7 +263,7 @@ namespace PointAndPlant
 
         private void Plow()
         {
-            SFarmer player = Game1.player;
+            Farmer player = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             if (player.currentLocation.Name.Equals("Farm") || player.currentLocation.Name.Contains("Greenhouse"))
@@ -353,7 +352,7 @@ namespace PointAndPlant
 
         private void Plant()
         {
-            SFarmer player = Game1.player;
+            Farmer player = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             int min = this.PlantRadius * -1;
@@ -404,7 +403,7 @@ namespace PointAndPlant
 
         private void PlantGrass()
         {
-            SFarmer player = Game1.player;
+            Farmer player = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             int min = this.PlantRadius * -1;
@@ -436,7 +435,7 @@ namespace PointAndPlant
 
         private void ChopTrees()
         {
-            SFarmer player = Game1.player;
+            Farmer player = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             if (this.PhantomAxe == null)
@@ -467,7 +466,7 @@ namespace PointAndPlant
 
         private void BreakRocks()
         {
-            SFarmer player = Game1.player;
+            Farmer player = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             if (this.PhantomPick == null)
@@ -505,7 +504,7 @@ namespace PointAndPlant
 
         private void Grow()
         {
-            SFarmer player = Game1.player;
+            Farmer player = Game1.player;
             List<Vector2> tiles = new List<Vector2>();
 
             int min = this.GrowRadius * -1;
@@ -536,7 +535,7 @@ namespace PointAndPlant
 
         private void Harvest()
         {
-            SFarmer player = Game1.player;
+            Farmer player = Game1.player;
             GameLocation currentLocation = Game1.currentLocation;
             currentLocation.terrainFeatures.TryGetValue(this.Vector, out var terrainFeature);
 
@@ -633,7 +632,7 @@ namespace PointAndPlant
             }
         }
 
-        private List<Vector2> TilesAffected(SFarmer who)
+        private List<Vector2> TilesAffected(Farmer who)
         {
             List<Vector2> tiles = new List<Vector2>();
 

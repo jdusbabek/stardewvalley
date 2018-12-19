@@ -11,7 +11,6 @@ using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
-using SFarmer = StardewValley.Farmer;
 
 namespace Replanter
 {
@@ -204,7 +203,7 @@ namespace Replanter
         private void PerformAction()
         {
             Farm farm = Game1.getFarm();
-            SFarmer farmer = Game1.player;
+            Farmer farmer = Game1.player;
 
             ReplanterStats stats = new ReplanterStats();
 
@@ -526,7 +525,7 @@ namespace Replanter
             }
         }
 
-        private void HandleSunflower(SFarmer farmer, ReplanterStats stats, int quality, int tileX = 0, int tileY = 0)
+        private void HandleSunflower(Farmer farmer, ReplanterStats stats, int quality, int tileX = 0, int tileY = 0)
         {
             if (this.SellAfterHarvest)
             {
@@ -749,7 +748,7 @@ namespace Replanter
         /**
          * Sells the crops, and adds them to the inventory if they are on the never-sell list.
          */
-        private bool SellCrops(SFarmer farmer, StardewValley.Object obj, ReplanterStats stats)
+        private bool SellCrops(Farmer farmer, StardewValley.Object obj, ReplanterStats stats)
         {
             if (this.NeverSell(obj.ParentSheetIndex))
                 return (this.AddItemToInventory(obj, farmer, Game1.getFarm(), stats));
@@ -787,7 +786,7 @@ namespace Replanter
         /**
          * Attempts to add the crop to the farmer's inventory.  If the crop is on the always sell list, it is sold instead.
          */
-        private bool AddItemToInventory(StardewValley.Object obj, SFarmer farmer, Farm farm, ReplanterStats stats)
+        private bool AddItemToInventory(StardewValley.Object obj, Farmer farmer, Farm farm, ReplanterStats stats)
         {
             if (this.AlwaysSell(obj.ParentSheetIndex))
                 return this.SellCrops(farmer, obj, stats);
