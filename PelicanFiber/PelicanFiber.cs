@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using PelicanFiber.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -13,7 +12,7 @@ namespace PelicanFiber
         /*********
         ** Properties
         *********/
-        private Keys MenuKey = Keys.PageDown;
+        private SButton MenuKey = SButton.PageDown;
         private Texture2D Websites;
         private ModConfig Config;
         private bool Unfiltered = true;
@@ -31,8 +30,8 @@ namespace PelicanFiber
             this.Config = this.Helper.ReadConfig<ModConfig>();
             if (!Enum.TryParse(this.Config.KeyBind, true, out this.MenuKey))
             {
-                this.MenuKey = Keys.PageDown;
-                this.Monitor.Log("404 Not Found: Error parsing key binding. Defaulted to Page Down");
+                this.MenuKey = SButton.PageDown;
+                this.Monitor.Log($"404 Not Found: Error parsing key binding; defaulted to {this.MenuKey}.");
             }
             this.Unfiltered = !this.Config.InternetFilter;
 
@@ -50,19 +49,22 @@ namespace PelicanFiber
             this.ItemUtils = new ItemUtils(helper.Content, this.Monitor);
 
             // hook events
-            ControlEvents.KeyReleased += this.ControlEvents_OnKeyReleased;
+            helper.Events.Input.ButtonPressed += this.OnButtonPressed;
         }
 
 
         /*********
         ** Private methods
         *********/
-        private void ControlEvents_OnKeyReleased(object sender, EventArgsKeyPressed e)
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             if (!Context.IsPlayerFree)
                 return;
 
-            if (e.KeyPressed == this.MenuKey)
+            if (e.Button == this.MenuKey)
             {
                 try
                 {

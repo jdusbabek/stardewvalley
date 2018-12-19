@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using AnimalSitter.Framework;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using StardewLib;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -19,7 +18,7 @@ namespace AnimalSitter
         /*********
         ** Properties
         *********/
-        private Keys PetKey;
+        private SButton PetKey;
 
         // Whether to use dark magic to age the animals to maturity when visiting the animals.
         private bool GrowUpEnabled = true;
@@ -78,12 +77,15 @@ namespace AnimalSitter
             this.DialogueManager = new DialogueManager(this.Config, helper.Content, this.Monitor);
             this.ChestManager = new ChestManager(this.Monitor);
 
-            SaveEvents.AfterLoad += this.SaveEvents_AfterLoad;
-            ControlEvents.KeyReleased += this.ControlEvents_KeyReleased;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.Input.ButtonPressed += this.OnButtonPressed;
         }
 
 
-        private void SaveEvents_AfterLoad(object sender, EventArgs e)
+        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             this.ImportConfiguration();
 
@@ -101,8 +103,8 @@ namespace AnimalSitter
         {
             if (!Enum.TryParse(this.Config.KeyBind, true, out this.PetKey))
             {
-                this.PetKey = Keys.O;
-                this.Monitor.Log("Error parsing key binding. Defaulted to O");
+                this.PetKey = SButton.O;
+                this.Monitor.Log($"Error parsing key binding; defaulted to {this.PetKey}.");
             }
 
             this.PettingEnabled = this.Config.PettingEnabled;
@@ -131,12 +133,15 @@ namespace AnimalSitter
             }
         }
 
-        private void ControlEvents_KeyReleased(object sender, EventArgsKeyPressed e)
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             if (!Context.IsPlayerFree)
                 return;
 
-            if (e.KeyPressed == this.PetKey)
+            if (e.Button == this.PetKey)
             {
                 try
                 {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using CrabNet.Framework;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using StardewLib;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -18,7 +17,7 @@ namespace CrabNet
         ** Properties
         *********/
         // Local variable for config setting "keybind"
-        private Keys ActionKey;
+        private SButton ActionKey;
 
         // Local variable for config setting "loggingEnabled"
         private bool LoggingEnabled;
@@ -99,20 +98,23 @@ namespace CrabNet
             this.Config = this.Helper.ReadConfig<ModConfig>();
             this.DialogueManager = new DialogueManager(this.Config, helper.Content, this.Monitor);
 
-            SaveEvents.AfterLoad += this.SaveEvents_AfterLoad;
-            ControlEvents.KeyReleased += this.ControlEvents_KeyReleased;
+            helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
+            helper.Events.Input.ButtonPressed += this.OnButtonPressed;
         }
 
 
         /*********
         ** Private methods
         *********/
-        private void SaveEvents_AfterLoad(object sender, EventArgs e)
+        /// <summary>Raised after the player loads a save slot.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             if (!Enum.TryParse(this.Config.KeyBind, true, out this.ActionKey))
             {
-                this.ActionKey = Keys.H;
-                this.Monitor.Log("Error parsing key binding. Defaulted to H");
+                this.ActionKey = SButton.H;
+                this.Monitor.Log($"Error parsing key binding; defaulted to {this.ActionKey}.");
             }
 
             this.LoggingEnabled = this.Config.EnableLogging;
@@ -137,12 +139,15 @@ namespace CrabNet
             this.ReadInMessages();
         }
 
-        private void ControlEvents_KeyReleased(object sender, EventArgsKeyPressed e)
+        /// <summary>Raised after the player presses a button on the keyboard, controller, or mouse.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
             if (!Context.IsPlayerFree)
                 return;
 
-            if (e.KeyPressed == this.ActionKey)
+            if (e.Button == this.ActionKey)
             {
                 try
                 {
