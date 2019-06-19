@@ -30,7 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="2.2.0" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.0.0-beta.4" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,12 +43,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\dialog.xnb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="assets\dialog.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="assets\dialog.xnb" />
+    <None Include="assets\dialog.yaml" />
     <None Include="manifest.json" />
   </ItemGroup>
   <Import Project="..\Common\Common.projitems" Label="Shared" />
