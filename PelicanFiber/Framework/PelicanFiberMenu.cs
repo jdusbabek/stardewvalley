@@ -47,88 +47,34 @@ namespace PelicanFiber.Framework
             this.Scale = scale;
             this.Unfiltered = unfiltered;
 
+            this.AddLink("blacksmith_tools", 55, 185, websites, new Rectangle(0, 0, 256, 128));
+            this.AddLink("blacksmith", 55, 313, websites, new Rectangle(0, 128, 256, 128));
+            this.AddLink("animals", 321, 185, websites, new Rectangle(257, 0, 256, 128));
+            this.AddLink("animal_supplies", 321, 313, websites, new Rectangle(257, 128, 256, 128));
+            this.AddLink("produce", 587, 185, websites, new Rectangle(513, 0, 256, 256));
+            this.AddLink("carpentry_build", 853, 185, websites, new Rectangle(769, 0, 256, 128));
+            this.AddLink("carpentry", 853, 313, websites, new Rectangle(769, 128, 256, 128));
+            this.AddLink("sauce", 1119, 185, websites, new Rectangle(1025, 0, 256, 256));
 
-            ClickableTextureComponent c1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(128f * scale)), websites, new Rectangle(0, 0, 256, 128), scale);
-            ClickableTextureComponent c1_1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 313 * scale), (int)(256f * scale), (int)(128f * scale)), websites, new Rectangle(0, 128, 256, 128), scale);
-            ClickableTextureComponent c2 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(128f * scale)), websites, new Rectangle(257, 0, 256, 128), scale);
-            ClickableTextureComponent c2_1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 313 * scale), (int)(256f * scale), (int)(128f * scale)), websites, new Rectangle(257, 128, 256, 128), scale);
-            ClickableTextureComponent c3 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(513, 0, 256, 256), scale);
-            ClickableTextureComponent c4 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(128f * scale)), websites, new Rectangle(769, 0, 256, 128), scale);
-            ClickableTextureComponent c4_1 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 313 * scale), (int)(256f * scale), (int)(128f * scale)), websites, new Rectangle(769, 128, 256, 128), scale);
-            ClickableTextureComponent c17 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 185 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(1025, 0, 256, 256), scale);
+            this.AddLink("fish", 55, 451, websites, new Rectangle(0, 257, 256, 256));
+            this.AddLink("dining", 321, 451, websites, new Rectangle(257, 257, 256, 256));
+            this.AddLink("imports", 587, 451, websites, new Rectangle(513, 257, 256, 256));
+            this.AddLink("adventure", 853, 451, websites, new Rectangle(769, 257, 256, 256));
+            this.AddLink("bundle", 1119, 451, websites, new Rectangle(1025, 257, 256, 256));
 
-            ClickableTextureComponent c5 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(0, 257, 256, 256), scale);
-            ClickableTextureComponent c6 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(257, 257, 256, 256), scale);
-            ClickableTextureComponent c7 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(513, 257, 256, 256), scale);
-            ClickableTextureComponent c8 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(769, 257, 256, 256), scale);
-            ClickableTextureComponent c18 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 451 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(1025, 257, 256, 256), scale);
+            this.AddLink("wizard", 55, 717, websites, new Rectangle(0, 513, 256, 256));
+            this.AddLink("hats", 321, 717, websites, new Rectangle(257, 513, 256, 256));
+            this.AddLink("hospital", 587, 717, websites, new Rectangle(513, 513, 256, 256));
+            this.AddLink("krobus", 853, 717, websites, new Rectangle(769, 513, 256, 256));
+            this.AddLink("artifact", 1119, 717, websites, new Rectangle(1025, 513, 256, 256));
 
-            ClickableTextureComponent c9 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(0, 513, 256, 256), scale);
-            ClickableTextureComponent c10 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(257, 513, 256, 256), scale);
-            ClickableTextureComponent c11 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(513, 513, 256, 256), scale);
-            ClickableTextureComponent c12 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(769, 513, 256, 256), scale);
-            ClickableTextureComponent c19 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 717 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(1025, 513, 256, 256), scale);
-
-            ClickableTextureComponent c13 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 55 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(0, 769, 256, 256), scale);
-            ClickableTextureComponent c14 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 321 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(257, 769, 256, 256), scale);
-            ClickableTextureComponent c15 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 587 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(513, 769, 256, 256), scale);
-            ClickableTextureComponent c16 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 853 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(769, 769, 256, 256), scale);
-            ClickableTextureComponent c20 = new ClickableTextureComponent(new Rectangle((int)(this.xPositionOnScreen + 1119 * scale), (int)(this.yPositionOnScreen + 983 * scale), (int)(256f * scale), (int)(256f * scale)), websites, new Rectangle(1025, 769, 256, 256), scale);
+            this.AddLink("dwarf", 55, 983, websites, new Rectangle(0, 769, 256, 256));
+            this.AddLink("qi", 321, 983, websites, new Rectangle(257, 769, 256, 256));
+            this.AddLink("sandy", 587, 983, websites, new Rectangle(513, 769, 256, 256));
+            this.AddLink("joja", 853, 983, websites, new Rectangle(769, 769, 256, 256));
+            this.AddLink("leah", 1119, 983, websites, new Rectangle(1025, 769, 256, 256));
 
             this.upperRightCloseButton = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + this.width - 9 * Game1.pixelZoom, this.yPositionOnScreen - Game1.pixelZoom * 2, 12 * Game1.pixelZoom, 12 * Game1.pixelZoom), Game1.mouseCursors, new Rectangle(337, 494, 12, 12), Game1.pixelZoom);
-
-            c1.name = "blacksmith_tools";
-            c1_1.name = "blacksmith";
-            c2.name = "animals";
-            c2_1.name = "animal_supplies";
-            c3.name = "produce";
-            c4.name = "carpentry_build";
-            c4_1.name = "carpentry";
-            c5.name = "fish";
-            c6.name = "dining";
-            c7.name = "imports";
-            c8.name = "adventure";
-            c9.name = "wizard";
-            c10.name = "hats";
-            c11.name = "hospital";
-            c12.name = "krobus";
-            c13.name = "dwarf";
-            c14.name = "qi";
-            c15.name = "sandy";
-            c16.name = "joja";
-            c17.name = "sauce";
-            c18.name = "bundle";
-            c19.name = "artifact";
-            c20.name = "leah";
-
-            this.LinksToVisit.Add(c1);
-            this.LinksToVisit.Add(c1_1);
-            this.LinksToVisit.Add(c2);
-            this.LinksToVisit.Add(c2_1);
-            this.LinksToVisit.Add(c3);
-            this.LinksToVisit.Add(c4);
-            this.LinksToVisit.Add(c4_1);
-            this.LinksToVisit.Add(c5);
-            this.LinksToVisit.Add(c6);
-            this.LinksToVisit.Add(c7);
-            this.LinksToVisit.Add(c8);
-            this.LinksToVisit.Add(c9);
-            this.LinksToVisit.Add(c10);
-            this.LinksToVisit.Add(c11);
-            this.LinksToVisit.Add(c12);
-            this.LinksToVisit.Add(c13);
-            this.LinksToVisit.Add(c14);
-            this.LinksToVisit.Add(c15);
-            this.LinksToVisit.Add(c16);
-            this.LinksToVisit.Add(c17);
-            this.LinksToVisit.Add(c18);
-            this.LinksToVisit.Add(c19);
-            this.LinksToVisit.Add(c20);
-        }
-
-        public override void receiveRightClick(int x, int y, bool playSound = true)
-        {
-
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
@@ -359,6 +305,24 @@ namespace PelicanFiber.Framework
         /*********
         ** Private methods
         *********/
+        /// <summary>Add a site link to the menu.</summary>
+        /// <param name="name">The internal link name.</param>
+        /// <param name="x">The pixel X position relative to the top-left corner of the menu.</param>
+        /// <param name="y">The pixel Y position relative to the top-left corner of the menu.</param>
+        /// <param name="texture">The texture containing the site image.</param>
+        /// <param name="sourceArea">The area within the texture to draw.</param>
+        private void AddLink(string name, int x, int y, Texture2D texture, Rectangle sourceArea)
+        {
+            ClickableTextureComponent component = new ClickableTextureComponent(
+                bounds: new Rectangle((int)(this.xPositionOnScreen + x * this.Scale), (int)(this.yPositionOnScreen + y * this.Scale), (int)(sourceArea.Width * this.Scale), (int)(sourceArea.Height * this.Scale)),
+                texture: texture,
+                sourceRect: sourceArea,
+                scale: this.Scale
+            );
+            component.name = name;
+            this.LinksToVisit.Add(component);
+        }
+
         private Dictionary<Item, int[]> GetAdventureShopStock()
         {
             Dictionary<Item, int[]> itemPriceAndStock = new Dictionary<Item, int[]>();

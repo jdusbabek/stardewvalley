@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Buildings;
@@ -60,7 +59,6 @@ namespace PelicanFiber.Framework
             this.ShowMainMenu = showMainMenu;
 
             this.WhereToGo = Game1.player.currentLocation.Name;
-            
 
             Game1.player.forceCanMove();
             this.ResetBounds();
@@ -461,9 +459,6 @@ namespace PelicanFiber.Framework
             IClickableMenu.drawHoverText(b, this.HoverText, Game1.dialogueFont);
         }
 
-        public override void receiveRightClick(int x, int y, bool playSound = true)
-        {
-        }
 
         /*********
         ** Private methods

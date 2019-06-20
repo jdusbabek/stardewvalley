@@ -241,10 +241,6 @@ namespace PelicanFiber.Framework
                 this.receiveKeyPress(pressedKey);
         }
 
-        public override void receiveRightClick(int x, int y, bool playSound = true)
-        {
-        }
-
         public override void performHoverAction(int x, int y)
         {
             this.Hovered = null;
