@@ -280,7 +280,7 @@ namespace PelicanFiber.Framework
                 this.OnFarm = true;
                 this.Moving = true;
             }
-            if (this.OkButton.containsPoint(x, y) && !this.OnFarm && (Game1.player.money >= this.Price && this.Blueprints[this.CurrentBlueprintIndex].doesFarmerHaveEnoughResourcesToBuild()))
+            if (this.OkButton.containsPoint(x, y) && !this.OnFarm && (Game1.player.Money >= this.Price && this.Blueprints[this.CurrentBlueprintIndex].doesFarmerHaveEnoughResourcesToBuild()))
             {
                 Game1.globalFadeToBlack(this.SetUpForBuildingPlacement);
                 Game1.playSound("smallSelect");
@@ -391,7 +391,7 @@ namespace PelicanFiber.Framework
                     Utility.drawTextWithShadow(b, this.Price.ToString() + "g", Game1.dialogueFont, new Vector2(location.X + Game1.tileSize, location.Y + Game1.pixelZoom * 2), Game1.textColor * 0.5f, 1f, -1f, -1, -1, this.MagicalConstruction ? 0.0f : 0.25f);
                     Utility.drawTextWithShadow(b, this.Price.ToString() + "g", Game1.dialogueFont, new Vector2((float)(location.X + (double)Game1.tileSize + Game1.pixelZoom - 1.0), location.Y + Game1.pixelZoom * 2), Game1.textColor * 0.25f, 1f, -1f, -1, -1, this.MagicalConstruction ? 0.0f : 0.25f);
                 }
-                Utility.drawTextWithShadow(b, this.Price.ToString() + "g", Game1.dialogueFont, new Vector2(location.X + Game1.tileSize + Game1.pixelZoom, location.Y + Game1.pixelZoom), Game1.player.money >= this.Price ? (this.MagicalConstruction ? Color.PaleGoldenrod : Game1.textColor) : Color.Red, 1f, -1f, -1, -1, this.MagicalConstruction ? 0.0f : 0.25f);
+                Utility.drawTextWithShadow(b, this.Price.ToString() + "g", Game1.dialogueFont, new Vector2(location.X + Game1.tileSize + Game1.pixelZoom, location.Y + Game1.pixelZoom), Game1.player.Money >= this.Price ? (this.MagicalConstruction ? Color.PaleGoldenrod : Game1.textColor) : Color.Red, 1f, -1f, -1, -1, this.MagicalConstruction ? 0.0f : 0.25f);
                 location.X -= Game1.tileSize / 4;
                 location.Y -= Game1.tileSize / 3;
                 foreach (Item ingredient in this.Ingredients)

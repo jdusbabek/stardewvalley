@@ -126,7 +126,7 @@ namespace PelicanFiber.Framework
                 if (textureComponent.containsPoint(x, y) && ((Object)textureComponent.item).Type == null)
                 {
                     int int32 = Convert.ToInt32(textureComponent.name);
-                    if (Game1.player.money >= int32)
+                    if (Game1.player.Money >= int32)
                     {
                         //Game1.globalFadeToBlack(new Game1.afterFadeFunction(this.setUpForAnimalPlacement), 0.02f);
                         //Game1.globalFadeToBlack(new Game1.afterFadeFunction(this.setUpForAnimalPlacement), 0.02f);
@@ -286,7 +286,7 @@ namespace PelicanFiber.Framework
                     ((AnimalHouse)this.NewAnimalHome.indoors.Value).animals.Add(this.AnimalBeingPurchased.myID.Value, this.AnimalBeingPurchased);
                     ((AnimalHouse)this.NewAnimalHome.indoors.Value).animalsThatLiveHere.Add(this.AnimalBeingPurchased.myID.Value);
                     this.NewAnimalHome = null;
-                    Game1.player.money -= this.PriceOfAnimal;
+                    Game1.player.Money -= this.PriceOfAnimal;
                     this.NamingAnimal = false;
 
                     //Game1.globalFadeToBlack(new Game1.afterFadeFunction(this.setUpForReturnAfterPurchasingAnimal), 0.02f);

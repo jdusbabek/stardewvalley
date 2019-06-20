@@ -185,7 +185,7 @@ namespace PelicanFiber.Framework
                             this.exitThisMenu();
                             {
                                 Forest forest = (Forest)Game1.getLocationFromName("Forest");
-                                Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getTravelingMerchantStock(forest.stockSeed.Value));
+                                Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getTravelingMerchantStock((int)(Game1.uniqueIDForThisGame + Game1.stats.DaysPlayed)));
                             }
                             break;
                         case "adventure":

@@ -124,7 +124,7 @@ namespace PelicanFiber.Framework
                             this.TextBox.Text = this.AnimalBeingPurchased.Name;
                             this.TextBox.Selected = true;
                         }
-                        else if (Game1.player.money >= this.PriceOfAnimal)
+                        else if (Game1.player.Money >= this.PriceOfAnimal)
                         {
                             this.NewAnimalHome = building;
                             this.AnimalBeingPurchased.home = this.NewAnimalHome;
@@ -140,11 +140,11 @@ namespace PelicanFiber.Framework
                                 cue.SetVariable("Pitch", 1200 + Game1.random.Next(-200, 201));
                                 cue.Play();
                             }
-                            Game1.player.money -= this.PriceOfAnimal;
+                            Game1.player.Money -= this.PriceOfAnimal;
                             Game1.addHUDMessage(new HUDMessage("Purchased " + this.AnimalBeingPurchased.type.Value, Color.LimeGreen, 3500f));
                             this.AnimalBeingPurchased = new FarmAnimal(this.AnimalBeingPurchased.type.Value, this.GetNewId(), Game1.player.UniqueMultiplayerID);
                         }
-                        else if (Game1.player.money < this.PriceOfAnimal)
+                        else if (Game1.player.Money < this.PriceOfAnimal)
                             Game1.dayTimeMoneyBox.moneyShakeTimer = 1000;
                     }
                     else
@@ -172,7 +172,7 @@ namespace PelicanFiber.Framework
                     if (textureComponent.containsPoint(x, y) && ((Object)textureComponent.item).Type == null)
                     {
                         int int32 = Convert.ToInt32(textureComponent.name);
-                        if (Game1.player.money >= int32)
+                        if (Game1.player.Money >= int32)
                         {
                             Game1.globalFadeToBlack(this.SetUpForAnimalPlacement);
                             Game1.playSound("smallSelect");
@@ -364,7 +364,7 @@ namespace PelicanFiber.Framework
                     ((AnimalHouse)this.NewAnimalHome.indoors.Value).animalsThatLiveHere.Add(this.AnimalBeingPurchased.myID.Value);
                     this.NewAnimalHome = null;
                     this.NamingAnimal = false;
-                    Game1.player.money -= this.PriceOfAnimal;
+                    Game1.player.Money -= this.PriceOfAnimal;
                     Game1.globalFadeToBlack(this.SetUpForReturnAfterPurchasingAnimal);
                 }
             }
