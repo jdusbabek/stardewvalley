@@ -65,10 +65,6 @@ namespace PelicanFiber
                 original: AccessTools.Method(typeof(ShopMenu), "tryToPurchaseItem"),
                 postfix: new HarmonyMethod(this.GetType(), nameof(PelicanFiber.After_TryPurchaseItem))
             );
-            harmony.Patch(
-                original: AccessTools.Method(typeof(ShopMenu2), "TryToPurchaseItem"),
-                postfix: new HarmonyMethod(this.GetType(), nameof(PelicanFiber.After_TryPurchaseItem))
-            );
         }
 
 
@@ -109,7 +105,7 @@ namespace PelicanFiber
                 if (Game1.viewport.Height < 1325)
                     scale = Game1.viewport.Height / 1325f;
 
-                Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, PelicanFiber.ItemUtils, this.Helper.Multiplayer.GetNewID, this.OnLinkOpened, scale, this.Unfiltered);
+                Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.Helper.Reflection, PelicanFiber.ItemUtils, this.Helper.Multiplayer.GetNewID, this.OnLinkOpened, scale, this.Unfiltered);
             }
             catch (Exception ex)
             {

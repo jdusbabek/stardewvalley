@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Netcode;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Locations;
@@ -23,6 +26,8 @@ namespace PelicanFiber.Framework
         private readonly bool Unfiltered;
         private readonly float Scale;
 
+        /// <summary>Simplifies access to private game code.</summary>
+        private readonly IReflectionHelper Reflection;
         private readonly ItemUtils ItemUtils;
         private readonly Action OnLinkOpened;
         private readonly Func<long> GetNewId;
@@ -31,12 +36,13 @@ namespace PelicanFiber.Framework
         /*********
         ** Public methods
         *********/
-        public PelicanFiberMenu(Texture2D websites, ItemUtils itemUtils, Func<long> getNewId, Action onLinkOpened, float scale = 1.0f, bool unfiltered = true)
+        public PelicanFiberMenu(Texture2D websites, IReflectionHelper reflection, ItemUtils itemUtils, Func<long> getNewId, Action onLinkOpened, float scale = 1.0f, bool unfiltered = true)
           : base(Game1.viewport.Width / 2 - (int)(PelicanFiberMenu.MenuWidth * scale) / 2 - IClickableMenu.borderWidth * 2,
                 Game1.viewport.Height / 2 - (int)(PelicanFiberMenu.MenuHeight * scale) / 2 - IClickableMenu.borderWidth * 2,
                 (int)(PelicanFiberMenu.MenuWidth * scale) + IClickableMenu.borderWidth * 2,
                 (int)(PelicanFiberMenu.MenuHeight * scale) + IClickableMenu.borderWidth, true)
         {
+            this.Reflection = reflection;
             this.ItemUtils = itemUtils;
             this.GetNewId = getNewId;
             this.OnLinkOpened = onLinkOpened;
@@ -86,15 +92,15 @@ namespace PelicanFiber.Framework
                     switch (textureComponent.name)
                     {
                         case "blacksmith":
-                            this.OpenLink(new ShopMenu2(this.ItemUtils.GetBlacksmithStock(this.Unfiltered), 0, null, "Blacksmith"));
+                            this.OpenLink(() => new ShopMenu(this.ItemUtils.GetBlacksmithStock(this.Unfiltered)), "Blacksmith");
                             break;
 
                         case "blacksmith_tools":
-                            this.OpenLink(new ShopMenu2(Utility.getBlacksmithUpgradeStock(Game1.player)));
+                            this.OpenLink(new ShopMenu(Utility.getBlacksmithUpgradeStock(Game1.player)));
                             break;
 
                         case "animals":
-                            this.OpenLink(new ShopMenu2(Utility.getAnimalShopStock(), 0, null, "AnimalShop"));
+                            this.OpenLink(() => new ShopMenu(Utility.getAnimalShopStock()), "AnimalShop");
                             break;
 
                         case "animal_supplies":
@@ -105,11 +111,11 @@ namespace PelicanFiber.Framework
                             break;
 
                         case "produce":
-                            this.OpenLink(new ShopMenu2(this.ItemUtils.GetShopStock(true, this.Unfiltered), 0, null, "SeedShop"));
+                            this.OpenLink(() => new ShopMenu(this.ItemUtils.GetShopStock(true, this.Unfiltered)), "SeedShop");
                             break;
 
                         case "carpentry":
-                            this.OpenLink(new ShopMenu2(this.ItemUtils.GetCarpenterStock(this.Unfiltered), 0, null, "ScienceHouse"));
+                            this.OpenLink(() => new ShopMenu(this.ItemUtils.GetCarpenterStock(this.Unfiltered)), "ScienceHouse");
                             break;
 
                         case "carpentry_build":
@@ -117,27 +123,27 @@ namespace PelicanFiber.Framework
                             break;
 
                         case "fish":
-                            this.OpenLink(new ShopMenu2(this.ItemUtils.GetFishShopStock(Game1.player, this.Unfiltered), 0, null, "FishShop"));
+                            this.OpenLink(() => new ShopMenu(this.ItemUtils.GetFishShopStock(Game1.player, this.Unfiltered)), "FishShop");
                             break;
 
                         case "dining":
-                            this.OpenLink(new ShopMenu2(this.ItemUtils.GetSaloonStock(this.Unfiltered)));
+                            this.OpenLink(new ShopMenu(this.ItemUtils.GetSaloonStock(this.Unfiltered)));
                             break;
 
                         case "imports":
-                            this.OpenLink(new ShopMenu2(Utility.getTravelingMerchantStock((int)(Game1.uniqueIDForThisGame + Game1.stats.DaysPlayed))));
+                            this.OpenLink(new ShopMenu(Utility.getTravelingMerchantStock((int)(Game1.uniqueIDForThisGame + Game1.stats.DaysPlayed))));
                             break;
 
                         case "adventure":
-                            this.OpenLink(new ShopMenu2(this.GetAdventureShopStock(), 0, null, "AdventureGuild"));
+                            this.OpenLink(() => new ShopMenu(this.GetAdventureShopStock()), "AdventureGuild");
                             break;
 
                         case "hats":
-                            this.OpenLink(new ShopMenu2(Utility.getHatStock()));
+                            this.OpenLink(new ShopMenu(Utility.getHatStock()));
                             break;
 
                         case "hospital":
-                            this.OpenLink(new ShopMenu2(Utility.getHospitalStock()));
+                            this.OpenLink(new ShopMenu(Utility.getHospitalStock()));
                             break;
 
                         case "wizard":
@@ -145,39 +151,39 @@ namespace PelicanFiber.Framework
                             break;
 
                         case "dwarf":
-                            this.OpenLink(new ShopMenu2(Utility.getDwarfShopStock()));
+                            this.OpenLink(new ShopMenu(Utility.getDwarfShopStock()));
                             break;
 
                         case "krobus":
-                            this.OpenLink(new ShopMenu2((Game1.getLocationFromName("Sewer") as Sewer).getShadowShopStock(), 0, "Krobus"));
+                            this.OpenLink(new ShopMenu(((Sewer)Game1.getLocationFromName("Sewer")).getShadowShopStock(), 0, "Krobus"));
                             break;
 
                         case "qi":
-                            this.OpenLink(new ShopMenu2(Utility.getQiShopStock()));
+                            this.OpenLink(new ShopMenu(Utility.getQiShopStock()));
                             break;
 
                         case "joja":
-                            this.OpenLink(new ShopMenu2(Utility.getJojaStock()));
+                            this.OpenLink(new ShopMenu(Utility.getJojaStock()));
                             break;
 
                         case "sandy":
-                            this.OpenLink(new ShopMenu2(this.ItemUtils.GetShopStock(false, this.Unfiltered)));
+                            this.OpenLink(new ShopMenu(this.ItemUtils.GetShopStock(false, this.Unfiltered)));
                             break;
 
                         case "sauce":
-                            this.OpenLink(new ShopMenu2(this.ItemUtils.GetRecipesStock(this.Unfiltered), 0, null, "Recipe"));
+                            this.OpenLink(new ShopMenu(this.ItemUtils.GetRecipesStock(this.Unfiltered)));
                             break;
 
                         case "bundle":
-                            this.OpenLink(new ShopMenu2(this.ItemUtils.GetJunimoStock(), 0, null, "Junimo"));
+                            this.OpenLink(new ShopMenu(this.ItemUtils.GetJunimoStock()));
                             break;
 
                         case "artifact":
-                            this.OpenLink(new ShopMenu2(this.ItemUtils.GetMineralsAndArtifactsStock(this.Unfiltered), 0, null, "Artifact"));
+                            this.OpenLink(new ShopMenu(this.ItemUtils.GetMineralsAndArtifactsStock(this.Unfiltered)));
                             break;
 
                         case "leah":
-                            this.OpenLink(new ShopMenu2(this.ItemUtils.GetLeahShopStock(this.Unfiltered), 0, "Leah", "LeahCottage"));
+                            this.OpenLink(new ShopMenu(this.ItemUtils.GetLeahShopStock(this.Unfiltered), 0, "Leah"));
                             break;
                     }
                 }
@@ -318,9 +324,45 @@ namespace PelicanFiber.Framework
         /// <param name="menu">The menu to open.</param>
         private void OpenLink(IClickableMenu menu)
         {
+            this.OpenLink(() => menu);
+        }
+
+        /// <summary>Track and open a link menu.</summary>
+        /// <param name="menu">The menu to open.</param>
+        /// <param name="locationName">The location name to simulate.</param>
+        [SuppressMessage("SMAPI", "AvoidNetField", Justification = "Net fields are accessed deliberately to bypass network sync.")]
+        private void OpenLink(Func<IClickableMenu> menu, string locationName = null)
+        {
+            // close main menu
             this.exitThisMenu();
-            Game1.activeClickableMenu = menu;
+
+            // simulate location name if needed
+            if (locationName != null && locationName != Game1.currentLocation.Name)
+            {
+                string prevLocationName = Game1.currentLocation.Name;
+                try
+                {
+                    this.DirectlySetValue(Game1.currentLocation.name, locationName);
+                    Game1.activeClickableMenu = menu();
+                }
+                finally
+                {
+                    this.DirectlySetValue(Game1.currentLocation.name, prevLocationName);
+                }
+            }
+            else
+                Game1.activeClickableMenu = menu();
+
+            // track link opened
             this.OnLinkOpened();
+        }
+
+        /// <summary>Set a net string value without triggering sync logic.</summary>
+        /// <param name="field">The net field to update.</param>
+        /// <param name="value">The new value to set.</param>
+        private void DirectlySetValue(NetString field, string value)
+        {
+            this.Reflection.GetField<string>(field, "value").SetValue(value);
         }
 
         private Dictionary<Item, int[]> GetAdventureShopStock()
