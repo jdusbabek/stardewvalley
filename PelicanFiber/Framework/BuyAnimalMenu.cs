@@ -37,17 +37,17 @@ namespace PelicanFiber.Framework
         private readonly TextBoxEvent TextBoxEvent;
         private Building NewAnimalHome;
         private int PriceOfAnimal;
-        private readonly Action ShowMainMenu;
+        private readonly Action OnMenuOpened;
         private readonly Func<long> GetNewId;
 
 
         /*********
         ** Public methods
         *********/
-        public BuyAnimalMenu(List<Object> stock, Action showMainMenu, Func<long> getNewId)
+        public BuyAnimalMenu(List<Object> stock, Action onMenuOpened, Func<long> getNewId)
           : base(Game1.viewport.Width / 2 - BuyAnimalMenu.MenuWidth / 2 - IClickableMenu.borderWidth * 2, Game1.viewport.Height / 2 - BuyAnimalMenu.MenuHeight - IClickableMenu.borderWidth * 2, BuyAnimalMenu.MenuWidth + IClickableMenu.borderWidth * 2, BuyAnimalMenu.MenuHeight + IClickableMenu.borderWidth)
         {
-            this.ShowMainMenu = showMainMenu;
+            this.OnMenuOpened = onMenuOpened;
             this.GetNewId = getNewId;
             this.WhereToGo = Game1.player.currentLocation.Name;
 
@@ -389,16 +389,14 @@ namespace PelicanFiber.Framework
             Game1.player.forceCanMove();
             this.Freeze = false;
 
-            Game1.activeClickableMenu = new BuyAnimalMenu(Utility.getPurchaseAnimalStock(), this.ShowMainMenu, this.GetNewId);
+            Game1.activeClickableMenu = new BuyAnimalMenu(Utility.getPurchaseAnimalStock(), this.OnMenuOpened, this.GetNewId);
+            this.OnMenuOpened();
         }
 
         private void BackButtonPressed()
         {
             if (this.readyToClose())
-            {
                 this.exitThisMenu();
-                this.ShowMainMenu();
-            }
         }
 
         private void SetUpForAnimalPlacement()

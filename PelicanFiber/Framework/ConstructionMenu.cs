@@ -45,7 +45,7 @@ namespace PelicanFiber.Framework
         private bool Demolishing;
         private bool Moving;
         private readonly bool MagicalConstruction;
-        private readonly Action ShowMainMenu;
+        private readonly Action OnMenuOpened;
 
         private BluePrint CurrentBlueprint => this.Blueprints[this.CurrentBlueprintIndex];
 
@@ -53,10 +53,10 @@ namespace PelicanFiber.Framework
         /*********
         ** Public methods
         *********/
-        public ConstructionMenu(bool magicalConstruction, Action showMainMenu)
+        public ConstructionMenu(bool magicalConstruction, Action onMenuOpened)
         {
             this.MagicalConstruction = magicalConstruction;
-            this.ShowMainMenu = showMainMenu;
+            this.OnMenuOpened = onMenuOpened;
 
             this.WhereToGo = Game1.player.currentLocation.Name;
 
@@ -494,10 +494,7 @@ namespace PelicanFiber.Framework
         private void GoBackButtonPressed()
         {
             if (this.readyToClose())
-            {
                 this.exitThisMenu();
-                this.ShowMainMenu();
-            }
         }
 
         private bool TryToBuild()
@@ -544,7 +541,7 @@ namespace PelicanFiber.Framework
             this.exitThisMenu();
             Game1.player.forceCanMove();
 
-            Game1.activeClickableMenu = new ConstructionMenu(this.MagicalConstruction, this.ShowMainMenu);
+            Game1.activeClickableMenu = new ConstructionMenu(this.MagicalConstruction, this.OnMenuOpened);
             //if (this.magicalConstruction)
             //    return;
             //string path = "Data\\ExtraDialogue:Robin_" + (this.upgrading ? "Upgrade" : "New") + "Construction";

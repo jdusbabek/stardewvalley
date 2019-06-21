@@ -24,7 +24,7 @@ namespace PelicanFiber.Framework
         private readonly float Scale;
 
         private readonly ItemUtils ItemUtils;
-        private readonly Action ReopenMainMenu;
+        private readonly Action OnLinkOpened;
         private readonly bool GiveAchievements;
         private readonly Func<long> GetNewId;
 
@@ -32,7 +32,7 @@ namespace PelicanFiber.Framework
         /*********
         ** Public methods
         *********/
-        public PelicanFiberMenu(Texture2D websites, ItemUtils itemUtils, bool giveAchievements, Func<long> getNewId, Action reopenMainMenu, float scale = 1.0f, bool unfiltered = true)
+        public PelicanFiberMenu(Texture2D websites, ItemUtils itemUtils, bool giveAchievements, Func<long> getNewId, Action onLinkOpened, float scale = 1.0f, bool unfiltered = true)
           : base(Game1.viewport.Width / 2 - (int)(PelicanFiberMenu.MenuWidth * scale) / 2 - IClickableMenu.borderWidth * 2,
                 Game1.viewport.Height / 2 - (int)(PelicanFiberMenu.MenuHeight * scale) / 2 - IClickableMenu.borderWidth * 2,
                 (int)(PelicanFiberMenu.MenuWidth * scale) + IClickableMenu.borderWidth * 2,
@@ -41,7 +41,7 @@ namespace PelicanFiber.Framework
             this.ItemUtils = itemUtils;
             this.GiveAchievements = giveAchievements;
             this.GetNewId = getNewId;
-            this.ReopenMainMenu = reopenMainMenu;
+            this.OnLinkOpened = onLinkOpened;
 
             this.height += Game1.tileSize;
             this.Scale = scale;
@@ -88,105 +88,98 @@ namespace PelicanFiber.Framework
                     switch (textureComponent.name)
                     {
                         case "blacksmith":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetBlacksmithStock(this.Unfiltered), 0, null, "Blacksmith");
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetBlacksmithStock(this.Unfiltered), 0, null, "Blacksmith"));
                             break;
+
                         case "blacksmith_tools":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getBlacksmithUpgradeStock(Game1.player));
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, Utility.getBlacksmithUpgradeStock(Game1.player)));
                             break;
+
                         case "animals":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getAnimalShopStock(), 0, null, "AnimalShop");
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, Utility.getAnimalShopStock(), 0, null, "AnimalShop"));
                             break;
+
                         case "animal_supplies":
-                            this.exitThisMenu();
                             if (Game1.currentLocation is AnimalHouse)
-                                Game1.activeClickableMenu = new MailOrderPigMenu(this.ItemUtils.GetPurchaseAnimalStock(), this.ItemUtils, this.ReopenMainMenu, this.GetNewId);
+                                this.OpenLink(new MailOrderPigMenu(this.ItemUtils.GetPurchaseAnimalStock(), this.ItemUtils, this.OnLinkOpened, this.GetNewId));
                             else
-                                Game1.activeClickableMenu = new BuyAnimalMenu(Utility.getPurchaseAnimalStock(), this.ReopenMainMenu, this.GetNewId);
+                                this.OpenLink(new BuyAnimalMenu(Utility.getPurchaseAnimalStock(), this.OnLinkOpened, this.GetNewId));
                             break;
+
                         case "produce":
-                            this.exitThisMenu();
-                            //Game1.activeClickableMenu = new ShopMenu2(Utility.getShopStock(true), 0, null, "SeedShop");
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetShopStock(true, this.Unfiltered), 0, null, "SeedShop");
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetShopStock(true, this.Unfiltered), 0, null, "SeedShop"));
                             break;
+
                         case "carpentry":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetCarpenterStock(this.Unfiltered), 0, null, "ScienceHouse");
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetCarpenterStock(this.Unfiltered), 0, null, "ScienceHouse"));
                             break;
+
                         case "carpentry_build":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ConstructionMenu(false, this.ReopenMainMenu);
+                            this.OpenLink(new ConstructionMenu(false, this.OnLinkOpened));
                             break;
+
                         case "fish":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetFishShopStock(Game1.player, this.Unfiltered), 0, null, "FishShop");
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetFishShopStock(Game1.player, this.Unfiltered), 0, null, "FishShop"));
                             break;
+
                         case "dining":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetSaloonStock(this.Unfiltered));
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetSaloonStock(this.Unfiltered)));
                             break;
+
                         case "imports":
-                            this.exitThisMenu();
-                            {
-                                Forest forest = (Forest)Game1.getLocationFromName("Forest");
-                                Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getTravelingMerchantStock((int)(Game1.uniqueIDForThisGame + Game1.stats.DaysPlayed)));
-                            }
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, Utility.getTravelingMerchantStock((int)(Game1.uniqueIDForThisGame + Game1.stats.DaysPlayed))));
                             break;
+
                         case "adventure":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, this.GetAdventureShopStock(), 0, null, "AdventureGuild");
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, this.GetAdventureShopStock(), 0, null, "AdventureGuild"));
                             break;
+
                         case "hats":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getHatStock());
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, Utility.getHatStock()));
                             break;
+
                         case "hospital":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getHospitalStock());
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, Utility.getHospitalStock()));
                             break;
+
                         case "wizard":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ConstructionMenu(true, this.ReopenMainMenu);
+                            this.OpenLink(new ConstructionMenu(true, this.OnLinkOpened));
                             break;
+
                         case "dwarf":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getDwarfShopStock());
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, Utility.getDwarfShopStock()));
                             break;
+
                         case "krobus":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, (Game1.getLocationFromName("Sewer") as Sewer).getShadowShopStock(), 0, "Krobus");
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, (Game1.getLocationFromName("Sewer") as Sewer).getShadowShopStock(), 0, "Krobus"));
                             break;
+
                         case "qi":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getQiShopStock());
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, Utility.getQiShopStock()));
                             break;
+
                         case "joja":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, Utility.getJojaStock());
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, Utility.getJojaStock()));
                             break;
+
                         case "sandy":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetShopStock(false, this.Unfiltered));
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetShopStock(false, this.Unfiltered)));
                             break;
+
                         case "sauce":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetRecipesStock(this.Unfiltered), 0, null, "Recipe");
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetRecipesStock(this.Unfiltered), 0, null, "Recipe"));
                             break;
+
                         case "bundle":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetJunimoStock(), 0, null, "Junimo");
-                            //ItemUtils.finishAllBundles();
-                            //Game1.showRedMessage("Error 404: Not found. www.thejunimoconspiracy.com");
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetJunimoStock(), 0, null, "Junimo"));
                             break;
+
                         case "artifact":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetMineralsAndArtifactsStock(this.Unfiltered), 0, null, "Artifact");
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetMineralsAndArtifactsStock(this.Unfiltered), 0, null, "Artifact"));
                             break;
+
                         case "leah":
-                            this.exitThisMenu();
-                            Game1.activeClickableMenu = new ShopMenu2(this.ReopenMainMenu, this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetLeahShopStock(this.Unfiltered), 0, "Leah", "LeahCottage");
+                            this.OpenLink(new ShopMenu2(this.ItemUtils, this.GiveAchievements, this.ItemUtils.GetLeahShopStock(this.Unfiltered), 0, "Leah", "LeahCottage"));
                             break;
                     }
                 }
@@ -321,6 +314,15 @@ namespace PelicanFiber.Framework
             );
             component.name = name;
             this.LinksToVisit.Add(component);
+        }
+
+        /// <summary>Track and open a link menu.</summary>
+        /// <param name="menu">The menu to open.</param>
+        private void OpenLink(IClickableMenu menu)
+        {
+            this.exitThisMenu();
+            Game1.activeClickableMenu = menu;
+            this.OnLinkOpened();
         }
 
         private Dictionary<Item, int[]> GetAdventureShopStock()

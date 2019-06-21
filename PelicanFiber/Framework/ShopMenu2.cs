@@ -44,15 +44,14 @@ namespace PelicanFiber.Framework
         private bool Scrolling;
         private readonly string LocationName;
 
-        private readonly Action ShowMainMenu;
         private readonly ItemUtils ItemUtils;
         private readonly bool GiveAchievements;
 
         /*********
         ** Public methods
         *********/
-        public ShopMenu2(Action showMainMenu, ItemUtils itemUtils, bool giveAchievements, Dictionary<Item, int[]> itemPriceAndStock, int currency = 0, string who = null, string locationName = "")
-          : this(showMainMenu, itemUtils, giveAchievements, itemPriceAndStock.Keys.ToList(), currency, who, locationName)
+        public ShopMenu2(ItemUtils itemUtils, bool giveAchievements, Dictionary<Item, int[]> itemPriceAndStock, int currency = 0, string who = null, string locationName = "")
+          : this(itemUtils, giveAchievements, itemPriceAndStock.Keys.ToList(), currency, who, locationName)
         {
             this.LocationName = locationName;
             this.ItemPriceAndStock = itemPriceAndStock;
@@ -61,10 +60,9 @@ namespace PelicanFiber.Framework
             this.SetUpShopOwner(who);
         }
 
-        public ShopMenu2(Action showMainMenu, ItemUtils itemUtils, bool giveAchievements, List<Item> itemsForSale, int currency = 0, string who = null, string locationName = "")
+        public ShopMenu2(ItemUtils itemUtils, bool giveAchievements, List<Item> itemsForSale, int currency = 0, string who = null, string locationName = "")
           : base(Game1.viewport.Width / 2 - (800 + IClickableMenu.borderWidth * 2) / 2, Game1.viewport.Height / 2 - (600 + IClickableMenu.borderWidth * 2) / 2, 1000 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2, true)
         {
-            this.ShowMainMenu = showMainMenu;
             this.ItemUtils = itemUtils;
             this.GiveAchievements = giveAchievements;
 
@@ -746,10 +744,7 @@ namespace PelicanFiber.Framework
         private void BackButtonPressed()
         {
             if (this.readyToClose())
-            {
                 this.exitThisMenu();
-                this.ShowMainMenu();
-            }
         }
 
         private void ChargePlayer(Farmer who, int currencyType, int amount)

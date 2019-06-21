@@ -33,18 +33,18 @@ namespace PelicanFiber.Framework
         private Building NewAnimalHome;
         private int PriceOfAnimal;
         private readonly ItemUtils ItemUtils;
-        private readonly Action ShowMainMenu;
+        private readonly Action OnMenuOpened;
         private readonly Func<long> GetNewId;
 
 
         /*********
         ** Public methods
         *********/
-        public MailOrderPigMenu(List<Object> stock, ItemUtils itemUtils, Action showMainMenu, Func<long> getNewId)
+        public MailOrderPigMenu(List<Object> stock, ItemUtils itemUtils, Action onMenuOpened, Func<long> getNewId)
           : base(Game1.viewport.Width / 2 - MailOrderPigMenu.MenuWidth / 2 - IClickableMenu.borderWidth * 2, Game1.viewport.Height / 2 - MailOrderPigMenu.MenuHeight - IClickableMenu.borderWidth * 2, MailOrderPigMenu.MenuWidth + IClickableMenu.borderWidth * 2, MailOrderPigMenu.MenuHeight + IClickableMenu.borderWidth)
         {
             this.ItemUtils = itemUtils;
-            this.ShowMainMenu = showMainMenu;
+            this.OnMenuOpened = onMenuOpened;
             this.GetNewId = getNewId;
 
             this.height += Game1.tileSize;
@@ -317,16 +317,14 @@ namespace PelicanFiber.Framework
             Game1.player.forceCanMove();
             this.Freeze = false;
 
-            Game1.activeClickableMenu = new MailOrderPigMenu(this.ItemUtils.GetPurchaseAnimalStock(), this.ItemUtils, this.ShowMainMenu, this.GetNewId);
+            Game1.activeClickableMenu = new MailOrderPigMenu(this.ItemUtils.GetPurchaseAnimalStock(), this.ItemUtils, this.OnMenuOpened, this.GetNewId);
+            this.OnMenuOpened();
         }
 
         private void BackButtonPressed()
         {
             if (this.readyToClose())
-            {
                 this.exitThisMenu();
-                this.ShowMainMenu();
-            }
         }
 
         private string GetAnimalDescription(string name)
