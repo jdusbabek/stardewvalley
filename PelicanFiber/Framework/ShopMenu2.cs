@@ -44,13 +44,12 @@ namespace PelicanFiber.Framework
         private bool Scrolling;
         private readonly string LocationName;
 
-        private readonly ItemUtils ItemUtils;
 
         /*********
         ** Public methods
         *********/
-        public ShopMenu2(ItemUtils itemUtils, Dictionary<Item, int[]> itemPriceAndStock, int currency = 0, string who = null, string locationName = "")
-          : this(itemUtils, itemPriceAndStock.Keys.ToList(), currency, who, locationName)
+        public ShopMenu2(Dictionary<Item, int[]> itemPriceAndStock, int currency = 0, string who = null, string locationName = "")
+          : this(itemPriceAndStock.Keys.ToList(), currency, who, locationName)
         {
             this.LocationName = locationName;
             this.ItemPriceAndStock = itemPriceAndStock;
@@ -59,11 +58,9 @@ namespace PelicanFiber.Framework
             this.SetUpShopOwner(who);
         }
 
-        public ShopMenu2(ItemUtils itemUtils, List<Item> itemsForSale, int currency = 0, string who = null, string locationName = "")
+        public ShopMenu2(List<Item> itemsForSale, int currency = 0, string who = null, string locationName = "")
           : base(Game1.viewport.Width / 2 - (800 + IClickableMenu.borderWidth * 2) / 2, Game1.viewport.Height / 2 - (600 + IClickableMenu.borderWidth * 2) / 2, 1000 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2, true)
         {
-            this.ItemUtils = itemUtils;
-
             this.LocationName = locationName;
             this.Currency = currency;
             if (Game1.viewport.Width < 1500)
@@ -791,28 +788,19 @@ namespace PelicanFiber.Framework
                     {
                         if (this.HeldItem is Object obj && obj.IsRecipe)
                         {
-                            if (obj.name.Contains("Bundle"))
+                            string key = this.HeldItem.Name.Substring(0, this.HeldItem.Name.IndexOf("Recipe") - 1);
+                            try
                             {
-                                this.ItemUtils.AddBundle(obj.SpecialVariable);
+                                if (((Object)this.HeldItem).Category == -7)
+                                    Game1.player.cookingRecipes.Add(key, 0);
+                                else
+                                    Game1.player.craftingRecipes.Add(key, 0);
                                 Game1.playSound("newRecipe");
-                                this.HeldItem = null;
                             }
-                            else
+                            catch
                             {
-                                string key = this.HeldItem.Name.Substring(0, this.HeldItem.Name.IndexOf("Recipe") - 1);
-                                try
-                                {
-                                    if (((Object)this.HeldItem).Category == -7)
-                                        Game1.player.cookingRecipes.Add(key, 0);
-                                    else
-                                        Game1.player.craftingRecipes.Add(key, 0);
-                                    Game1.playSound("newRecipe");
-                                }
-                                catch
-                                {
-                                }
-                                this.HeldItem = null;
                             }
+                            this.HeldItem = null;
                         }
                     }
                     else if (Game1.mouseClickPolling > 300)

@@ -18,9 +18,9 @@ namespace PelicanFiber
         *********/
         private SButton MenuKey = SButton.PageDown;
         private Texture2D Websites;
-        private ModConfig Config;
+        private static ModConfig Config;
         private bool Unfiltered = true;
-        private ItemUtils ItemUtils;
+        private static ItemUtils ItemUtils;
 
         /// <summary>The last link opened through the Pelican Fiber menu.</summary>
         private IClickableMenu LastLinkOpened;
@@ -34,13 +34,13 @@ namespace PelicanFiber
         public override void Entry(IModHelper helper)
         {
             // load config
-            this.Config = this.Helper.ReadConfig<ModConfig>();
-            if (!Enum.TryParse(this.Config.KeyBind, true, out this.MenuKey))
+            ModConfig config = PelicanFiber.Config = this.Helper.ReadConfig<ModConfig>();
+            if (!Enum.TryParse(config.KeyBind, true, out this.MenuKey))
             {
                 this.MenuKey = SButton.PageDown;
                 this.Monitor.Log($"404 Not Found: Error parsing key binding; defaulted to {this.MenuKey}.");
             }
-            this.Unfiltered = !this.Config.InternetFilter;
+            this.Unfiltered = !config.InternetFilter;
 
             // load textures
             try
@@ -53,7 +53,7 @@ namespace PelicanFiber
             }
 
             // load utils
-            this.ItemUtils = new ItemUtils(helper.Content, this.Monitor);
+            PelicanFiber.ItemUtils = new ItemUtils(helper.Content, this.Monitor);
 
             // hook events
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
@@ -61,17 +61,14 @@ namespace PelicanFiber
 
             // hook Harmony patches
             HarmonyInstance harmony = HarmonyInstance.Create(this.ModManifest.UniqueID);
-            if (this.Config.GiveAchievements)
-            {
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(ShopMenu), "tryToPurchaseItem"),
-                    postfix: new HarmonyMethod(this.GetType(), nameof(PelicanFiber.After_TryPurchaseItem))
-                );
-                harmony.Patch(
-                    original: AccessTools.Method(typeof(ShopMenu2), "TryToPurchaseItem"),
-                    postfix: new HarmonyMethod(this.GetType(), nameof(PelicanFiber.After_TryPurchaseItem))
-                );
-            };
+            harmony.Patch(
+                original: AccessTools.Method(typeof(ShopMenu), "tryToPurchaseItem"),
+                postfix: new HarmonyMethod(this.GetType(), nameof(PelicanFiber.After_TryPurchaseItem))
+            );
+            harmony.Patch(
+                original: AccessTools.Method(typeof(ShopMenu2), "TryToPurchaseItem"),
+                postfix: new HarmonyMethod(this.GetType(), nameof(PelicanFiber.After_TryPurchaseItem))
+            );
         }
 
 
@@ -112,7 +109,7 @@ namespace PelicanFiber
                 if (Game1.viewport.Height < 1325)
                     scale = Game1.viewport.Height / 1325f;
 
-                Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Helper.Multiplayer.GetNewID, this.OnLinkOpened, scale, this.Unfiltered);
+                Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, PelicanFiber.ItemUtils, this.Helper.Multiplayer.GetNewID, this.OnLinkOpened, scale, this.Unfiltered);
             }
             catch (Exception ex)
             {
@@ -133,34 +130,45 @@ namespace PelicanFiber
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The argument names must match those expected by Harmony.")]
         private static void After_TryPurchaseItem(bool __result, Item item, int numberToBuy)
         {
-            // update achievements if item was purchased
+            // if purchased
             if (__result)
             {
                 SObject obj = item as SObject;
 
-                switch (item.Category)
+                // add bundle
+                if (obj?.Category == -425 && item.Name.Contains("Bundle"))
                 {
-                    // recipes cooked
-                    case SObject.CookingCategory:
-                        Game1.player.cookedRecipe(item.ParentSheetIndex);
-                        Game1.stats.checkForCookingAchievements();
-                        break;
+                    PelicanFiber.ItemUtils.AddBundle(item.SpecialVariable);
+                    Game1.player.craftingRecipes.Remove(obj.name); // don't use .Name, since that includes 'Recipe'
+                }
 
-                    // fish caught
-                    case SObject.FishCategory:
-                        Game1.player.caughtFish(item.ParentSheetIndex, 12);
-                        break;
+                // update achievements if item was purchased
+                if (PelicanFiber.Config.GiveAchievements)
+                {
+                    switch (item.Category)
+                    {
+                        // recipes cooked
+                        case SObject.CookingCategory:
+                            Game1.player.cookedRecipe(item.ParentSheetIndex);
+                            Game1.stats.checkForCookingAchievements();
+                            break;
 
-                    // minerals found
-                    case SObject.GemCategory:
-                    case SObject.mineralsCategory:
-                        Game1.player.foundMineral(item.ParentSheetIndex);
-                        break;
+                        // fish caught
+                        case SObject.FishCategory:
+                            Game1.player.caughtFish(item.ParentSheetIndex, 12);
+                            break;
 
-                    // artifacts found
-                    case 0 when obj?.Type == "Arch":
-                        Game1.player.foundArtifact(item.ParentSheetIndex, numberToBuy);
-                        break;
+                        // minerals found
+                        case SObject.GemCategory:
+                        case SObject.mineralsCategory:
+                            Game1.player.foundMineral(item.ParentSheetIndex);
+                            break;
+
+                        // artifacts found
+                        case 0 when obj?.Type == "Arch":
+                            Game1.player.foundArtifact(item.ParentSheetIndex, numberToBuy);
+                            break;
+                    }
                 }
             }
         }
