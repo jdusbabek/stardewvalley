@@ -45,13 +45,12 @@ namespace PelicanFiber.Framework
         private readonly string LocationName;
 
         private readonly ItemUtils ItemUtils;
-        private readonly bool GiveAchievements;
 
         /*********
         ** Public methods
         *********/
-        public ShopMenu2(ItemUtils itemUtils, bool giveAchievements, Dictionary<Item, int[]> itemPriceAndStock, int currency = 0, string who = null, string locationName = "")
-          : this(itemUtils, giveAchievements, itemPriceAndStock.Keys.ToList(), currency, who, locationName)
+        public ShopMenu2(ItemUtils itemUtils, Dictionary<Item, int[]> itemPriceAndStock, int currency = 0, string who = null, string locationName = "")
+          : this(itemUtils, itemPriceAndStock.Keys.ToList(), currency, who, locationName)
         {
             this.LocationName = locationName;
             this.ItemPriceAndStock = itemPriceAndStock;
@@ -60,11 +59,10 @@ namespace PelicanFiber.Framework
             this.SetUpShopOwner(who);
         }
 
-        public ShopMenu2(ItemUtils itemUtils, bool giveAchievements, List<Item> itemsForSale, int currency = 0, string who = null, string locationName = "")
+        public ShopMenu2(ItemUtils itemUtils, List<Item> itemsForSale, int currency = 0, string who = null, string locationName = "")
           : base(Game1.viewport.Width / 2 - (800 + IClickableMenu.borderWidth * 2) / 2, Game1.viewport.Height / 2 - (600 + IClickableMenu.borderWidth * 2) / 2, 1000 + IClickableMenu.borderWidth * 2, 600 + IClickableMenu.borderWidth * 2, true)
         {
             this.ItemUtils = itemUtils;
-            this.GiveAchievements = giveAchievements;
 
             this.LocationName = locationName;
             this.Currency = currency;
@@ -805,15 +803,7 @@ namespace PelicanFiber.Framework
                                 try
                                 {
                                     if (((Object)this.HeldItem).Category == -7)
-                                    {
                                         Game1.player.cookingRecipes.Add(key, 0);
-
-                                        if (this.LocationName.Equals("Recipe") && this.GiveAchievements)
-                                        {
-                                            Game1.player.cookedRecipe(item.ParentSheetIndex);
-                                            Game1.stats.checkForCookingAchievements();
-                                        }
-                                    }
                                     else
                                         Game1.player.craftingRecipes.Add(key, 0);
                                     Game1.playSound("newRecipe");
@@ -865,27 +855,7 @@ namespace PelicanFiber.Framework
                 }
             }
             if (this.ItemPriceAndStock[item][1] > 0)
-            {
-                if (this.GiveAchievements)
-                {
-                    if (this.LocationName.Equals("FishShop"))
-                    {
-                        if (item.Category == -4)
-                            Game1.player.caughtFish(item.ParentSheetIndex, 12);
-                    }
-                    else if (this.LocationName.Equals("Artifact"))
-                    {
-                        if (item.Category == -2)
-                            Game1.player.foundMineral(item.ParentSheetIndex);
-                        else if (item.Category == -12)
-                            Game1.player.foundMineral(item.ParentSheetIndex);
-                        else if (item.Category == 0)
-                            Game1.player.foundArtifact(item.ParentSheetIndex, numberToBuy);
-                    }
-                }
-
                 return false;
-            }
             this.HoveredItem = null;
             return true;
         }

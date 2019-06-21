@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using Harmony;
 using Microsoft.Xna.Framework.Graphics;
 using PelicanFiber.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
+using SObject = StardewValley.Object;
 
 namespace PelicanFiber
 {
@@ -17,6 +21,9 @@ namespace PelicanFiber
         private ModConfig Config;
         private bool Unfiltered = true;
         private ItemUtils ItemUtils;
+
+        /// <summary>The last link opened through the Pelican Fiber menu.</summary>
+        private IClickableMenu LastLinkOpened;
 
 
         /*********
@@ -50,6 +57,21 @@ namespace PelicanFiber
 
             // hook events
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+            helper.Events.Display.MenuChanged += this.OnMenuChanged;
+
+            // hook Harmony patches
+            HarmonyInstance harmony = HarmonyInstance.Create(this.ModManifest.UniqueID);
+            if (this.Config.GiveAchievements)
+            {
+                harmony.Patch(
+                    original: AccessTools.Method(typeof(ShopMenu), "tryToPurchaseItem"),
+                    postfix: new HarmonyMethod(this.GetType(), nameof(PelicanFiber.After_TryPurchaseItem))
+                );
+                harmony.Patch(
+                    original: AccessTools.Method(typeof(ShopMenu2), "TryToPurchaseItem"),
+                    postfix: new HarmonyMethod(this.GetType(), nameof(PelicanFiber.After_TryPurchaseItem))
+                );
+            };
         }
 
 
@@ -65,23 +87,24 @@ namespace PelicanFiber
                 return;
 
             if (e.Button == this.MenuKey)
-            {
-                try
-                {
-                    float scale = 1.0f;
-                    if (Game1.viewport.Height < 1325)
-                        scale = Game1.viewport.Height / 1325f;
+                this.OpenMainMenu();
+        }
 
-                    Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Config.GiveAchievements, this.Helper.Multiplayer.GetNewID, this.ShowMainMenu, scale, this.Unfiltered);
-                }
-                catch (Exception ex)
-                {
-                    this.Monitor.Log($"500 Internal Error: {ex}", LogLevel.Error);
-                }
+        /// <summary>Raised after a game menu is opened, closed, or replaced.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
+        {
+            if (this.LastLinkOpened != null && e.NewMenu == null && object.ReferenceEquals(e.OldMenu, this.LastLinkOpened))
+            {
+                this.OpenMainMenu();
+                this.LastLinkOpened = null;
             }
         }
 
-        private void ShowMainMenu()
+
+        /// <summary>Open the main Pelican Fiber menu.</summary>
+        private void OpenMainMenu()
         {
             try
             {
@@ -89,11 +112,56 @@ namespace PelicanFiber
                 if (Game1.viewport.Height < 1325)
                     scale = Game1.viewport.Height / 1325f;
 
-                Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Config.GiveAchievements, this.Helper.Multiplayer.GetNewID, this.ShowMainMenu, scale, !this.Config.InternetFilter);
+                Game1.activeClickableMenu = new PelicanFiberMenu(this.Websites, this.ItemUtils, this.Helper.Multiplayer.GetNewID, this.OnLinkOpened, scale, this.Unfiltered);
             }
             catch (Exception ex)
             {
                 this.Monitor.Log($"500 Internal Error: {ex}", LogLevel.Error);
+            }
+        }
+
+        /// <summary>Track the last link menu opened.</summary>
+        private void OnLinkOpened()
+        {
+            this.LastLinkOpened = Game1.activeClickableMenu;
+        }
+
+        /// <summary>Called by Harmony after the <c>ShopMenu.TryToPurchaseItem</c> method.</summary>
+        /// <param name="__result">The return value of the original method.</param>
+        /// <param name="item">The item being purchased.</param>
+        /// <param name="numberToBuy">The number of items to purchase.</param>
+        [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "The argument names must match those expected by Harmony.")]
+        private static void After_TryPurchaseItem(bool __result, Item item, int numberToBuy)
+        {
+            // update achievements if item was purchased
+            if (__result)
+            {
+                SObject obj = item as SObject;
+
+                switch (item.Category)
+                {
+                    // recipes cooked
+                    case SObject.CookingCategory:
+                        Game1.player.cookedRecipe(item.ParentSheetIndex);
+                        Game1.stats.checkForCookingAchievements();
+                        break;
+
+                    // fish caught
+                    case SObject.FishCategory:
+                        Game1.player.caughtFish(item.ParentSheetIndex, 12);
+                        break;
+
+                    // minerals found
+                    case SObject.GemCategory:
+                    case SObject.mineralsCategory:
+                        Game1.player.foundMineral(item.ParentSheetIndex);
+                        break;
+
+                    // artifacts found
+                    case 0 when obj?.Type == "Arch":
+                        Game1.player.foundArtifact(item.ParentSheetIndex, numberToBuy);
+                        break;
+                }
             }
         }
     }
