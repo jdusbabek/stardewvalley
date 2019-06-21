@@ -53,7 +53,7 @@ namespace PelicanFiber
             }
 
             // load utils
-            PelicanFiber.ItemUtils = new ItemUtils(helper.Content, this.Monitor);
+            PelicanFiber.ItemUtils = new ItemUtils(helper.Content, helper.Data, this.Monitor);
 
             // hook events
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
