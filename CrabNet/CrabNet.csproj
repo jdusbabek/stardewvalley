@@ -5,6 +5,8 @@
     <RootNamespace>CrabNet</RootNamespace>
     <Version>1.1.1</Version>
     <TargetFramework>net452</TargetFramework>
+    <Platforms>x86</Platforms>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
