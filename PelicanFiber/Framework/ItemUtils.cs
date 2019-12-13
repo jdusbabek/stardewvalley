@@ -121,7 +121,8 @@ namespace PelicanFiber.Framework
                     new Object(Vector2.Zero, 802, int.MaxValue),
                     new Object(Vector2.Zero, 478, int.MaxValue),
                     new Object(Vector2.Zero, 486, int.MaxValue),
-                    new Object(Vector2.Zero, 494, int.MaxValue)  
+                    new Object(Vector2.Zero, 494, int.MaxValue),
+                    new Object(Vector2.Zero, 196, false)
                 });
                 if (unfiltered)
                 {
@@ -163,6 +164,7 @@ namespace PelicanFiber.Framework
                             break;                            
                     }
                 }
+                stock.Add(new Clothing(1000 + new Random((int) Game1.stats.DaysPlayed + (int) Game1.uniqueIDForThisGame / 2).Next((int) sbyte.MaxValue)), 1000, int.MaxValue);
             }
             return stock;
         }
@@ -261,6 +263,12 @@ namespace PelicanFiber.Framework
                     stock.Add(new TV(1468, Vector2.Zero));
                 if (Utility.getHomeOfFarmer(Game1.player).upgradeLevel > 0)
                     stock.Add(new Furniture(1226, Vector2.Zero));
+                stock.Add(new Object(Vector2.Zero, 200, false));
+                stock.Add(new Object(Vector2.Zero, 35, false));
+                stock.Add(new Object(Vector2.Zero, 46, false));
+                stock.Add(new Furniture(1792, Vector2.Zero));
+                stock.Add(new Furniture(1794, Vector2.Zero));
+                stock.Add(new Furniture(1798, Vector2.Zero));
             }
 
             if (!Game1.player.craftingRecipes.ContainsKey("Wooden Brazier"))
