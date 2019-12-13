@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -46,9 +46,9 @@ namespace PelicanFiber.Framework
                         new Object(Vector2.Zero, 474, int.MaxValue),
                         new Object(Vector2.Zero, 475, int.MaxValue),
                         new Object(Vector2.Zero, 427, int.MaxValue),
-                        new Object(Vector2.Zero, 477, int.MaxValue)
+                        new Object(Vector2.Zero, 477, int.MaxValue),
                         new Object(Vector2.Zero, 429, int.MaxValue),
-                        new Object(745, int.MaxValue, false, 100),
+                        new Object(745, int.MaxValue, false, 100)
                     });
                     if (Game1.year > 1 || unfiltered)
                     {
@@ -97,7 +97,7 @@ namespace PelicanFiber.Framework
 
                 stock.Add(new Object(Vector2.Zero, 297, int.MaxValue));
                 if (!Game1.player.craftingRecipes.ContainsKey("Grass Starter"))
-                    stock.Add(new Object(297, 1, true, -1, 0), new[] { 1000, 1 });
+                    stock.Add(new Object(297, 1, true, 1000, 0));
                 stock.AddRange(new[]
                 {
                     new Object(628, int.MaxValue, false, 1700),
@@ -114,15 +114,15 @@ namespace PelicanFiber.Framework
                 });
                 if ((int) Game1.stats.DaysPlayed >= 15)
                 {
-                    stock.Add(368, int.MaxValue, false, 50);
-                    stock.Add(370, int.MaxValue, false, 50);
-                    stock.Add(465, int.MaxValue, false, 50);
+                    stock.Add(new Object(368, int.MaxValue, false, 50));
+                    stock.Add(new Object(370, int.MaxValue, false, 50));
+                    stock.Add(new Object(465, int.MaxValue, false, 50));
                 }
                 if (Game1.year > 1)
                 {
-                    stock.Add(369, int.MaxValue, false, 75);
-                    stock.Add(371, int.MaxValue, false, 75);
-                    stock.Add(466, int.MaxValue, false, 75);
+                    stock.Add(new Object(369, int.MaxValue, false, 75));
+                    stock.Add(new Object(371, int.MaxValue, false, 75));
+                    stock.Add(new Object(466, int.MaxValue, false, 75));
                 }
 
                 Random random = new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2);
@@ -134,16 +134,15 @@ namespace PelicanFiber.Framework
                     new Wallpaper(which) { Stack = int.MaxValue },
                     new Wallpaper(random.Next(56), true) { Stack = int.MaxValue }
                 });
-                stock.Add(new Clothing(1000 + random.Next(128)), new[] { 1000, int.MaxValue });
-                stock.Add(new Furniture(1308, Vector2.Zero));
-                if (Game1.player.achievements.Contains(38))
+                stock.Add(new Furniture(1308, Vector2.Zero) { Stack = int.MaxValue });
+                if (Game1.player.hasAFriendWithHeartLevel(8, true))
                     stock.Add(new Object(Vector2.Zero, 458, int.MaxValue));
             }
             else
             {
                 stock.AddRange(new[]
                 {
-                    new Object(Vector2.Zero, 802, int.MaxValue),
+                    new Object(Vector2.Zero, 802, int.MaxValue) { Price = 75 },
                     new Object(Vector2.Zero, 478, int.MaxValue),
                     new Object(Vector2.Zero, 486, int.MaxValue),
                     new Object(Vector2.Zero, 494, int.MaxValue),
@@ -189,7 +188,7 @@ namespace PelicanFiber.Framework
                             break;                            
                     }
                 }
-                stock.Add(new Clothing(1000 + new Random((int) Game1.stats.DaysPlayed + (int) Game1.uniqueIDForThisGame / 2).Next((int) sbyte.MaxValue)), new[] { 1000, int.MaxValue });
+                stock.Add(new Clothing(1000 + new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2).Next((int)sbyte.MaxValue)) { Price = 1000, Stack = int.MaxValue });
             }
             return stock;
         }
@@ -203,99 +202,99 @@ namespace PelicanFiber.Framework
             {
                 new Object(Vector2.Zero, 388, int.MaxValue),
                 new Object(Vector2.Zero, 390, int.MaxValue),
-                new Furniture(1614, Vector2.Zero),
-                new Furniture(1616, Vector2.Zero),
-                new Workbench(Vector2.Zero)
+                new Furniture(1614, Vector2.Zero) { Stack = int.MaxValue },
+                new Furniture(1616, Vector2.Zero) { Stack = int.MaxValue },
+                new Workbench(Vector2.Zero) { Stack = int.MaxValue }
             };
             if (Game1.currentSeason == "winter" || Game1.year >= 2 || unfiltered)
-                stock.Add(new WoodChipper(Vector2.Zero));
+                stock.Add(new WoodChipper(Vector2.Zero) { Stack = int.MaxValue });
             if (Utility.getHomeOfFarmer(Game1.player).upgradeLevel > 0 || unfiltered)
-                stock.Add(new Object(Vector2.Zero, 216, false));
+                stock.Add(new Object(Vector2.Zero, 216, false) { Stack = int.MaxValue });
 
-            if (unfiltered)
-            {
-                stock.AddRange(this.GetAllFurniture());
-            }
-            else
-            {
-                switch (Game1.dayOfMonth % 7)
-                {
-                    case 0:
-                        stock.Add(this.GetRandomFurniture(r, stock, 1296, 1391));
-                        stock.Add(this.GetRandomFurniture(r, stock, 416, 537));
-                        break;
-                    case 1:
-                        stock.AddRange(new[]
-                        {
-                            new Furniture(0, Vector2.Zero),
-                            new Furniture(192, Vector2.Zero),
-                            new Furniture(704, Vector2.Zero),
-                            new Furniture(1120, Vector2.Zero),
-                            new Furniture(1216, Vector2.Zero),
-                            new Furniture(1391, Vector2.Zero)
-                        });
-                        break;
-                    case 2:
-                        stock.AddRange(new[]
-                        {
-                            new Furniture(3, Vector2.Zero),
-                            new Furniture(197, Vector2.Zero),
-                            new Furniture(709, Vector2.Zero),
-                            new Furniture(1122, Vector2.Zero),
-                            new Furniture(1218, Vector2.Zero),
-                            new Furniture(1393, Vector2.Zero)
-                        });
-                        break;
-                    case 3:
-                        stock.AddRange(new[]
-                        {
-                            new Furniture(6, Vector2.Zero),
-                            new Furniture(202, Vector2.Zero),
-                            new Furniture(714, Vector2.Zero),
-                            new Furniture(1124, Vector2.Zero),
-                            new Furniture(1220, Vector2.Zero),
-                            new Furniture(1395, Vector2.Zero)
-                        });
-                        break;
-                    case 4:
-                        stock.AddRange(new[]
-                        {
-                            this.GetRandomFurniture(r, stock, 1296, 1391),
-                            this.GetRandomFurniture(r, stock, 1296, 1391)
-                        });
-                        break;
-                    case 5:
-                        stock.AddRange(new[]
-                        {
-                            this.GetRandomFurniture(r, stock, 1443, 1450),
-                            this.GetRandomFurniture(r, stock, 288, 313)
-                        });
-                        break;
-                    case 6:
-                        stock.AddRange(new[]
-                        {
-                            this.GetRandomFurniture(r, stock, 1565, 1607),
-                            this.GetRandomFurniture(r, stock, 12, 129)
-                        });
-                        break;
-                }
-                stock.Add(this.GetRandomFurniture(r, stock, 0, 1462));
-                stock.Add(this.GetRandomFurniture(r, stock, 0, 1462));
-                while (r.NextDouble() < 0.25)
-                    stock.Add(this.GetRandomFurniture(r, stock, 1673, 1815));
-                stock.Add(new Furniture(1402, Vector2.Zero));
-                stock.Add(new TV(1466, Vector2.Zero));
-                stock.Add(new TV(1680, Vector2.Zero));
+			if (unfiltered)
+			{
+				stock.AddRange(this.GetAllFurniture());
+			}
+			else
+			{
+				switch (Game1.dayOfMonth % 7)
+				{
+					case 0:
+						stock.Add(this.GetRandomFurniture(r, stock, 1296, 1391));
+						stock.Add(this.GetRandomFurniture(r, stock, 416, 537));
+						break;
+					case 1:
+						stock.AddRange(new[]
+						{
+							new Furniture(0, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(192, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(704, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(1120, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(1216, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(1391, Vector2.Zero) { Stack = int.MaxValue }
+						});
+						break;
+					case 2:
+						stock.AddRange(new[]
+						{
+							new Furniture(3, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(197, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(709, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(1122, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(1218, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(1393, Vector2.Zero) { Stack = int.MaxValue }
+						});
+						break;
+					case 3:
+						stock.AddRange(new[]
+						{
+							new Furniture(6, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(202, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(714, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(1124, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(1220, Vector2.Zero) { Stack = int.MaxValue },
+							new Furniture(1395, Vector2.Zero) { Stack = int.MaxValue }
+						});
+						break;
+					case 4:
+						stock.AddRange(new[]
+						{
+							this.GetRandomFurniture(r, stock, 1296, 1391),
+							this.GetRandomFurniture(r, stock, 1296, 1391)
+						});
+						break;
+					case 5:
+						stock.AddRange(new[]
+						{
+							this.GetRandomFurniture(r, stock, 1443, 1450),
+							this.GetRandomFurniture(r, stock, 288, 313)
+						});
+						break;
+					case 6:
+						stock.AddRange(new[]
+						{
+							this.GetRandomFurniture(r, stock, 1565, 1607),
+							this.GetRandomFurniture(r, stock, 12, 129)
+						});
+						break;
+				}
+				stock.Add(this.GetRandomFurniture(r, stock, 0, 1462));
+				stock.Add(this.GetRandomFurniture(r, stock, 0, 1462));
+				while (r.NextDouble() < 0.25)
+					stock.Add(this.GetRandomFurniture(r, stock, 1673, 1815));
+				stock.Add(new Furniture(1402, Vector2.Zero) { Stack = int.MaxValue });
+				stock.Add(new TV(1466, Vector2.Zero) { Stack = int.MaxValue });
+				stock.Add(new TV(1680, Vector2.Zero) { Stack = int.MaxValue });
+				if (Utility.getHomeOfFarmer(Game1.player).upgradeLevel > 0)
+					stock.Add(new TV(1468, Vector2.Zero) { Stack = int.MaxValue });
                 if (Utility.getHomeOfFarmer(Game1.player).upgradeLevel > 0)
-                    stock.Add(new TV(1468, Vector2.Zero));
-                if (Utility.getHomeOfFarmer(Game1.player).upgradeLevel > 0)
-                    stock.Add(new Furniture(1226, Vector2.Zero));
+                    stock.Add(new Furniture(1226, Vector2.Zero) { Stack = int.MaxValue });
                 stock.Add(new Object(Vector2.Zero, 200, false) { Stack = int.MaxValue });
                 stock.Add(new Object(Vector2.Zero, 35, false) { Stack = int.MaxValue });
                 stock.Add(new Object(Vector2.Zero, 46, false) { Stack = int.MaxValue });
-                stock.Add(new Furniture(1792, Vector2.Zero));
-                stock.Add(new Furniture(1794, Vector2.Zero));
-                stock.Add(new Furniture(1798, Vector2.Zero));
+                stock.Add(new Furniture(1792, Vector2.Zero) { Stack = int.MaxValue });
+                stock.Add(new Furniture(1794, Vector2.Zero) { Stack = int.MaxValue });
+                stock.Add(new Furniture(1798, Vector2.Zero) { Stack = int.MaxValue });
             }
 
             if (!Game1.player.craftingRecipes.ContainsKey("Wooden Brazier"))
@@ -345,39 +344,117 @@ namespace PelicanFiber.Framework
 
 
         private bool IsFurnitureOffLimitsForSale(int index)
-        {
-            switch (index)
-            {
-                case 1669:
-                case 1671:
-                case 1680:
-                case 1733:
-                case 1541:
-                case 1545:
-                case 1554:
-                case 1298:
-                case 1299:
-                case 1300:
-                case 1301:
-                case 1302:
-                case 1303:
-                case 1304:
-                case 1305:
-                case 1306:
-                case 1307:
-                case 1308:
-                case 1402:
-                case 1466:
-                case 1468:
-                case 131:
-                case 1226:
-                    return true;
-                default:
-                    return false;
-            }
-        }
+		{
+			if (index <= 1545)
+			{
+				if (index <= 1375)
+				{
+					if (index <= 989)
+					{
+						if (index != 131 && (uint)(index - 984) > 2U && index != 989)
+							goto label_22;
+					}
+					else if (index != 1226 && (uint)(index - 1298) > 11U)
+					{
+						switch (index)
+						{
+							case 1371:
+							case 1373:
+							case 1375:
+								break;
+							default:
+								goto label_22;
+						}
+					}
+				}
+				else if (index <= 1468)
+				{
+					if (index != 1402 && index != 1466 && index != 1468)
+						goto label_22;
+				}
+				else if (index != 1471 && index != 1541 && index != 1545)
+					goto label_22;
+			}
+			else if (index <= 1764)
+			{
+				if (index <= 1671)
+				{
+					if (index != 1554 && index != 1669 && index != 1671)
+						goto label_22;
+				}
+				else if (index != 1680 && index != 1733 && (uint)(index - 1760) > 4U)
+					goto label_22;
+			}
+			else if (index <= 1900)
+			{
+				switch (index - 1796)
+				{
+					case 0:
+					case 2:
+					case 4:
+					case 6:
+						break;
+					case 1:
+					case 3:
+					case 5:
+						goto label_22;
+					default:
+						switch (index - 1838)
+						{
+							case 0:
+							case 2:
+							case 4:
+							case 6:
+							case 8:
+							case 10:
+							case 12:
+							case 14:
+							case 16:
+								break;
+							case 1:
+							case 3:
+							case 5:
+							case 7:
+							case 9:
+							case 11:
+							case 13:
+							case 15:
+								goto label_22;
+							default:
+								if (index == 1900)
+									break;
+								goto label_22;
+						}
+						break;
+				}
+			}
+			else if (index <= 1918)
+			{
+				if (index != 1902)
+				{
+					switch (index - 1907)
+					{
+						case 0:
+						case 2:
+						case 7:
+						case 8:
+						case 9:
+						case 10:
+						case 11:
+							break;
+						default:
+							goto label_22;
+					}
+				}
+			}
+			else if ((uint)(index - 1952) > 9U && index != 1971)
+				goto label_22;
+			return true;
+			label_22:
+			return false;
+		}
 
-        private List<Item> GetAllFurniture()
+		private List<Item> GetAllFurniture()
         {
             List<Item> list = new List<Item>();
 
@@ -476,7 +553,7 @@ namespace PelicanFiber.Framework
                 stock.Add(new FishingRod(2), new[] { 1800, int.MaxValue });
             if (Game1.player.fishingLevel.Value >= 6 || unfiltered)
                 stock.Add(new FishingRod(3), new[] { 7500, int.MaxValue });
-            if (Game1.masterPlayer.mailReceived.Contains("ccFishTank"))
+            if (Game1.MasterPlayer.mailReceived.Contains("ccFishTank"))
                 stock.Add(new Pan(), new[] { 2500, int.MaxValue });
 
             if (unfiltered)
