@@ -46,27 +46,31 @@ namespace PelicanFiber.Framework
                         new Object(Vector2.Zero, 474, int.MaxValue),
                         new Object(Vector2.Zero, 475, int.MaxValue),
                         new Object(Vector2.Zero, 427, int.MaxValue),
+                        new Object(Vector2.Zero, 477, int.MaxValue)
                         new Object(Vector2.Zero, 429, int.MaxValue),
                         new Object(745, int.MaxValue, false, 100),
-                        new Object(Vector2.Zero, 477, int.MaxValue),
-                        new Object(Vector2.Zero, 273, int.MaxValue)
                     });
                     if (Game1.year > 1 || unfiltered)
+                    {
                         stock.Add(new Object(Vector2.Zero, 476, int.MaxValue));
+                        stock.Add(new Object(Vector2.Zero, 273, int.MaxValue));
+                    }
                 }
                 if (Game1.currentSeason.Equals("summer") || unfiltered)
                 {
                     stock.AddRange(new[]
                     {
+                        new Object(Vector2.Zero, 479, int.MaxValue),
                         new Object(Vector2.Zero, 480, int.MaxValue),
                         new Object(Vector2.Zero, 481, int.MaxValue),
                         new Object(Vector2.Zero, 482, int.MaxValue),
                         new Object(Vector2.Zero, 483, int.MaxValue),
                         new Object(Vector2.Zero, 484, int.MaxValue),
-                        new Object(Vector2.Zero, 479, int.MaxValue),
-                        new Object(Vector2.Zero, 302, int.MaxValue),
                         new Object(Vector2.Zero, 453, int.MaxValue),
-                        new Object(Vector2.Zero, 455, int.MaxValue)
+                        new Object(Vector2.Zero, 455, int.MaxValue),
+                        new Object(Vector2.Zero, 302, int.MaxValue),
+                        new Object(Vector2.Zero, 487, int.MaxValue),
+                        new Object(431, int.MaxValue, false, 100)
                     });
                     if (Game1.year > 1 || unfiltered)
                         stock.Add(new Object(Vector2.Zero, 485, int.MaxValue));
@@ -75,21 +79,25 @@ namespace PelicanFiber.Framework
                 {
                     stock.AddRange(new[]
                     {
+                        new Object(Vector2.Zero, 490, int.MaxValue),
                         new Object(Vector2.Zero, 487, int.MaxValue),
                         new Object(Vector2.Zero, 488, int.MaxValue),
-                        new Object(Vector2.Zero, 490, int.MaxValue),
-                        new Object(Vector2.Zero, 299, int.MaxValue),
-                        new Object(Vector2.Zero, 301, int.MaxValue),
-                        new Object(Vector2.Zero, 492, int.MaxValue),
                         new Object(Vector2.Zero, 491, int.MaxValue),
+                        new Object(Vector2.Zero, 492, int.MaxValue),
                         new Object(Vector2.Zero, 493, int.MaxValue),
+                        new Object(Vector2.Zero, 483, int.MaxValue),
                         new Object(431, int.MaxValue, false, 100),
-                        new Object(Vector2.Zero, 425, int.MaxValue)
+                        new Object(Vector2.Zero, 425, int.MaxValue),
+                        new Object(Vector2.Zero, 299, int.MaxValue),
+                        new Object(Vector2.Zero, 301, int.MaxValue)
                     });
                     if (Game1.year > 1 || unfiltered)
                         stock.Add(new Object(Vector2.Zero, 489, int.MaxValue));
                 }
 
+                stock.Add(new Object(Vector2.Zero, 297, int.MaxValue));
+                if (!Game1.player.craftingRecipes.ContainsKey("Grass Starter"))
+                    stock.Add(new Object(297, 1, true, -1, 0), new[] { 1000, 1 });
                 stock.AddRange(new[]
                 {
                     new Object(628, int.MaxValue, false, 1700),
@@ -98,19 +106,36 @@ namespace PelicanFiber.Framework
                     new Object(631, int.MaxValue, false, 3000),
                     new Object(632, int.MaxValue, false, 3000),
                     new Object(633, int.MaxValue, false, 2000),
-                    new Object(Vector2.Zero, 297, int.MaxValue),
                     new Object(Vector2.Zero, 245, int.MaxValue),
                     new Object(Vector2.Zero, 246, int.MaxValue),
                     new Object(Vector2.Zero, 423, int.MaxValue),
                     new Object(Vector2.Zero, 247, int.MaxValue),
+                    new Object(Vector2.Zero, 419, int.MaxValue)
                 });
+                if ((int) Game1.stats.DaysPlayed >= 15)
+                {
+                    stock.Add(368, int.MaxValue, false, 50);
+                    stock.Add(370, int.MaxValue, false, 50);
+                    stock.Add(465, int.MaxValue, false, 50);
+                }
+                if (Game1.year > 1)
+                {
+                    stock.Add(369, int.MaxValue, false, 75);
+                    stock.Add(371, int.MaxValue, false, 75);
+                    stock.Add(466, int.MaxValue, false, 75);
+                }
 
                 Random random = new Random((int)Game1.stats.DaysPlayed + (int)Game1.uniqueIDForThisGame / 2);
+                int which = random.Next(112);
+                if (which == 21)
+                    which = 36;
                 stock.AddRange(new[]
                 {
-                    new Wallpaper(random.Next(112)) { Stack = int.MaxValue },
-                    new Wallpaper(random.Next(40), true) { Stack = int.MaxValue }
+                    new Wallpaper(which) { Stack = int.MaxValue },
+                    new Wallpaper(random.Next(56), true) { Stack = int.MaxValue }
                 });
+                stock.Add(new Clothing(1000 + random.Next(128)), new[] { 1000, int.MaxValue });
+                stock.Add(new Furniture(1308, Vector2.Zero));
                 if (Game1.player.achievements.Contains(38))
                     stock.Add(new Object(Vector2.Zero, 458, int.MaxValue));
             }
@@ -122,7 +147,7 @@ namespace PelicanFiber.Framework
                     new Object(Vector2.Zero, 478, int.MaxValue),
                     new Object(Vector2.Zero, 486, int.MaxValue),
                     new Object(Vector2.Zero, 494, int.MaxValue),
-                    new Object(Vector2.Zero, 196, false)
+                    new Object(Vector2.Zero, 196, false) { Stack = int.MaxValue }
                 });
                 if (unfiltered)
                 {
@@ -164,7 +189,7 @@ namespace PelicanFiber.Framework
                             break;                            
                     }
                 }
-                stock.Add(new Clothing(1000 + new Random((int) Game1.stats.DaysPlayed + (int) Game1.uniqueIDForThisGame / 2).Next((int) sbyte.MaxValue)), 1000, int.MaxValue);
+                stock.Add(new Clothing(1000 + new Random((int) Game1.stats.DaysPlayed + (int) Game1.uniqueIDForThisGame / 2).Next((int) sbyte.MaxValue)), new[] { 1000, int.MaxValue });
             }
             return stock;
         }
@@ -180,10 +205,12 @@ namespace PelicanFiber.Framework
                 new Object(Vector2.Zero, 390, int.MaxValue),
                 new Furniture(1614, Vector2.Zero),
                 new Furniture(1616, Vector2.Zero),
-                new Workbench(Vector2.Zero),
-                new WoodChipper(Vector2.Zero),
-                new Object(Vector2.Zero, 216, false)
+                new Workbench(Vector2.Zero)
             };
+            if (Game1.currentSeason == "winter" || Game1.year >= 2 || unfiltered)
+                stock.Add(new WoodChipper(Vector2.Zero));
+            if (Utility.getHomeOfFarmer(Game1.player).upgradeLevel > 0 || unfiltered)
+                stock.Add(new Object(Vector2.Zero, 216, false));
 
             if (unfiltered)
             {
@@ -252,8 +279,8 @@ namespace PelicanFiber.Framework
                         });
                         break;
                 }
-                stock.Add(this.GetRandomFurniture(r, stock));
-                stock.Add(this.GetRandomFurniture(r, stock));
+                stock.Add(this.GetRandomFurniture(r, stock, 0, 1462));
+                stock.Add(this.GetRandomFurniture(r, stock, 0, 1462));
                 while (r.NextDouble() < 0.25)
                     stock.Add(this.GetRandomFurniture(r, stock, 1673, 1815));
                 stock.Add(new Furniture(1402, Vector2.Zero));
@@ -263,9 +290,9 @@ namespace PelicanFiber.Framework
                     stock.Add(new TV(1468, Vector2.Zero));
                 if (Utility.getHomeOfFarmer(Game1.player).upgradeLevel > 0)
                     stock.Add(new Furniture(1226, Vector2.Zero));
-                stock.Add(new Object(Vector2.Zero, 200, false));
-                stock.Add(new Object(Vector2.Zero, 35, false));
-                stock.Add(new Object(Vector2.Zero, 46, false));
+                stock.Add(new Object(Vector2.Zero, 200, false) { Stack = int.MaxValue });
+                stock.Add(new Object(Vector2.Zero, 35, false) { Stack = int.MaxValue });
+                stock.Add(new Object(Vector2.Zero, 46, false) { Stack = int.MaxValue });
                 stock.Add(new Furniture(1792, Vector2.Zero));
                 stock.Add(new Furniture(1794, Vector2.Zero));
                 stock.Add(new Furniture(1798, Vector2.Zero));
@@ -444,10 +471,13 @@ namespace PelicanFiber.Framework
             if (Game1.player.fishingLevel.Value >= 9 || unfiltered)
                 stock.Add(new Object(703, 1), new[] { 1000, int.MaxValue });
             stock.Add(new FishingRod(0), new[] { 500, int.MaxValue });
+            stock.Add(new FishingRod(1), new[] { 25, int.MaxValue });
             if (Game1.player.fishingLevel.Value >= 2 || unfiltered)
                 stock.Add(new FishingRod(2), new[] { 1800, int.MaxValue });
             if (Game1.player.fishingLevel.Value >= 6 || unfiltered)
                 stock.Add(new FishingRod(3), new[] { 7500, int.MaxValue });
+            if (Game1.masterPlayer.mailReceived.Contains("ccFishTank"))
+                stock.Add(new Pan(), new[] { 2500, int.MaxValue });
 
             if (unfiltered)
             {
@@ -479,7 +509,7 @@ namespace PelicanFiber.Framework
             };
 
             if (Game1.dishOfTheDay.Stack > 0 && !unfiltered)
-                stock.Add(Game1.dishOfTheDay);
+                stock.Add(Game1.dishOfTheDay.getOne() as Object);
             else if (unfiltered)
             {
                 // 194 - 239
@@ -506,7 +536,13 @@ namespace PelicanFiber.Framework
                 stock.Add(new Object(206, 1, true, 75));
             if (!Game1.player.cookingRecipes.ContainsKey("Maki Roll"))
                 stock.Add(new Object(228, 1, true, 150));
-
+            if (!Game1.player.cookingRecipes.ContainsKey("Cookies") && Game1.player.eventsSeen.Contains(19))
+                stock.Add(new Object(223, 1, true, 150) { name = "Cookies" });
+            if (!Game1.player.cookingRecipes.ContainsKey("Triple Shot Espresso"))
+                stock.Add(new Object(253, 1, true, 2500));
+            if (Game1.player.activeDialogueEvents.ContainsKey("willyCrabs"))
+                stock.Add(new Object(Vector2.Zero, 732, int.MaxValue));
+            
             return stock;
         }
 
