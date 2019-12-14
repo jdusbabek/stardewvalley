@@ -616,7 +616,7 @@ namespace PelicanFiber.Framework
             if (!Game1.player.cookingRecipes.ContainsKey("Cookies") && Game1.player.eventsSeen.Contains(19))
                 stock.Add(new Object(223, 1, true, 150) { name = "Cookies" });
             if (!Game1.player.cookingRecipes.ContainsKey("Triple Shot Espresso"))
-                stock.Add(new Object(253, 1, true, 2500));
+                stock.Add(new Object(253, 1, true, 500));
             if (Game1.player.activeDialogueEvents.ContainsKey("willyCrabs"))
                 stock.Add(new Object(Vector2.Zero, 732, int.MaxValue));
             
