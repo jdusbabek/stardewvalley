@@ -250,7 +250,7 @@ namespace PelicanFiber.Framework
 
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Dwarf", (int)(this.xPositionOnScreen + 182 * this.Scale), (int)(this.yPositionOnScreen + 1167 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Qi", (int)(this.xPositionOnScreen + 448 * this.Scale), (int)(this.yPositionOnScreen + 1167 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
-                SpriteText.drawStringHorizontallyCenteredAt(b, "Oaisis", (int)(this.xPositionOnScreen + 714 * this.Scale), (int)(this.yPositionOnScreen + 1167 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
+                SpriteText.drawStringHorizontallyCenteredAt(b, "Oasis", (int)(this.xPositionOnScreen + 714 * this.Scale), (int)(this.yPositionOnScreen + 1167 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Joja", (int)(this.xPositionOnScreen + 980 * this.Scale), (int)(this.yPositionOnScreen + 1167 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
 
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Foraged", (int)(this.xPositionOnScreen + 1246 * this.Scale), (int)(this.yPositionOnScreen + 997 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
