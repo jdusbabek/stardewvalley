@@ -105,6 +105,7 @@ namespace Replanter
 
         private DialogueManager DialogueManager;
 
+        private JsonAssetsAPI ja;
 
         /*********
         ** Public methods
@@ -121,8 +122,20 @@ namespace Replanter
             this.DialogueManager = new DialogueManager(this.Config, helper.Content, this.Monitor);
 
             // hook events
+            helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
             helper.Events.GameLoop.SaveLoaded += this.OnSaveLoaded;
             helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+        }
+
+        private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var api = Helper.ModRegistry.GetApi<JsonAssetsAPI>("spacechase0.JsonAssets");
+            if (api == null)
+            {
+                return;
+            }
+
+            ja = api;
         }
 
 
@@ -429,7 +442,14 @@ namespace Replanter
             else if (random.NextDouble() < qualityModifier2)
                 itemQuality = 1;
             if (crop.minHarvest.Value > 1 || crop.maxHarvest.Value > 1)
-                stackSize = random.Next(crop.minHarvest.Value, Math.Min(crop.minHarvest.Value + 1, crop.maxHarvest.Value + 1 + Game1.player.FarmingLevel / crop.maxHarvestIncreasePerFarmingLevel.Value));
+            {
+                int max_harvest_increase = 0;
+                if (crop.maxHarvestIncreasePerFarmingLevel.Value > 0)
+                {
+                    max_harvest_increase = Game1.player.FarmingLevel / crop.maxHarvestIncreasePerFarmingLevel.Value;
+                }
+                stackSize = random.Next(crop.minHarvest.Value, Math.Min(crop.minHarvest.Value + 1, crop.maxHarvest.Value + 1 + max_harvest_increase));
+            }
             if (crop.chanceForExtraCrops.Value > 0.0)
             {
                 while (random.NextDouble() < Math.Min(0.9, crop.chanceForExtraCrops.Value))
@@ -660,7 +680,25 @@ namespace Replanter
                 string[] ignoredItems = this.IgnoreList.Split('|');
                 foreach (string ignored in ignoredItems)
                 {
-                    this.IgnoreLookup.Add(Convert.ToInt32(ignored));
+                    // According to S/O Parse throws an error on nulls so lets skip those
+                    if (ignored == null) { continue; }
+                    // Setup a temporary variable to hold our int
+                    int result;
+                    // Attempt to parse the input.
+                    // If it succeeds assign to result
+                    // Otherwise fall into If conditional
+                    if (! Int32.TryParse(ignored, out result)) {
+                        // Check to see if JsonAssets exists
+                        // Skip the entry if it doesn't
+                        if (ja == null) { continue; }
+                        // Otherwise get the object ID
+                        int objectId = ja.GetObjectId(ignored);
+                        // If JA didn't find the object, skip
+                        if (objectId == -1) { continue; }
+                        result = objectId;
+                    }
+
+                    this.IgnoreLookup.Add(result);
                 }
             }
 
