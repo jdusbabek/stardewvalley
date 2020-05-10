@@ -442,7 +442,14 @@ namespace Replanter
             else if (random.NextDouble() < qualityModifier2)
                 itemQuality = 1;
             if (crop.minHarvest.Value > 1 || crop.maxHarvest.Value > 1)
-                stackSize = random.Next(crop.minHarvest.Value, Math.Min(crop.minHarvest.Value + 1, crop.maxHarvest.Value + 1 + Game1.player.FarmingLevel / crop.maxHarvestIncreasePerFarmingLevel.Value));
+            {
+                int max_harvest_increase = 0;
+                if (crop.maxHarvestIncreasePerFarmingLevel.Value > 0)
+                {
+                    max_harvest_increase = Game1.player.FarmingLevel / crop.maxHarvestIncreasePerFarmingLevel.Value;
+                }
+                stackSize = random.Next(crop.minHarvest.Value, Math.Min(crop.minHarvest.Value + 1, crop.maxHarvest.Value + 1 + max_harvest_increase));
+            }
             if (crop.chanceForExtraCrops.Value > 0.0)
             {
                 while (random.NextDouble() < Math.Min(0.9, crop.chanceForExtraCrops.Value))
