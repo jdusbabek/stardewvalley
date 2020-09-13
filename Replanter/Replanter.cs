@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Xna.Framework;
+using Netcode;
 using Replanter.Framework;
 using StardewLib;
 using StardewModdingAPI;
@@ -352,6 +354,38 @@ namespace Replanter
 
 
                     }
+                    else if (feature.Value is Bush bush)
+                    {
+                        if (bush.size.Value == Bush.greenTeaBush && bush.inBloom(Game1.currentSeason, Game1.dayOfMonth) && bush.tileSheetOffset.Value != 0)
+                        {
+                            stats.TotalCrops++;
+
+                            StardewValley.Object teaLeaf = this.GetHarvestedTeaLeaf(bush);
+
+                            if (this.SellAfterHarvest)
+                            {
+                                if (this.SellCrops(farmer, teaLeaf, stats))
+                                    itemHarvested = true;
+                                else
+                                    itemHarvested = false;
+                            }
+                            else
+                            {
+                                if (this.AddItemToInventory(teaLeaf, farmer, farm, stats))
+                                    itemHarvested = true;
+                                else
+                                    itemHarvested = false;
+                            }
+
+                            if (itemHarvested)
+                            {
+                                stats.CropsHarvested++;
+
+                                float experience = (float)(16.0 * Math.Log(0.018 * Convert.ToInt32(Game1.objectInformation[teaLeaf.ParentSheetIndex].Split('/')[1]) + 1.0, Math.E));
+                                Game1.player.gainExperience(0, (int)Math.Round(experience));
+                            }
+                        }
+                    }
                 }
             }
 
@@ -378,6 +412,24 @@ namespace Replanter
             {
                 this.ShowMessage(stats);
             }
+        }
+
+        private StardewValley.Object GetHarvestedTeaLeaf(Bush bush)
+        {
+            // create tea leaf
+            NetInt indexOfLeaf = new NetInt(815);
+            StardewValley.Object teaLeaf = new StardewValley.Object(indexOfLeaf.Value, 1, false, -1, 0);
+
+            // change green tea bush state to harvested, using reflection to set values on otherwise inaccesible fields
+            typeof(Bush)
+                .GetField("maxShake", BindingFlags.NonPublic | BindingFlags.Instance)
+                .SetValue(bush, (float)Math.PI / 128f);
+            typeof(Bush)
+                .GetField("tileSheetOffset", BindingFlags.Public | BindingFlags.Instance)
+                .SetValue(bush, new NetInt(0));
+            bush.setUpSourceRect();
+
+            return teaLeaf;
         }
 
         private StardewValley.Object GetHarvestedFruit(FruitTree tree)
@@ -429,7 +481,12 @@ namespace Replanter
             else if (random.NextDouble() < qualityModifier2)
                 itemQuality = 1;
             if (crop.minHarvest.Value > 1 || crop.maxHarvest.Value > 1)
-                stackSize = random.Next(crop.minHarvest.Value, Math.Min(crop.minHarvest.Value + 1, crop.maxHarvest.Value + 1 + Game1.player.FarmingLevel / crop.maxHarvestIncreasePerFarmingLevel.Value));
+            {
+                int levelBoundary = 0;
+                if (crop.maxHarvestIncreasePerFarmingLevel.Value != 0)
+                    levelBoundary = Game1.player.FarmingLevel / crop.maxHarvestIncreasePerFarmingLevel.Value;
+                stackSize = random.Next(crop.minHarvest.Value, Math.Min(crop.minHarvest.Value + 1, crop.maxHarvest.Value + 1 + levelBoundary));
+            }
             if (crop.chanceForExtraCrops.Value > 0.0)
             {
                 while (random.NextDouble() < Math.Min(0.9, crop.chanceForExtraCrops.Value))

@@ -28,7 +28,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SortMyStuff", "SortMyStuff\
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Common\Common.projitems*{2cc63da9-c0ff-4922-a816-8cbf6c539839}*SharedItemsImports = 5
+		Common\Common.projitems*{3dbcb972-83eb-42b9-9399-bf45562287f0}*SharedItemsImports = 5
+		Common\Common.projitems*{44f105fc-1767-4357-97e2-30145a837b88}*SharedItemsImports = 5
+		Common\Common.projitems*{5e3fa970-a798-40a7-adb5-fd6c0b1d5460}*SharedItemsImports = 5
+		Common\Common.projitems*{81f7bec0-be0b-42e3-a7b4-6f5f28bcd2cc}*SharedItemsImports = 5
+		Common\Common.projitems*{88733388-0fd5-4279-92c9-59fdd201df22}*SharedItemsImports = 5
 		Common\Common.projitems*{edc6b19b-a212-4692-8318-992a16d4dd44}*SharedItemsImports = 13
+		Common\Common.projitems*{ff0a2fb3-dc84-40a1-a3ce-ab5e77274ce0}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
