@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Microsoft.Xna.Framework;
-using Netcode;
 using Replanter.Framework;
 using StardewLib;
 using StardewModdingAPI;
@@ -351,8 +349,6 @@ namespace Replanter
 
                             tree.fruitsOnTree.Value -= countFromThisTree;
                         }
-
-
                     }
                     else if (feature.Value is Bush bush)
                     {
@@ -362,20 +358,9 @@ namespace Replanter
 
                             StardewValley.Object teaLeaf = this.GetHarvestedTeaLeaf(bush);
 
-                            if (this.SellAfterHarvest)
-                            {
-                                if (this.SellCrops(farmer, teaLeaf, stats))
-                                    itemHarvested = true;
-                                else
-                                    itemHarvested = false;
-                            }
-                            else
-                            {
-                                if (this.AddItemToInventory(teaLeaf, farmer, farm, stats))
-                                    itemHarvested = true;
-                                else
-                                    itemHarvested = false;
-                            }
+                            itemHarvested = this.SellAfterHarvest
+                                ? this.SellCrops(farmer, teaLeaf, stats)
+                                : this.AddItemToInventory(teaLeaf, farmer, farm, stats);
 
                             if (itemHarvested)
                             {
@@ -417,16 +402,11 @@ namespace Replanter
         private StardewValley.Object GetHarvestedTeaLeaf(Bush bush)
         {
             // create tea leaf
-            NetInt indexOfLeaf = new NetInt(815);
-            StardewValley.Object teaLeaf = new StardewValley.Object(indexOfLeaf.Value, 1, false, -1, 0);
+            StardewValley.Object teaLeaf = new StardewValley.Object(815, 1);
 
-            // change green tea bush state to harvested, using reflection to set values on otherwise inaccesible fields
-            typeof(Bush)
-                .GetField("maxShake", BindingFlags.NonPublic | BindingFlags.Instance)
-                .SetValue(bush, (float)Math.PI / 128f);
-            typeof(Bush)
-                .GetField("tileSheetOffset", BindingFlags.Public | BindingFlags.Instance)
-                .SetValue(bush, new NetInt(0));
+            // change green tea bush state to harvested
+            this.Helper.Reflection.GetField<float>(bush, "maxShake").SetValue((float)Math.PI / 128f);
+            bush.tileSheetOffset.Value = 0;
             bush.setUpSourceRect();
 
             return teaLeaf;
@@ -482,10 +462,10 @@ namespace Replanter
                 itemQuality = 1;
             if (crop.minHarvest.Value > 1 || crop.maxHarvest.Value > 1)
             {
-                int levelBoundary = 0;
-                if (crop.maxHarvestIncreasePerFarmingLevel.Value != 0)
-                    levelBoundary = Game1.player.FarmingLevel / crop.maxHarvestIncreasePerFarmingLevel.Value;
-                stackSize = random.Next(crop.minHarvest.Value, Math.Min(crop.minHarvest.Value + 1, crop.maxHarvest.Value + 1 + levelBoundary));
+                int farmingLevelBonus = crop.maxHarvestIncreasePerFarmingLevel.Value != 0
+                    ? Game1.player.FarmingLevel / crop.maxHarvestIncreasePerFarmingLevel.Value
+                    : 0;
+                stackSize = random.Next(crop.minHarvest.Value, Math.Min(crop.minHarvest.Value + 1, crop.maxHarvest.Value + 1 + farmingLevelBonus));
             }
             if (crop.chanceForExtraCrops.Value > 0.0)
             {
