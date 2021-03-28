@@ -295,20 +295,27 @@ namespace CrabNet
         /// <param name="maxSize">The maximum fish size.</param>
         private bool GetFishSize(int parentSheetIndex, out int minSize, out int maxSize)
         {
+            minSize = -1;
+            maxSize = -1;
+
             // get data
             Dictionary<int, string> data = this.Helper.Content.Load<Dictionary<int, string>>("Data\\Fish", ContentSource.GameContent);
-            if (!data.TryGetValue(parentSheetIndex, out string rawFields))
-            {
-                minSize = -1;
-                maxSize = -1;
+            if (!data.TryGetValue(parentSheetIndex, out string rawFields) || rawFields == null || !rawFields.Contains("/"))
                 return false;
-            }
+
+            // get field indexes
+            string[] fields = rawFields.Split('/');
+            int minSizeIndex = fields[1] == "trap"
+                ? 5
+                : 3;
+            int maxSizeIndex = minSizeIndex + 1;
+            if (fields.Length <= maxSizeIndex)
+                return false;
 
             // parse fields
-            string[] fields = rawFields.Split('/');
-            if (fields.Length < 7 || !int.TryParse(fields[5], out minSize))
+            if (!int.TryParse(fields[minSizeIndex], out minSize))
                 minSize = 1;
-            if (fields.Length < 7 || !int.TryParse(fields[6], out maxSize))
+            if (!int.TryParse(fields[maxSizeIndex], out maxSize))
                 maxSize = 10;
             return true;
         }
