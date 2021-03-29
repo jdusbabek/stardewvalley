@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
@@ -250,7 +250,7 @@ namespace PelicanFiber.Framework
 
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Dwarf", (int)(this.xPositionOnScreen + 182 * this.Scale), (int)(this.yPositionOnScreen + 1167 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Qi", (int)(this.xPositionOnScreen + 448 * this.Scale), (int)(this.yPositionOnScreen + 1167 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
-                SpriteText.drawStringHorizontallyCenteredAt(b, "Oaisis", (int)(this.xPositionOnScreen + 714 * this.Scale), (int)(this.yPositionOnScreen + 1167 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
+                SpriteText.drawStringHorizontallyCenteredAt(b, "Oasis", (int)(this.xPositionOnScreen + 714 * this.Scale), (int)(this.yPositionOnScreen + 1167 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Joja", (int)(this.xPositionOnScreen + 980 * this.Scale), (int)(this.yPositionOnScreen + 1167 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
 
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Foraged", (int)(this.xPositionOnScreen + 1246 * this.Scale), (int)(this.yPositionOnScreen + 997 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 1);
@@ -286,7 +286,7 @@ namespace PelicanFiber.Framework
 
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Dwarf", (int)(this.xPositionOnScreen + 180 * this.Scale), (int)(this.yPositionOnScreen + 1165 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 4);
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Qi", (int)(this.xPositionOnScreen + 448 * this.Scale), (int)(this.yPositionOnScreen + 1165 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 4);
-                SpriteText.drawStringHorizontallyCenteredAt(b, "Oaisis", (int)(this.xPositionOnScreen + 714 * this.Scale), (int)(this.yPositionOnScreen + 1165 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 4);
+                SpriteText.drawStringHorizontallyCenteredAt(b, "Oasis", (int)(this.xPositionOnScreen + 714 * this.Scale), (int)(this.yPositionOnScreen + 1165 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 4);
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Joja", (int)(this.xPositionOnScreen + 980 * this.Scale), (int)(this.yPositionOnScreen + 1165 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 4);
 
                 SpriteText.drawStringHorizontallyCenteredAt(b, "Foraged", (int)(this.xPositionOnScreen + 1244 * this.Scale), (int)(this.yPositionOnScreen + 995 * this.Scale), 999999, -1, 999999, 1, 0.88f, false, 4);
@@ -370,55 +370,62 @@ namespace PelicanFiber.Framework
             Dictionary<ISalable, int[]> itemPriceAndStock = new Dictionary<ISalable, int[]>();
             int maxValue = int.MaxValue;
             itemPriceAndStock.Add(new MeleeWeapon(12), new[] { 250, maxValue });
-            if (Game1.mine != null)
+            if (MineShaft.lowestLevelReached >= 15)
+                itemPriceAndStock.Add(new MeleeWeapon(17), new[] { 500, maxValue });
+            if (MineShaft.lowestLevelReached >= 20)
+                itemPriceAndStock.Add(new MeleeWeapon(1), new[] { 750, maxValue });
+            if (MineShaft.lowestLevelReached >= 25)
             {
-                if (MineShaft.lowestLevelReached >= 15)
-                    itemPriceAndStock.Add(new MeleeWeapon(17), new[] { 500, maxValue });
-                if (MineShaft.lowestLevelReached >= 20)
-                    itemPriceAndStock.Add(new MeleeWeapon(1), new[] { 750, maxValue });
-                if (MineShaft.lowestLevelReached >= 25)
-                {
-                    itemPriceAndStock.Add(new MeleeWeapon(43), new[] { 850, maxValue });
-                    itemPriceAndStock.Add(new MeleeWeapon(44), new[] { 1500, maxValue });
-                }
-                if (MineShaft.lowestLevelReached >= 40)
-                    itemPriceAndStock.Add(new MeleeWeapon(27), new[] { 2000, maxValue });
-                if (MineShaft.lowestLevelReached >= 45)
-                    itemPriceAndStock.Add(new MeleeWeapon(10), new[] { 2000, maxValue });
-                if (MineShaft.lowestLevelReached >= 55)
-                    itemPriceAndStock.Add(new MeleeWeapon(7), new[] { 4000, maxValue });
-                if (MineShaft.lowestLevelReached >= 75)
-                    itemPriceAndStock.Add(new MeleeWeapon(5), new[] { 6000, maxValue });
-                if (MineShaft.lowestLevelReached >= 90)
-                    itemPriceAndStock.Add(new MeleeWeapon(50), new[] { 9000, maxValue });
-                if (MineShaft.lowestLevelReached >= 120)
-                    itemPriceAndStock.Add(new MeleeWeapon(9), new[] { 25000, maxValue });
-                if (Game1.player.mailReceived.Contains("galaxySword"))
-                {
-                    itemPriceAndStock.Add(new MeleeWeapon(4), new[] { 50000, maxValue });
-                    itemPriceAndStock.Add(new MeleeWeapon(23), new[] { 350000, maxValue });
-                    itemPriceAndStock.Add(new MeleeWeapon(29), new[] { 75000, maxValue });
-                }
+                itemPriceAndStock.Add(new MeleeWeapon(43), new[] { 850, maxValue });
+                itemPriceAndStock.Add(new MeleeWeapon(44), new[] { 1500, maxValue });
             }
+            if (MineShaft.lowestLevelReached >= 40)
+                itemPriceAndStock.Add(new MeleeWeapon(27), new[] { 2000, maxValue });
+            if (MineShaft.lowestLevelReached >= 45)
+                itemPriceAndStock.Add(new MeleeWeapon(10), new[] { 2000, maxValue });
+            if (MineShaft.lowestLevelReached >= 55)
+                itemPriceAndStock.Add(new MeleeWeapon(7), new[] { 4000, maxValue });
+            if (MineShaft.lowestLevelReached >= 75)
+                itemPriceAndStock.Add(new MeleeWeapon(5), new[] { 6000, maxValue });
+            if (MineShaft.lowestLevelReached >= 90)
+                itemPriceAndStock.Add(new MeleeWeapon(50), new[] { 9000, maxValue });
+            if (MineShaft.lowestLevelReached >= 120)
+                itemPriceAndStock.Add(new MeleeWeapon(9), new[] { 25000, maxValue });
+            if (Game1.player.mailReceived.Contains("galaxySword"))
+            {
+                itemPriceAndStock.Add(new MeleeWeapon(4), new[] { 50000, maxValue });
+                itemPriceAndStock.Add(new MeleeWeapon(23), new[] { 350000, maxValue });
+                itemPriceAndStock.Add(new MeleeWeapon(29), new[] { 75000, maxValue });
+            }
+        
             itemPriceAndStock.Add(new Boots(504), new[] { 500, maxValue });
-            if (Game1.mine != null && MineShaft.lowestLevelReached >= 40)
+			if (MineShaft.lowestLevelReached >= 10)
+				itemPriceAndStock.Add(new Boots(506), new[] { 500, maxValue });
+            if (MineShaft.lowestLevelReached >= 40)
                 itemPriceAndStock.Add(new Boots(508), new[] { 1250, maxValue });
-            if (Game1.mine != null && MineShaft.lowestLevelReached >= 80)
-                itemPriceAndStock.Add(new Boots(511), new[] { 2500, maxValue });
+			if (MineShaft.lowestLevelReached >= 50)
+				itemPriceAndStock.Add(new Boots(509), new[] { 750, maxValue });
+			if (MineShaft.lowestLevelReached >= 80)
+			{
+				itemPriceAndStock.Add(new Boots(512), new[] { 2000, maxValue });
+				itemPriceAndStock.Add(new Boots(511), new[] { 2500, maxValue });
+			}
+			if (MineShaft.lowestLevelReached >= 110)
+				itemPriceAndStock.Add(new Boots(514), new[] { 5000, maxValue });
             itemPriceAndStock.Add(new Ring(529), new[] { 1000, maxValue });
             itemPriceAndStock.Add(new Ring(530), new[] { 1000, maxValue });
-            if (Game1.mine != null && MineShaft.lowestLevelReached >= 40)
+            if (MineShaft.lowestLevelReached >= 40)
             {
                 itemPriceAndStock.Add(new Ring(531), new[] { 2500, maxValue });
                 itemPriceAndStock.Add(new Ring(532), new[] { 2500, maxValue });
             }
-            if (Game1.mine != null && MineShaft.lowestLevelReached >= 80)
+            if (MineShaft.lowestLevelReached >= 80)
             {
                 itemPriceAndStock.Add(new Ring(533), new[] { 5000, maxValue });
                 itemPriceAndStock.Add(new Ring(534), new[] { 5000, maxValue });
             }
-            if (Game1.player.hasItemWithNameThatContains("Slingshot") != null)
-                itemPriceAndStock.Add(new Object(441, int.MaxValue), new[] { 100, maxValue });
+			if (Game1.player.craftingRecipes.ContainsKey("Explosive Ammo"))
+				itemPriceAndStock.Add(new Object(441, int.MaxValue), new[] { 300, maxValue });
             if (Game1.player.mailReceived.Contains("Gil_Slime Charmer Ring"))
                 itemPriceAndStock.Add(new Ring(520), new[] { 25000, maxValue });
             if (Game1.player.mailReceived.Contains("Gil_Savage Ring"))
@@ -427,10 +434,18 @@ namespace PelicanFiber.Framework
                 itemPriceAndStock.Add(new Ring(526), new[] { 20000, maxValue });
             if (Game1.player.mailReceived.Contains("Gil_Vampire Ring"))
                 itemPriceAndStock.Add(new Ring(522), new[] { 15000, maxValue });
+			if (Game1.player.mailReceived.Contains("Gil_Crabshell Ring"))
+				itemPriceAndStock.Add(new Ring(810), new[] { 15000, maxValue });
+			if (Game1.player.mailReceived.Contains("Gil_Napalm Ring"))
+				itemPriceAndStock.Add(new Ring(811), new[] { 30000, maxValue });
             if (Game1.player.mailReceived.Contains("Gil_Skeleton Mask"))
                 itemPriceAndStock.Add(new Hat(8), new[] { 20000, maxValue });
             if (Game1.player.mailReceived.Contains("Gil_Hard Hat"))
                 itemPriceAndStock.Add(new Hat(27), new[] { 20000, maxValue });
+			if (Game1.player.mailReceived.Contains("Gil_Arcane Hat"))
+				itemPriceAndStock.Add(new Hat(60), new[] { 20000, maxValue });
+			if (Game1.player.mailReceived.Contains("Gil_Knight's Helmet"))
+				itemPriceAndStock.Add(new Hat(50), new[] { 20000, maxValue });
             if (Game1.player.mailReceived.Contains("Gil_Insect Head"))
                 itemPriceAndStock.Add(new MeleeWeapon(13), new[] { 10000, maxValue });
             //Game1.activeClickableMenu = (IClickableMenu)new ShopMenu(itemPriceAndStock, 0, "Marlon");
