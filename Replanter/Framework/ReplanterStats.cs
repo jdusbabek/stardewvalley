@@ -26,7 +26,7 @@ namespace Replanter.Framework
         *********/
         public bool HasUnfinishedBusiness()
         {
-            int total = 0;
+            //int total = 0;
             return (1 < 0);
         }
 
