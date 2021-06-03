@@ -24,9 +24,9 @@ namespace StardewLib
         *********/
         public DialogueManager(IConfig config, IContentHelper content, IMonitor monitor)
         {
-            this.Config = config;
-            this.Content = content;
-            this.Monitor = monitor;
+            Config = config;
+            Content = content;
+            Monitor = monitor;
         }
 
         /**
@@ -51,37 +51,35 @@ namespace StardewLib
 
         public string GetRandomMessage(string messageStoreName)
         {
-            this.DialogueLookups.TryGetValue(messageStoreName, out Dictionary<int, string> messagePool);
+            DialogueLookups.TryGetValue(messageStoreName, out Dictionary<int, string> messagePool);
 
             if (messagePool == null)
             {
-                messagePool = this.ReadDialogue(messageStoreName);
+                messagePool = ReadDialogue(messageStoreName);
             }
             else if (messagePool.Count == 0)
             {
                 return "...$h#$e#";
             }
 
-            int rand = this.Random.Next(1, messagePool.Count + 1);
+            int rand = Random.Next(1, messagePool.Count + 1);
             messagePool.TryGetValue(rand, out string value);
 
             if (value == null)
             {
                 return "...$h#$e#";
             }
-            else
-            {
-                return value;
-            }
+
+            return value;
         }
 
         public string GetMessageAt(int index, string messageStoreName)
         {
-            this.DialogueLookups.TryGetValue(messageStoreName, out Dictionary<int, string> messagePool);
+            DialogueLookups.TryGetValue(messageStoreName, out Dictionary<int, string> messagePool);
 
             if (messagePool == null)
             {
-                messagePool = this.ReadDialogue(messageStoreName);
+                messagePool = ReadDialogue(messageStoreName);
             }
             else if (messagePool.Count == 0)
             {
@@ -92,7 +90,7 @@ namespace StardewLib
                 return "...$h#$e#";
             }
 
-            this.Monitor.Log($"Returning message {index}: {messagePool[index]}", LogLevel.Trace);
+            Monitor.Log($"Returning message {index}: {messagePool[index]}");
             return messagePool[index];
             //return messagePool.ElementAt(index).Value;
         }
@@ -106,11 +104,11 @@ namespace StardewLib
             //Dictionary<int, string> objects = Game1.content.Load<Dictionary<int, string>>("Data\\ObjectInformation");
             try
             {
-                this.AllMessages = this.Content.Load<Dictionary<string, string>>("assets/dialog");
+                AllMessages = Content.Load<Dictionary<string, string>>("assets/dialog");
             }
             catch (Exception ex)
             {
-                this.Monitor.Log($"[jwdred-StardewLib] Exception loading content:{ex}", LogLevel.Error);
+                Monitor.Log($"[jwdred-StardewLib] Exception loading content:{ex}", LogLevel.Error);
             }
         }
 
@@ -136,12 +134,12 @@ namespace StardewLib
                     }
                     else
                     {
-                        this.Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
+                        Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
                     }
                 }
                 else
                 {
-                    this.Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
+                    Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
                 }
             }
 
@@ -155,7 +153,7 @@ namespace StardewLib
         {
             Dictionary<int, string> result = new Dictionary<int, string>();
 
-            foreach (KeyValuePair<string, string> msgPair in this.AllMessages)
+            foreach (KeyValuePair<string, string> msgPair in AllMessages)
             {
                 if (msgPair.Key.Contains("_"))
                 {
@@ -170,18 +168,18 @@ namespace StardewLib
                     }
                     else
                     {
-                        this.Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
+                        Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
                     }
                 }
                 else
                 {
-                    this.Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
+                    Monitor.Log("Malformed dialog string encountered. Ensure key is in the form of indexGroup_number:, where 'number' is unique within its indexGroup.", LogLevel.Error);
                 }
             }
 
             if (identifier.Equals("smalltalk"))
             {
-                Dictionary<int, string> characterDialog = this.ReadDialogue(this.Config.WhoChecks);
+                Dictionary<int, string> characterDialog = ReadDialogue(Config.WhoChecks);
 
                 if (characterDialog.Count > 0)
                 {
@@ -194,7 +192,7 @@ namespace StardewLib
                 }
             }
 
-            this.DialogueLookups.Add(identifier, result);
+            DialogueLookups.Add(identifier, result);
 
             return result;
         }

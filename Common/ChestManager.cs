@@ -25,12 +25,12 @@ namespace StardewLib
         *********/
         public ChestManager(IMonitor monitor)
         {
-            this.Monitor = monitor;
+            Monitor = monitor;
         }
 
         public void ParseChests(string chestString)
         {
-            this.Chests = new Dictionary<int, ChestDef>();
+            Chests = new Dictionary<int, ChestDef>();
 
             string[] chestDefinitions = chestString.Split('|');
 
@@ -41,22 +41,22 @@ namespace StardewLib
                 {
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
-                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
+                    Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}");
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // A farm house chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
-                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
+                    Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}");
                 }
             }
         }
 
         public void ParseChests(string[] chestList)
         {
-            this.Chests = new Dictionary<int, ChestDef>();
+            Chests = new Dictionary<int, ChestDef>();
 
             foreach (string def in chestList)
             {
@@ -65,22 +65,22 @@ namespace StardewLib
                 {
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
-                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
+                    Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}");
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // Another location.
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
-                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
+                    Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}");
                 }
             }
         }
 
         public void ParseChests(List<string> chestList)
         {
-            this.Chests = new Dictionary<int, ChestDef>();
+            Chests = new Dictionary<int, ChestDef>();
 
             foreach (string def in chestList)
             {
@@ -89,32 +89,32 @@ namespace StardewLib
                 {
                     // A Farm chest
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), "Farm");
-                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
+                    Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}");
                 }
                 else if (chestInfo.Length == 4)
                 {
                     // Another location.
                     ChestDef cd = new ChestDef(Convert.ToInt32(chestInfo[1]), Convert.ToInt32(chestInfo[2]), chestInfo[3]);
-                    this.Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
-                    this.Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}", LogLevel.Trace);
+                    Chests.Add(Convert.ToInt32(chestInfo[0]), cd);
+                    Monitor.Log($"Parsing chest: {cd.X},{cd.Y} for item: {chestInfo[0]}, location: {cd.Location}");
                 }
             }
         }
 
         public void SetDefault(Vector2 v)
         {
-            this.DefaultChest = new ChestDef((int)v.X, (int)v.Y);
+            DefaultChest = new ChestDef((int)v.X, (int)v.Y);
         }
 
         public Object GetDefaultChest()
         {
-            return this.GetChest(-999999);
+            return GetChest(-999999);
         }
 
         public Object GetChest(int itemId)
         {
-            ChestDef def = this.GetChestDef(itemId);
+            ChestDef def = GetChestDef(itemId);
             if (def == null)
                 return null;
 
@@ -232,8 +232,8 @@ namespace StardewLib
         *********/
         private ChestDef GetChestDef(int itemId)
         {
-            this.Chests.TryGetValue(itemId, out ChestDef def);
-            return def ?? this.DefaultChest;
+            Chests.TryGetValue(itemId, out ChestDef def);
+            return def ?? DefaultChest;
         }
     }
 }

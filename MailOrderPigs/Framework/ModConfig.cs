@@ -1,8 +1,9 @@
-﻿namespace MailOrderPigs.Framework
+﻿using StardewModdingAPI.Utilities;
+
+namespace MailOrderPigs.Framework
 {
     internal class ModConfig
     {
-        public string KeyBind { get; set; } = "PageUp";
-        public bool AllowOvercrowding { get; set; }
+        public KeybindList ToggleKey { get; set; } = KeybindList.Parse("PageUp");        
     }
 }
